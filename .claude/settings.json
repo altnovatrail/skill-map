@@ -1,0 +1,6 @@
+{
+  "claudeMdExcludes": [
+    "**/skill-map/spec/CLAUDE.md",
+    "**/skill-map/spec/**/CLAUDE.md"
+  ]
+}
