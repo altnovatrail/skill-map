@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>novatrail-skill-map, by hand</title>
+<!-- The page to try the map on by hand (RUN.md, T16; R12 in docs/decisions.md): a graph of the
+     tests' example, one of eight tiers, the modules of the first slice and spec's vectors of
+     tiers; the view, the language, the state, the theme, the level of headings and the width the
+     page gives the element; and the skills chosen, as skillchoose tells them. It keeps nothing. -->
+<style>
+  body { margin: 0; padding: 16px; background: #f4f4f1; color: #1d1d1b;
+         font: 16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  body.dark { background: #1b1d21; color: #e7e7e3; }
+  main { max-width: 1040px; margin: 0 auto; }
+  form { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: end; margin: 0 0 12px; }
+  label { display: flex; flex-direction: column; font-size: 0.875em; gap: 2px; }
+  select { font: inherit; min-height: 44px; padding: 4px 8px; }
+  #source { font-size: 0.875em; margin: 0 0 12px; }
+  #frame { margin: 0 0 16px; }
+  #frame.narrow { width: 320px; }
+  /* The dark theme: the element's custom properties, which its shadow tree inherits (R10). */
+  body.dark novatrail-skill-map { --novatrail-skill-map-paper: #24272d;
+    --novatrail-skill-map-ink: #f1f1ec; --novatrail-skill-map-accent: #8fb4ff; }
+  #chosen { font-size: 0.875em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>novatrail-skill-map, by hand</h1>
+  <form>
+    <label>Graph <select id="graph"></select></label>
+    <label>View <select id="view">
+      <option value="learner">learner</option>
+      <option value="adult">adult</option>
+      <option value="">none</option>
+    </select></label>
+    <label>Language <select id="lang">
+      <option value="en">en</option>
+      <option value="ru">ru</option>
+      <option value="de">de — falls back to English</option>
+    </select></label>
+    <label>State <select id="state"></select></label>
+    <label>Theme <select id="theme">
+      <option value="light">light</option>
+      <option value="dark">dark</option>
+    </select></label>
+    <label>Heading level <select id="heading">
+      <option value="2">2</option>
+      <option value="3" selected>3</option>
+      <option value="4">4</option>
+    </select></label>
+    <label>Width <select id="width">
+      <option value="full">full</option>
+      <option value="narrow">320 px</option>
+    </select></label>
+  </form>
+  <p id="source"></p>
+  <div id="frame"><novatrail-skill-map></novatrail-skill-map></div>
+  <h2>Chosen to practise</h2>
+  <ol id="chosen"></ol>
+</main>
+<script type="module" src="./main.ts"></script>
+</body>
+</html>

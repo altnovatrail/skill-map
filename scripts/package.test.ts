@@ -49,7 +49,7 @@ test("a package without its license, its notice or the element's build is a prob
 });
 
 const element = { types: "./lib/element/index.d.ts", default: "./lib/element/index.js" };
-const sideEffects = ["./lib/element/index.js"];
+const sideEffects = ["./lib/element/index.js", "./src/element/index.ts"];
 
 test("the element is the one entry point, and its registration is the one side effect", () => {
   expect(manifestProblems({ exports: { ".": element }, sideEffects })).toEqual([]);
@@ -77,10 +77,14 @@ test("exports that is no object of entry points is one problem, not one per char
 });
 
 test("sideEffects that leaves out the entry, or says there are none, is a problem", () => {
-  const problem = 'package.json\'s sideEffects is not ["./lib/element/index.js"]';
+  const problem =
+    'package.json\'s sideEffects is not ["./lib/element/index.js","./src/element/index.ts"]';
   expect(manifestProblems({ exports: { ".": element }, sideEffects: false })).toEqual([problem]);
   expect(
     manifestProblems({ exports: { ".": element }, sideEffects: ["./lib/element/main.js"] }),
+  ).toEqual([problem]);
+  expect(
+    manifestProblems({ exports: { ".": element }, sideEffects: ["./lib/element/index.js"] }),
   ).toEqual([problem]);
 });
 

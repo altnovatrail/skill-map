@@ -11,3 +11,5 @@
 # The screenshots Vitest takes of a failed test in the browser: Vitest 5 puts them under .vitest/.
 __screenshots__/
 /.vitest/
+# The demo built for a tablet: just demo-build writes it, and it never ships (R12 in docs/decisions.md).
+/demo/dist/

@@ -80,7 +80,7 @@ export function pinned(source: string): string | undefined {
   return /\bsha256: "([0-9a-f]{64})"/.exec(source)?.[1];
 }
 
-function sha256Of(bytes: Buffer): string {
+export function sha256Of(bytes: Uint8Array): string {
   return createHash("sha256").update(bytes).digest("hex");
 }
 

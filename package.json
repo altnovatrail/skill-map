@@ -19,7 +19,8 @@
     }
   },
   "sideEffects": [
-    "./lib/element/index.js"
+    "./lib/element/index.js",
+    "./src/element/index.ts"
   ],
   "devDependencies": {
     "@altnovatrail/contracts": "0.9.5",
@@ -33,7 +34,8 @@
     "playwright": "1.64.1",
     "typescript": "7.0.2",
     "vite": "8.3.5",
-    "vitest": "5.1.0"
+    "vitest": "5.1.0",
+    "yaml": "2.9.1"
   },
   "dependencies": {
     "@altnovatrail/spec": "0.9.5"

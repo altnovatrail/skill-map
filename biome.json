@@ -5,6 +5,7 @@
       "src/**",
       "!src/element/anchor-titles.ts",
       "scripts/**",
+      "demo/**/*.ts",
       "*.ts",
       "*.json",
       "!package-lock.json"
