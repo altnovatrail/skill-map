@@ -22,6 +22,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
+import { TAR } from "./tar.ts";
 
 /** How a consumer's TypeScript resolves modules: as Node does, and as a bundler does. */
 export const RESOLUTIONS = ["NodeNext", "Bundler"] as const;
@@ -70,7 +71,7 @@ function main(): void {
     const archive = join(folder, packed[0]?.filename ?? "");
     const target = join(folder, "node_modules", "@altnovatrail", "skill-map");
     mkdirSync(target, { recursive: true });
-    execFileSync("tar", ["-xzf", archive, "-C", target, "--strip-components=1"]);
+    execFileSync(TAR, ["-xzf", archive, "-C", target, "--strip-components=1"]);
     for (const name of BESIDE) {
       const link = join(folder, "node_modules", name);
       mkdirSync(dirname(link), { recursive: true });

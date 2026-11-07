@@ -2,10 +2,10 @@
 // from shared-taxonomy.schema.json in the format file of a release of spec, which enters the
 // package only through spec's release-verify (R77 spec; RULES.md, Hard rules).
 //
-//   node scripts/taxonomy.ts           verify the file, pin its digest and write the titles
+//   just taxonomy                      verify the file, pin its digest and write the titles
 //   node scripts/taxonomy.ts --check   fail unless the pinned file gives the titles as written
 //
-// Writing downloads the file and its bundle from the release, runs
+// Writing, which `just taxonomy` runs, downloads the file and its bundle from the release, runs
 // `just -f spec/justfile release-verify spec <tag> <file> <bundle>` on them, and writes
 // src/element/anchor-titles.ts with the file's sha256. From then on the digest holds the file:
 // --check, which ci-lint runs, downloads it again, holds it to the digest the source names, and
@@ -17,6 +17,7 @@ import { createHash } from "node:crypto";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { TAR } from "./tar.ts";
 
 /** The release of spec whose format file the titles come from: the tag spec/ stands on. */
 export const RELEASE = { repository: "spec", tag: "v0.9.5", format: "0.3" } as const;
@@ -84,7 +85,7 @@ function sha256Of(path: string): string {
 }
 
 function titlesFrom(archive: string, folder: string): [string, string][] {
-  execFileSync("tar", ["-xzf", archive, "-C", folder, SCHEMA]);
+  execFileSync(TAR, ["-xzf", archive, "-C", folder, SCHEMA]);
   return titlesOf(JSON.parse(readFileSync(join(folder, SCHEMA), "utf8")));
 }
 
@@ -104,9 +105,12 @@ async function main(check: boolean): Promise<string> {
       }
       return `${TARGET} is what ${FILE} of ${RELEASE.tag} gives, sha256 ${sha256}`;
     }
+    // The just that runs the recipe, by its path: none is looked up in PATH.
+    const just = process.env.JUST;
+    if (just === undefined) throw new Error("run it by just taxonomy, which names its just");
     const bundle = await download(`${FILE}.sigstore.json`, folder);
     execFileSync(
-      process.env.JUST ?? "just",
+      just,
       ["-f", "spec/justfile", "release-verify", RELEASE.repository, RELEASE.tag, archive, bundle],
       { stdio: "inherit" },
     );
