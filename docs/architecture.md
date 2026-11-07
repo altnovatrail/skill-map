@@ -1,6 +1,6 @@
 # skill-map — архитектура
 
-> Статус: каркас из заготовки `spec`, 2026-10-19; сверен с `spec` v0.2.9 2026-10-20 (R01), с v0.9.4 2026-11-07 (R02) и с v0.9.5 в тот же день (R05).
+> Статус: каркас из заготовки `spec`, 2026-10-19; сверен с `spec` v0.2.9 2026-10-20 (R01), с v0.9.4 2026-11-07 (R02) и с v0.9.5 в тот же день (R05); детализация закончена 2026-11-07 (T05 RUN.md).
 >
 > Что делает компонент, чего не делает и что о нём ещё предстоит решить. Это подробности его карточки — architecture 3.3 spec. Карточка остаётся сводкой: если подробности меняют то, что в ней сказано, она правится в `spec` тем же путём, что и вопросы в его реестры (RULES.md, Across repositories).
 >
@@ -31,59 +31,39 @@
   - позже — `site`, этап 3 (repositories 2.1 spec), и инструменты автора.
 
   Второй потребитель — например, сайт — получает вторую сборку того же пакета (R16 spec; architecture 6 spec). В потребителя пакет интерфейса входит веб-компонентом: данные получает свойствами, работу отдаёт методом, а изменения и просьбы — событиями; свои элементы он называет сам, а типы данных, которые делят репозитории, берёт из релизов `spec` (R36 spec; Т-21 закрыт). У карты это один элемент, `<novatrail-skill-map>`: данные — свойствами, выбор навыка — событием, а методов у него нет (R04, раздел 3.3);
-- при сборке ни от чего не зависит, кроме `spec`; от него самого при сборке зависят `app`, а с этапа 3 — `site` (repositories 2.1 spec, repositories 3 spec). Во время разработки `app` подключает рабочую копию пакета, а в релиз идёт только точная версия (architecture 6 spec). Выходит пакет в npm, в области `@altnovatrail`: туда уходит файл подписанного релиза GitHub, а подпись `app` проверяет рецептом `spec` `release-verify-npm` в CI pull request, который меняет lock-файл (R37 spec, R77 spec; Т-26 и Т-27 закрыты; раздел 2.4);
+- при сборке ни от чего не зависит, кроме `spec`; от него самого при сборке зависят `app`, а с этапа 3 — `site` (repositories 2.1 spec, repositories 3 spec). Выходит пакет в npm, в области `@altnovatrail`, файлом подписанного релиза GitHub (R37 spec, R77 spec; Т-26 и Т-27 закрыты); как его собирают, проверяют и принимают, — раздел 3.7;
 - лицензия — Apache-2.0 (R20 spec); зависимости — только с лицензиями, совместимыми с ней (RULES.md, Hard rules);
 - этап 2, «Первый срез с учеником», вместе с `tutor`, `canvas`, `api`, `app` и `infra` (product 11 spec). Код `skill-map` идёт после первого кода этапа — `tutor` и `canvas`, — вместе с `api`, `app` и `infra` (repositories 6 spec).
 
 ## 2. Решить при детализации
 
-Здесь — пункты «Решить при детализации» из карточки и то, что о них уже решил `spec`. Открытый пункт решает своя задача эпика E1 в [RUN.md](../RUN.md). Решённый пункт называет запись журнала, а само решение переезжает в раздел 3. Вопрос, который выходит за этот репозиторий, уходит «в реестр spec» (RULES.md, Across repositories).
+Детализация закончена 2026-11-07 (RUN.md, T05): решены все пункты «Решить при детализации» карточки, а решения — в разделе 3. Подразделы ниже остались указателями: на них ссылаются журнал и RUN.md.
 
-На `spec` v0.9.4 и v0.9.5 у карточки три пункта: данные и раскладка, как карта показывает ярусы, ранги (architecture 3.3 spec).
-- 2.1 — раскладка графа: решила T08, R06, раздел 3.4. Данные и договор элемента решила T01 — R03 и R04, раздел 3: раскладывает граф сам пакет, поэтому то, что ему присылают, от рисунка не зависит, и при планировании T01 автор разбил пункт на две задачи;
-- 2.2 — что о ярусах решил `spec`, R49 и R62 spec: это был вход T08, а не отдельный пункт;
-- 2.3 — ранги: для карты решила T03, R07, раздел 3.5, а сам ранг ушёл к О-13;
-- 2.4 — публикация: её решил R37 spec, и из карточки этот пункт ушёл.
+На `spec` v0.9.4 и v0.9.5 у карточки три пункта: данные и раскладка, как карта показывает ярусы, ранги (architecture 3.3 spec). Данные и договор элемента решила T01 — R03 и R04, — раскладку и ярусы на карте — T08, R06, ранги на карте — T03, R07. Что решил сам `spec` — ярусы и публикацию, — разделы 3.6 и 3.7. Задачи T02 и T04, которые разбирали 2.2 и 2.4, не делались (R02).
 
-Задачи T02 и T04, которые разбирали 2.2 и 2.4, поэтому не делаются (R02).
+**Отложено сознательно:**
+- что такое ранг в NovaTrail — О-13, строка «В реестр spec» В4 в таблице 3 [RUN.md](../RUN.md). До решения рангов на карте нет (R07; раздел 3.5);
+- сворачивание далёких ярусов — Д3 в таблице 4 [RUN.md](../RUN.md): вернуться, когда у модуля станет больше шести ярусов (R06).
 
 ### 2.1. Раскладка графа — решено (R06)
 
-- **Суть:** как пакет раскладывает карту на экране — где стоят навыки и навыки-опоры, как идут связи, что видно на узком экране и при масштабе 200 %, как по карте ходят с клавиатуры и какая у неё текстовая замена. Раскладывает сам пакет, на устройстве, из открытого вида графа и ярусов `skill_tiers` (R03). Решила T08 — R06, а само решение — раздел 3.4.
-- **Задача:** T08, сделана.
+- **Суть:** как пакет раскладывает карту на экране. Решила T08 — R06, раздел 3.4.
 
 ### 2.2. Ярусы — решено в `spec` (R49 spec, R62 spec)
 
-- **Суть:** О-18 решён — ярус вычисляется по графу, а имена ярусам даёт автор (R49 spec). Что решил `spec`, записано ниже. Осталось, как карта рисует ярусы, — это часть раскладки, и решает её T08 (раздел 2.1). T02, которая разбирала О-18, не делается (R02).
-- **Что решено:**
-  - ярус навыка без пререквизитов среди навыков модуля — 1, а у остальных — на 1 выше самого высокого яруса их пререквизитов в модуле: число навыков в самой длинной цепочке пререквизитов, которой навык кончается. Пререквизит всегда стоит ярусом ниже, и связи из старшего яруса в младший не бывает. Предела числа ярусов нет. Навыки-опоры ярусов не дают (R49 spec с поправкой 2026-10-26);
-  - имена ярусам — необязательный список `tiers` в графе, на языке объяснений: первое имя — у яруса 1. Ярус без имени показывается номером, а имя за последним ярусом ничего не называет (R49 spec);
-  - ярусы вычисляет `module-kit`, когда собирает пакет, и кладёт в канонический вид, `skill_tiers`; векторы ярусов — в `format/vectors/tiers/` `spec`. До карты ярусы доходят от `api`, ответом `GetSkillGraph`, рядом с открытым видом графа (R62 spec; R99 spec; architecture 3.3 spec). Карта ярусов не вычисляет;
-  - R49 spec отверг подгонять граф под рисунок карты: ради трёх слоёв карты standalone одно ребро там не провели (R164 standalone), а дальние ярусы карта может свернуть в строку, как прототип.
-- **Что известно для T08:**
-  - в MathTrail ярусов три — «основы», «правила», «сложные задачи», — и тест каталога держал цепочки в пределах трёх ярусов (SPEC 8.12.2 standalone; раздел 4 этого документа). У олимпиадного модуля NovaTrail имена ярусов — те же, Foundations, Rules, Hard problems (R49 spec);
-  - в прототипе модуль называет свои ступени сам — у модуля Goroutines они «Basics», «Waiting», «Many goroutines», «Review», — а подпись — «Step N · имя» или, без имени, «Step N»; далёкие ярусы сворачиваются в одну строку (прототип, `spec/draft/README.md`; R49 spec);
-  - сколько ярусов в модулях первого среза, скажут их графы: длина цепочек — по 17 темам standalone (repositories 7 spec) и по двум другим модулям (R41 spec).
-- **Задача:** T08 — как карта рисует ярусы, решил R06: раздел 3.4. Графы первого среза дали и число ярусов: 3 у `grade-3-math`, 4 у `english-essays` (`modules`, `main` 6d061e9) и 3 у примера олимпиадной математики в формате.
+- **Суть:** О-18 решён — ярус вычисляется по графу, а имена ярусам даёт автор (R49 spec). Что решил `spec`, — раздел 3.6, а как карта рисует ярусы, — R06, раздел 3.4.
 
 ### 2.3. Ранги (О-13) — решено для карты (R07)
 
-- **Суть:** показывает ли карта ранги — по навыку, по модулю, общий, — в каком виде, кому и откуда берётся сам ранг. Ранги и персонаж для взрослых — открытый вопрос О-13 реестра `spec`. Для карты решила T03 — R07: в первом срезе рангов на карте нет, а что такое ранг в NovaTrail, ушло к О-13 строкой «В реестр spec». Само решение — раздел 3.5.
-- **Задача:** T03, сделана.
+- **Суть:** показывает ли карта ранги и откуда берётся сам ранг. Для карты решила T03 — R07, раздел 3.5: в первом срезе рангов на карте нет, а что такое ранг в NovaTrail, ушло к О-13.
 
 ### 2.4. Где публикуется пакет — решено в `spec` (R37 spec, R77 spec)
 
-- **Суть:** Т-26 закрыт — пакеты интерфейса выходят в npm, в области `@altnovatrail` (R37 spec), а Т-27 — подпись файла релиза проверяет рецепт `spec` `release-verify` (R77 spec). Пункт ушёл из карточки (architecture 3.3 spec), а T04, которая его разбирала, не делается (R02). Что осталось, — работа эпика кода.
-- **Что решено:**
-  - в npm уходит тот же файл, что подписан в релизе GitHub, шагом общего `release.yml` `.github` (R37 spec). Пакет `@altnovatrail` из npm `app` принимает, когда `release-verify-npm` принял lock-файл, в CI pull request, который его меняет, а дальше файл держит дайджест lock-файла (R77 spec; RULES.md, Hard rules). Так у `app` уже устроено: его T01 (R03 app; Д54 в таблице 4 RUN.md `spec`);
-  - во время разработки `app` подключает рабочую копию пакета, а в релиз идёт только точная версия (R16 spec; architecture 6 spec); второй потребитель — например, сайт — получает вторую сборку того же пакета, `site` — с этапа 3 (repositories 2.1 spec);
-  - набор иконок `@iconify-json/material-symbols` пакет берёт из `devDependencies` и вшивает при сборке только свои иконки (R78 spec; поправка 2026-11-02 к R39 spec);
-  - все репозитории организации публичные (R18 spec), лицензия — Apache-2.0 (R20 spec).
-- **Задача:** эпик кода — его предложит T05.
+- **Суть:** Т-26 и Т-27 закрыты — пакет выходит в npm, в области `@altnovatrail` (R37 spec), а подпись файла релиза проверяет рецепт `spec` `release-verify` (R77 spec). Что решено, — раздел 3.7; сделает это эпик кода.
 
 ## 3. Устройство
 
-Сюда переезжает то, что решено по разделу 2: из каких частей компонент состоит, его типы и данные, как он связан с другими репозиториями. Решены данные и договор элемента (T01: R03, R04) и раскладка (T08: R06), а для карты — и ранги (T03: R07). Открытых пунктов карточки нет.
+Сюда переезжает то, что решено по разделу 2: из каких частей компонент состоит, его типы и данные, как он связан с другими репозиториями. Решены данные и договор элемента (T01: R03, R04) и раскладка (T08: R06), а для карты — и ранги (T03: R07); что решил `spec` о ярусах и публикации, — разделы 3.6 и 3.7. Открытых пунктов карточки нет, а что строить, раздел 3 отвечает целиком.
 
 ### 3.1. Данные для показа
 
@@ -253,16 +233,38 @@ skills:
   - рекомендация — ранг модуля, если О-13 решит, что ранги видны, а до того — никаких.
 - **Как ранги придут.** Их включит атрибут элемента: его ставит `app` по стилю подачи ученика, на обоих видах карты, а без атрибута рангов нет. Карта стиля подачи не знает и профиля не читает (R04). Имя атрибута и вид ранга назовёт решение, которое придёт вслед за О-13, поправкой к R04; как стиль подачи держит ранги, решают О-13, О-23 и `app`.
 
+### 3.6. Ярусы — что решил `spec`
+
+- Ярус навыка без пререквизитов среди навыков модуля — 1, а у остальных — на 1 выше самого высокого яруса их пререквизитов в модуле: число навыков в самой длинной цепочке пререквизитов, которой навык кончается. Пререквизит всегда стоит ярусом ниже, и связи из старшего яруса в младший не бывает. Предела числа ярусов нет. Навыки-опоры ярусов не дают (R49 spec с поправкой 2026-10-26).
+- Имена ярусам — необязательный список `tiers` в графе, на языке объяснений: первое имя — у яруса 1. Ярус без имени показывается номером, а имя за последним ярусом ничего не называет (R49 spec).
+- Ярусы вычисляет `module-kit`, когда собирает пакет, и кладёт их в канонический вид, `skill_tiers`; векторы ярусов — в `format/vectors/tiers/` `spec`. До карты ярусы доходят от `api` ответом `GetSkillGraph`, рядом с открытым видом графа (R62 spec, R99 spec). Карта ярусов не вычисляет.
+- Подгонять граф под рисунок карты R49 spec отверг: ради трёх слоёв карты standalone одно ребро там не провели (R164 standalone), — а дальние ярусы карта может свернуть в строку, как прототип. Такое сворачивание R06 отложил — Д3 в таблице 4 [RUN.md](../RUN.md). В MathTrail слоёв было три — «основы», «правила», «сложные задачи», — и тест каталога держал цепочки в пределах трёх слоёв (SPEC 8.12.2 standalone; раздел 4).
+- В первом срезе ярусов немного: 3 у `grade-3-math`, 4 у `english-essays` (`modules`, `main` 6d061e9) и 3 у примера олимпиадной математики в формате (`spec/format/vectors/tiers/olympiad-math.yaml`).
+
+### 3.7. Сборка, зависимости и публикация
+
+Что решили `spec` и детализация для кода пакета; строит это эпик кода (таблица 2 [RUN.md](../RUN.md)).
+- **Без фреймворка.** Пакет — веб-компонент: фреймворк ему не нужен, а свой каждый потребитель выбирает сам (R36 spec). Во время разработки `app` подключает рабочую копию пакета, а в релиз идёт только точная версия (R16 spec; architecture 6 spec). Второй потребитель — `site` с этапа 3 — получает вторую сборку того же пакета (repositories 2.1 spec).
+- **Зависимости.**
+  - Типы данных — `@altnovatrail/spec` и `@altnovatrail/contracts`, по точной версии, той же, что тег подмодуля `spec` (R73 spec, R83 spec; R04); в какие зависимости пакета они ложатся, решает эпик кода.
+  - Набор иконок `@iconify-json/material-symbols` — в `devDependencies`, по точной версии, а вшиваются при сборке только свои иконки (R78 spec; поправка 2026-11-02 к R39 spec).
+  - Английские названия навыков-опор — из файла формата релиза `spec`, проверенного `release-verify` (R04; R64 spec, R77 spec).
+  - Только лицензии, совместимые с Apache-2.0; лицензии lock-файла проверяет рецепт `spec` `licenses-check-repo` в своём `ci-licenses` (R39 spec; RULES.md, Hard rules).
+- **Инструменты разработки.** Вид devcontainer — `typescript` (R02): Biome пришёл с ним форматтером TypeScript раньше решения `skill-map` о линтере. Линтер выбирает эпик кода своим решением, а другой линтер уберёт расширение и настройку Biome и назовёт это отличием от рецепта (R79 spec). Тесты в браузере — Chrome Headless Shell из образа Playwright в стадии `toolchain`, названным исключением из правила лицензий (R02; R79 spec). Контейнер на этом образе собран 2026-11-07 — Д2 в таблице 4 [RUN.md](../RUN.md) закрыт.
+- **Тесты и покрытие.** Код — со своими тестами, а покрытие идёт в Codecov, и мерж ждёт `codecov/patch` не ниже 90 % изменённых строк (R48 spec; RULES.md, How we work). README несёт значки статуса (R48 spec). Правила, которые тесты проверяют первыми: состояния на карте (раздел 3.2), порядок в полосе и раскрытие (раздел 3.4) — на синтетических графах, как пример `example/fair-shares`.
+- **Релиз и публикация.** Всё, что выходит у `skill-map`, — файлы одного релиза GitHub с подписью общего `release.yml` `.github`, и тот же файл пакета уходит в npm, `@altnovatrail/skill-map` (R37 spec). Пакет из npm `app` принимает, когда `release-verify-npm` принял lock-файл, в CI pull request, который его меняет (R77 spec; RULES.md, Hard rules). До первого релиза у репозитория — неизменяемые релизы и ruleset тегов `v*` (Д54 в таблице 4 RUN.md `spec`).
+- **Лицензия и доступ** — Apache-2.0 (R20 spec); все репозитории организации публичные (R18 spec).
+
 ## 4. Источники
 
 Внешний факт — условия поставщика, цена, закон, документация библиотеки — встаёт сюда с источником и датой прочтения (RULES.md, The bar).
 
-- **Карта тем и ярусы в MathTrail** (разделы 2.1, 2.2) — [mathtrail/mathtrail-standalone, `SPEC.md`](https://github.com/mathtrail/mathtrail-standalone/blob/c6cbeb2/SPEC.md), раздел 8.12.2 «The site», ветка `main`, коммит c6cbeb2, прочитано 2026-10-19: «a topic's layer is the longest chain of bases below it — 0 the foundations, 1 the rules, 2 the hard problems — computed rather than drawn, and a test on the catalog keeps the chains within three layers»; «The map is laid out when the site is built …: a column for each layer, from left to right in every language as a drawing is»; «a link to the next column is a curve, and a link that skips one runs under every box»; «Pointing at a topic, or reaching it with the keyboard, lights every topic below it and above it and the lines between them … no script runs»; «On a narrow screen the map scrolls sideways inside its panel».
-- **Ранги в MathTrail** (разделы 2.3 и 3.5; R07) — тот же коммит c6cbeb2, прочитано 2026-10-19:
+- **Карта тем и ярусы в MathTrail** (разделы 3.4 и 3.6; R06) — [mathtrail/mathtrail-standalone, `SPEC.md`](https://github.com/mathtrail/mathtrail-standalone/blob/c6cbeb2/SPEC.md), раздел 8.12.2 «The site», ветка `main`, коммит c6cbeb2, прочитано 2026-10-19: «a topic's layer is the longest chain of bases below it — 0 the foundations, 1 the rules, 2 the hard problems — computed rather than drawn, and a test on the catalog keeps the chains within three layers»; «The map is laid out when the site is built …: a column for each layer, from left to right in every language as a drawing is»; «a link to the next column is a curve, and a link that skips one runs under every box»; «Pointing at a topic, or reaching it with the keyboard, lights every topic below it and above it and the lines between them … no script runs»; «On a narrow screen the map scrolls sideways inside its panel».
+- **Ранги в MathTrail** (раздел 3.5; R07) — тот же коммит c6cbeb2, прочитано 2026-10-19:
   - [`SPEC.md`](https://github.com/mathtrail/mathtrail-standalone/blob/c6cbeb2/SPEC.md), раздел 2.4 «The chess scale and the ranks»: «Above the number comes a rank: eleven steps, told by their numbers — "Rank 3", "of 11" — with no names of their own»; рейтинг считается и общий, и по теме: «applied to θ + δ_topic, the rating for a topic»;
   - [`docs/decisions.md`](https://github.com/mathtrail/mathtrail-standalone/blob/c6cbeb2/docs/decisions.md), запись R213 standalone: «A rank is told by its number»; «a topic's rank is "Rank 4" at the end of its row»; «the eleven names of the dictionaries are gone»;
   - [`internal/domain/rating/scale.go`](https://github.com/mathtrail/mathtrail-standalone/blob/c6cbeb2/internal/domain/rating/scale.go), функция `Rank`: «It is worked out wherever it is drawn and stored nowhere». Её зовёт сервер, когда собирает прогресс ([`internal/domain/progress/progress.go`](https://github.com/mathtrail/mathtrail-standalone/blob/c6cbeb2/internal/domain/progress/progress.go)), а ответ прогресса несёт общий ранг в поле `rank` и число рангов шкалы в поле `ranks` — «so that a card need not know the number», — а у каждой темы своё поле `rank` ([`internal/transport/mcp/progress.go`](https://github.com/mathtrail/mathtrail-standalone/blob/c6cbeb2/internal/transport/mcp/progress.go), типы `standingOut` и `topicOut`).
-- **Раскладка карты тем в MathTrail** (раздел 2.1) — [mathtrail/mathtrail-standalone, `web/src/site/topicmap.ts`](https://github.com/mathtrail/mathtrail-standalone/blob/6b29dd9/web/src/site/topicmap.ts), ветка `main`, коммит 6b29dd9, прочитано 2026-11-07: «each in the column of its layer, the foundations in the catalog's order and every other column by where its topics' bases stand, so that lines cross as little as a simple rule allows»; «A link to the next column is a curve between the two boxes; a link that skips a column runs down a gutter, along a lane of its own under every box, and up the next gutter»; подсветку дают правила CSS, которые пишутся при сборке, — «and need no script; a browser that cannot read them shows the map unlit». Рисует карту [`web/src/site/TopicMap.tsx`](https://github.com/mathtrail/mathtrail-standalone/blob/6b29dd9/web/src/site/TopicMap.tsx) того же коммита: «it scrolls sideways inside its panel where the screen is narrower than it».
+- **Раскладка карты тем в MathTrail** (раздел 3.4; R06) — [mathtrail/mathtrail-standalone, `web/src/site/topicmap.ts`](https://github.com/mathtrail/mathtrail-standalone/blob/6b29dd9/web/src/site/topicmap.ts), ветка `main`, коммит 6b29dd9, прочитано 2026-11-07: «each in the column of its layer, the foundations in the catalog's order and every other column by where its topics' bases stand, so that lines cross as little as a simple rule allows»; «A link to the next column is a curve between the two boxes; a link that skips a column runs down a gutter, along a lane of its own under every box, and up the next gutter»; подсветку дают правила CSS, которые пишутся при сборке, — «and need no script; a browser that cannot read them shows the map unlit». Рисует карту [`web/src/site/TopicMap.tsx`](https://github.com/mathtrail/mathtrail-standalone/blob/6b29dd9/web/src/site/TopicMap.tsx) того же коммита: «it scrolls sideways inside its panel where the screen is narrower than it».
 - **WCAG 2.2** (раздел 3.4; R06 и поправка 2026-11-07 к R04) — [Web Content Accessibility Guidelines (WCAG) 2.2](https://www.w3.org/TR/WCAG22/), W3C Recommendation 12 December 2024, прочитано 2026-11-07:
   - 1.4.10 Reflow: «Content can be presented without loss of information or functionality, and without requiring scrolling in two dimensions for: Vertical scrolling content at a width equivalent to 320 CSS pixels; Horizontal scrolling content at a height equivalent to 256 CSS pixels. Except for parts of the content which require two-dimensional layout for usage or meaning». Note 2 у [Understanding 1.4.10](https://www.w3.org/WAI/WCAG22/Understanding/reflow.html): «Examples of content which requires two-dimensional layout are images required for understanding (such as maps and diagrams), video, games, presentations, data tables (not individual cells), and interfaces where it is necessary to keep toolbars in view»;
   - 2.5.7 Dragging Movements: «All functionality that uses dragging movements can be operated by single pointer activation without dragging, unless dragging is essential»;
