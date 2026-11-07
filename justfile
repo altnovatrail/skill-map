@@ -90,6 +90,37 @@ taxonomy:
 icons: _install
     node scripts/icons.ts
 
+# Serve the page to try the map on by hand — with a mouse, the keyboard or a screen reader — on
+# Vite's dev server at 127.0.0.1:5173, which VS Code forwards to a browser outside the container
+# (R12; RUN.md, T16). It serves the page, the element's sources and the packages they import, and
+# nothing else of the repository, and builds nothing. At its start it downloads the graphs of the
+# modules of the pinned index and the vectors of tiers of spec's format file, held to their pinned
+# digests in memory, so the network has to be reachable.
+demo: _install
+    {{ bin }}/vite --config demo/vite.config.ts
+
+# Build the same page into demo/dist, the graphs inside it, for a tablet: any server of files
+# serves the folder, and it needs no network. It never ships and is never released.
+demo-build: _install
+    {{ bin }}/vite build --config demo/vite.config.ts
+
+# Verify the module index of the release of modules that scripts/demo-data.ts names by spec's
+# release-verify, and pin its sha256 in demo/release.ts, which the demo holds the index to from
+# then on: after a move to a new release of modules. The recipe downloads the index and its bundle
+# into node_modules/.demo-pin, the folder the script names, and removes it after.
+demo-pin: _install
+    #!/usr/bin/env bash
+    set -euo pipefail
+    folder=node_modules/.demo-pin
+    rm -rf "$folder"
+    mkdir -p "$folder"
+    trap 'rm -rf "$folder"' EXIT
+    urls="$(node scripts/demo-data.ts --urls)"
+    for url in $urls; do
+        curl --fail --silent --show-error --location --output "$folder/${url##*/}" "$url"
+    done
+    JUST={{ quote(just_executable()) }} node scripts/demo-data.ts --pin
+
 # Format and fix the code in place, the way ci-lint checks it.
 fmt: _install
     {{ bin }}/biome check --write

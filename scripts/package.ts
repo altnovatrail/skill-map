@@ -16,6 +16,8 @@ import { fileURLToPath } from "node:url";
 
 /** The one entry point: the element, which registers itself when imported (R04). */
 const ENTRY = { types: "./lib/element/index.d.ts", default: "./lib/element/index.js" };
+/** What sideEffects names: the registration of the element, in the build and in the sources. */
+const SIDE_EFFECTS = [ENTRY.default, "./src/element/index.ts"];
 /**
  * The paths npm pack takes, besides the build: package.json, the files npm always adds, and NOTICE,
  * which names the icons the package embeds (R78 spec; R10 in docs/decisions.md).
@@ -56,7 +58,9 @@ export function packProblems(paths: readonly string[]): string[] {
 
 /**
  * Every problem with what package.json says of the entry point: there is one, the element's, and
- * sideEffects names its JavaScript alone, or a consumer's bundler would drop the registration.
+ * sideEffects names its JavaScript, or a consumer's bundler would drop the registration, and the
+ * sources' entry beside it, which the demo builds from (R12 in docs/decisions.md): npm pack takes
+ * nothing of src/, so for a consumer it names no file.
  */
 export function manifestProblems(manifest: { exports?: unknown; sideEffects?: unknown }): string[] {
   const { exports, sideEffects } = manifest;
@@ -72,8 +76,8 @@ export function manifestProblems(manifest: { exports?: unknown; sideEffects?: un
       problems.push(`package.json's entry point "." is not ${JSON.stringify(ENTRY)}`);
     }
   }
-  if (JSON.stringify(sideEffects) !== JSON.stringify([ENTRY.default])) {
-    problems.push(`package.json's sideEffects is not ["${ENTRY.default}"]`);
+  if (JSON.stringify(sideEffects) !== JSON.stringify(SIDE_EFFECTS)) {
+    problems.push(`package.json's sideEffects is not ${JSON.stringify(SIDE_EFFECTS)}`);
   }
   return problems;
 }

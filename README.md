@@ -21,6 +21,8 @@ A component of [NovaTrail](https://github.com/altnovatrail/spec/tree/v0.9.5), a 
 
 Detailing done. The first epic of the plan, now in [docs/plan/E1.md](docs/plan/E1.md), decided what the component's card left open, and section 3 of [docs/architecture.md](docs/architecture.md) describes the package. The first code is the current epic, E2 of RUN.md: so far the element `<novatrail-skill-map>` of the package `@altnovatrail/skill-map` — its tree, its words in English and Russian, its icons and its look — with its tools and CI, and no release yet. Inside the devcontainer, `just ci` runs the four checks CI runs — lint and types, the tests in Node and in Chromium with their coverage, advisories and licenses.
 
+To try the map by hand, `just demo` serves a page at http://127.0.0.1:5173, which VS Code forwards to a browser outside the container. It draws the tests' example, a graph of eight tiers, the modules of the first slice and spec's vectors of tiers, with switches for the view, the language, the state, the theme and the width. For a tablet, `just demo-build` writes the same page into `demo/dist/`, with the graphs inside it, and any server of files on your network serves that folder — for one, `python3 -m http.server -d demo/dist` on your computer. A browser loads no modules from `file://`.
+
 ## Theme and accessibility
 
 The map holds the standard of NovaTrail's packages of the interface: WCAG 2.2 AA, with targets of 44 by 44 CSS pixels and no motion triggered by interaction, as R90 spec decides. A consumer fits it to its theme by three custom properties, which the element's shadow tree inherits; their defaults are light:
