@@ -1,6 +1,7 @@
 // Runs inside a frame whose Content-Security-Policy allows styles and scripts from its own origin
 // alone, as a strict consumer's would (the second amendment of 2026-11-02 to R36 spec): it draws the
-// map of example/fair-shares and tells the test what the policy refused, on window.cspResult.
+// map of example/fair-shares, expands a skill so that its lines are drawn (R11), and tells the
+// test what the policy refused, on window.cspResult.
 
 // The imports are static: Vitest rewrites a dynamic import() into a call of its runner, which this
 // frame does not have. The element draws nothing until the map is assigned below, after the
@@ -13,6 +14,7 @@ interface Result {
   readonly display: string;
   readonly sheets: number;
   readonly inline: number;
+  readonly lines: number;
 }
 
 const violations: string[] = [];
@@ -33,11 +35,19 @@ await new Promise((resolve) => setTimeout(resolve));
 await new Promise((resolve) => setTimeout(resolve));
 
 const root = map.shadowRoot as ShadowRoot;
+// Quarters, expanded, has two lines: the map draws them in the update its click asks for.
+const quarters = [...root.querySelectorAll("button")].find((node) =>
+  node.textContent?.startsWith("Quarters"),
+);
+quarters?.click();
+await new Promise((resolve) => setTimeout(resolve));
+await new Promise((resolve) => setTimeout(resolve));
 const list = root.querySelector("ul") as HTMLUListElement;
 const result: Result = {
   violations: [...violations],
   display: getComputedStyle(list).display,
   sheets: root.adoptedStyleSheets.length,
   inline: root.querySelectorAll("style, [style]").length,
+  lines: root.querySelectorAll(".lines path").length,
 };
 (window as unknown as { cspResult: Result }).cspResult = result;

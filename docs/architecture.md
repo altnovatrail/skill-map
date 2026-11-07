@@ -206,6 +206,7 @@ skills:
 - Пакет проводит линии по измеренным местам плиток, когда раскладка готова, и проводит заново, когда меняется её размер. Линии лежат под плитками и не закрывают их, а у каждой на обоих концах — точка. Связь через ярус и линия от навыка-опоры проходят под плитками промежуточных полос, а линия из подробностей — и под плитками, перенесёнными под них: что с чем связано, говорят точки на концах и подписи у связанных плиток, а не сама линия.
 - У подсвеченных плиток — подписи «нужен раньше» и «откроется после»: связь видна не только цветом (1.4.1). Контраст линии с фоном — не меньше 3:1 (1.4.11).
 - При `prefers-reduced-motion` линии появляются без анимации (R90 spec).
+- Как линии устроены в коде — R11: кубические кривые в одном SVG под полосами, концы на раскрытой плитке и под подробностями разнесены по её ширине, места пересчитываются после каждой отрисовки и по `ResizeObserver`, анимации нет вовсе.
 
 **Клавиатура и текстовая замена.**
 - Каждая плитка — кнопка в порядке Tab: полоса за полосой, в порядке раскладки. Enter или Space раскрывает навык, фокус остаётся на плитке, а «Заниматься» — следующая остановка Tab: подробности стоят сразу за плиткой (2.4.3). Своего липкого у карты нет, а чтобы фокус не закрывало липкое на странице — шапка или строка `app`, — отвечает `app` (2.4.11).
@@ -330,7 +331,7 @@ skills:
 
 **Цели и перенос.** Плитка и «Заниматься» — не меньше 44 × 44 CSS px. Размеры — в `rem` и `em`, и текст растёт с масштабом страницы; длинное название переносится, и на 320 CSS px вбок ничего не прокручивается. Кольцо фокуса — 3 px акцента с отступом 2 px, `:focus-visible`.
 
-**Движение.** Его нет: ни перехода, ни анимации, так что выключать по `prefers-reduced-motion` нечего. Линии T15 появляются с движением только при `prefers-reduced-motion: no-preference`.
+**Движение.** Его нет: ни перехода, ни анимации, и у линий тоже (R11), так что выключать по `prefers-reduced-motion` нечего.
 
 **Объявленные несоответствия** (R90 spec) — нет: axe-core с тегами WCAG 2.0, 2.1 и 2.2 A и AA не находит нарушений ни на одном виде и языке, а тесты держат то, чего axe не видит: цели, перенос, тему, принудительные цвета, движение и фокус. За что отвечает `app`, а не пакет: чтобы фокус не закрывала липкая шапка (2.4.11; раздел 3.4) и контраст своей темы. Что найдёт проба руками (T16), встанет сюда — критерий, что есть вместо и когда уйдёт.
 
@@ -368,5 +369,6 @@ skills:
 - **Принудительные цвета и переменные CSS** (раздел 3.8; R10), прочитано 2026-11-07:
   - [Media Queries Level 5](https://www.w3.org/TR/mediaqueries-5/), W3C Working Draft 19 February 2026, `forced-colors`: «active — Indicates that forced colors mode is active: the user agent enforces a user-chosen limited color palette on the page» и «When forced colors mode is active, the only colors that are available to the author are system colors»;
   - [CSS Custom Properties for Cascading Variables Level 1](https://www.w3.org/TR/css-variables-1/), CR Snapshot 16 June 2022, раздел 3.1: значение недопустимого после подстановки `var()` — «Either the property's inherited value or its initial value depending on whether the property is inherited or not, respectively, as if the property's value had been specified as the unset keyword».
+- **Наблюдение за размером** (раздел 3.4; R11) — [Resize Observer](https://www.w3.org/TR/resize-observer/), W3C First Public Working Draft 11 February 2020, прочитано 2026-11-07: «Observation will fire when observation starts if Element is being rendered, and Element's size is not 0,0»; «Observations do not fire for non-replaced inline Elements» — поэтому наблюдаются кнопки плиток, подробности и сама карта, а не строчные части плиток.
 - **Пакеты слов, иконок и проверки** (раздел 3.8; R10) — реестр npm, `npm view <пакет> version license time dependencies`, прочитано 2026-11-07: `@iconify-json/material-symbols` 1.2.97 от 2026-10-28 — Apache-2.0, а 1.2.98 вышел 2026-11-07, позже паузы в три дня (R08); `@iconify/utils` 3.1.7 от 2026-09-06 — MIT, с зависимостями `@iconify/types`, `@antfu/install-pkg` и `import-meta-resolve`; `axe-core` 4.14.0 от 2026-10-05 — MPL-2.0, без зависимостей, и в нём у тега `wcag22aa` одно правило, `target-size`, а у `wcag22a` — ни одного.
 - **Карта тем прототипа** (раздел 3.4; R06) — `spec/draft/NovaTrail Widget.html` на теге v0.9.5, код экрана карты, `tsteps`: ступени — «Step 1 · Basics», «Step 2 · Rules», «Step 3 · Hard tasks» — идут друг под другом, ступень открыта, когда она не дальше одной от выбранной темы, а иначе свёрнута в строку названий; у тем — пометки `BEFORE` и `AFTER` относительно выбранной; у выбранной — панель, где кнопка «Practise: …», а у закрытой — «Opens in grade 5».
