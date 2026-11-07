@@ -19,6 +19,7 @@ import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { download } from "./download.ts";
 import { TAR } from "./tar.ts";
 
 /** The release of spec whose format file the titles come from: the tag spec/ stands on. */
@@ -85,15 +86,13 @@ export function sha256Of(bytes: Uint8Array): string {
 }
 
 /** The titles the archive's schema gives: tar reads the archive from its standard input. */
-function titlesFrom(archive: Buffer): [string, string][] {
+function titlesFrom(archive: Uint8Array): [string, string][] {
   const schema = execFileSync(TAR, ["-xzOf", "-", SCHEMA], { input: archive, maxBuffer: 1 << 26 });
   return titlesOf(JSON.parse(schema.toString("utf8")));
 }
 
 async function check(): Promise<string> {
-  const response = await fetch(URLS[0]);
-  if (!response.ok) throw new Error(`${URLS[0]}: HTTP ${response.status}`);
-  const archive = Buffer.from(await response.arrayBuffer());
+  const archive = await download(URLS[0]);
   const sha256 = sha256Of(archive);
   const source = readFileSync(TARGET, "utf8");
   const want = pinned(source);
