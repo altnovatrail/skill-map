@@ -1,6 +1,7 @@
 // The synthetic module of docs/architecture.md, sections 3.2 and 3.4: example/fair-shares, its graph
-// as the open view gives it and a synthetic answer of GetSkillMap at the device's time
-// 2026-11-07T12:00Z. No learner's data: every value is made up (RULES.md, Hard rules).
+// as the open view gives it, its tiers as GetSkillGraph gives them, and a synthetic answer of
+// GetSkillMap at the device's time 2026-11-07T12:00Z. No learner's data: every value is made up
+// (RULES.md, Hard rules).
 
 import type {
   AnchorSkillHolding,
@@ -47,6 +48,16 @@ export const GRAPH: SkillGraph = {
       prerequisites: ["halves", "explain-sharing"],
     },
   },
+};
+
+export const TIERS: Readonly<Record<string, number>> = {
+  "count-objects": 1,
+  "draw-shares": 1,
+  halves: 2,
+  "equal-groups": 2,
+  "explain-sharing": 2,
+  "share-with-remainder": 3,
+  quarters: 3,
 };
 
 /** A moment of the contract, to the nanosecond. */
