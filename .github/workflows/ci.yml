@@ -18,14 +18,27 @@ concurrency:
 jobs:
   secrets:
     name: Secrets
-    uses: altnovatrail/.github/.github/workflows/secrets.yml@ff2a3597769ca85e59e476b1a41bdcbc1f50e3ed # v0.1.0
+    uses: altnovatrail/.github/.github/workflows/secrets.yml@89d3ceee0b9977b3334488a4133d084d76474e0d # v0.1.15
 
   # A pull request's commits are what it checks; a push to main has been checked as one.
   dco:
     name: DCO
     if: github.event_name == 'pull_request'
-    uses: altnovatrail/.github/.github/workflows/dco.yml@ff2a3597769ca85e59e476b1a41bdcbc1f50e3ed # v0.1.0
+    uses: altnovatrail/.github/.github/workflows/dco.yml@89d3ceee0b9977b3334488a4133d084d76474e0d # v0.1.15
 
   documents:
     name: Documents
-    uses: altnovatrail/.github/.github/workflows/documents.yml@ff2a3597769ca85e59e476b1a41bdcbc1f50e3ed # v0.1.0
+    uses: altnovatrail/.github/.github/workflows/documents.yml@89d3ceee0b9977b3334488a4133d084d76474e0d # v0.1.15
+
+  # The repository's TypeScript code, by its own ci- recipes in its toolchain stage (R08 in
+  # docs/decisions.md). Its licenses job checks the spec submodule out, for ci-licenses to run
+  # spec's recipes from it, and there ci-licenses also checks the signature of each package of
+  # @altnovatrail in the lock file, which needs the network the job has (R39 spec, R77 spec). Its
+  # coverage job sends the report of ci-test to Codecov by OIDC, and a nested job has no more than
+  # this one gives it: without id-token: write the run would not start at all (R48 spec).
+  typescript:
+    name: TypeScript
+    permissions:
+      contents: read
+      id-token: write
+    uses: altnovatrail/.github/.github/workflows/typescript.yml@89d3ceee0b9977b3334488a4133d084d76474e0d # v0.1.15

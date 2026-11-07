@@ -15,3 +15,29 @@ updates:
       interval: weekly
     cooldown:
       default-days: 3
+
+  # The npm packages the code is built and checked with (R08 in docs/decisions.md). The browser the
+  # tests run in is no package: it comes with the toolchain stage of .devcontainer/Dockerfile, from
+  # spec's template, and a pull request that raises playwright stays red until the image there is
+  # raised with it, by hand (R79 spec).
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 3
+    groups:
+      # @vitest/browser-playwright and @vitest/coverage-v8 pin vitest exactly, so the three move in
+      # one pull request. Vite, which vitest runs on, moves with them.
+      vitest:
+        patterns: ["vitest", "@vitest/*", "vite"]
+    ignore:
+      # The types of Node follow the major version of the Node in .devcontainer/Dockerfile, which
+      # moves by hand.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      # The types of the module format and the contracts are spec's, at the version of the tag the
+      # spec/ submodule stands on: they move with it, in a move to a new tag of spec (R73 spec,
+      # R83 spec), and ci-licenses checks their signatures by spec's release-verify-npm (R77 spec).
+      - dependency-name: "@altnovatrail/spec"
+      - dependency-name: "@altnovatrail/contracts"

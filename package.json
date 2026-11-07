@@ -1,0 +1,37 @@
+{
+  "name": "@altnovatrail/skill-map",
+  "version": "0.0.0",
+  "description": "NovaTrail's skill map: a module's skill graph in tiers, with the learner model's state over it.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/altnovatrail/skill-map.git"
+  },
+  "type": "module",
+  "files": [
+    "lib"
+  ],
+  "exports": {
+    ".": {
+      "types": "./lib/element/index.d.ts",
+      "default": "./lib/element/index.js"
+    }
+  },
+  "sideEffects": [
+    "./lib/element/index.js"
+  ],
+  "devDependencies": {
+    "@altnovatrail/contracts": "0.9.5",
+    "@biomejs/biome": "2.6.4",
+    "@types/node": "24.19.2",
+    "@vitest/browser-playwright": "5.1.0",
+    "@vitest/coverage-v8": "5.1.0",
+    "playwright": "1.64.1",
+    "typescript": "7.0.2",
+    "vite": "8.3.5",
+    "vitest": "5.1.0"
+  },
+  "dependencies": {
+    "@altnovatrail/spec": "0.9.5"
+  }
+}
