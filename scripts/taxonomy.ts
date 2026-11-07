@@ -5,10 +5,11 @@
 //   just taxonomy                      verify the file, pin its digest and write the titles
 //   node scripts/taxonomy.ts --check   fail unless the pinned file gives the titles as written
 //
-// Writing, which `just taxonomy` runs, takes the file and its bundle from a folder the recipe has
-// downloaded them to — `--urls` names their addresses — runs `just -f spec/justfile release-verify
-// spec <tag> <file> <bundle>` on them, and writes src/element/anchor-titles.ts with the file's
-// sha256. From then on the digest holds the file: --check, which ci-lint runs, downloads it again,
+// Writing, which `just taxonomy` runs as --write, takes the file and its bundle from FOLDER, where
+// the recipe has downloaded them — `--urls` names their addresses. The folder is the script's own,
+// not an argument: nothing of the command line goes into a path or a command. It runs
+// `just -f spec/justfile release-verify spec <tag> <file> <bundle>` on them, and writes
+// src/element/anchor-titles.ts with the file's sha256. From then on the digest holds the file: --check, which ci-lint runs, downloads it again,
 // into memory, holds it to the digest the source names, and fails unless what it gives is what the
 // source says. The script writes no bytes of the network to a file (CodeQL js/http-to-file-access):
 // tar reads the archive from its standard input. Neither needs anything installed: the network,
@@ -29,6 +30,9 @@ const FILE = `format-${RELEASE.format}.tar.gz`;
 const SCHEMA = `format-${RELEASE.format}/format/schemas/shared-taxonomy.schema.json`;
 const URL_OF = (name: string) =>
   `https://github.com/altnovatrail/${RELEASE.repository}/releases/download/${RELEASE.tag}/${name}`;
+
+/** Where `just taxonomy` downloads the file and its bundle, and removes them after. */
+export const FOLDER = "node_modules/.taxonomy";
 
 /** The addresses of the file and its bundle, which `just taxonomy` downloads. */
 export const URLS = [URL_OF(FILE), URL_OF(`${FILE}.sigstore.json`)] as const;
@@ -102,12 +106,12 @@ async function check(): Promise<string> {
   return `${TARGET} is what ${FILE} of ${RELEASE.tag} gives, sha256 ${sha256}`;
 }
 
-/** Verifies the file in the folder, with its bundle, by release-verify, and writes the titles. */
-function write(folder: string): string {
+/** Verifies the file in FOLDER, with its bundle, by release-verify, and writes the titles. */
+function write(): string {
   // The just that runs the recipe, by its path: none is looked up in PATH.
   const just = process.env.JUST;
   if (just === undefined) throw new Error("run it by just taxonomy, which names its just");
-  const archive = join(folder, FILE);
+  const archive = join(FOLDER, FILE);
   const bundle = `${archive}.sigstore.json`;
   execFileSync(
     just,
@@ -122,8 +126,8 @@ function write(folder: string): string {
 
 async function main(argument: string | undefined): Promise<string> {
   if (argument === "--check") return check();
-  if (argument === undefined) throw new Error("name the folder of the file, or --check");
-  return write(argument);
+  if (argument === "--write") return write();
+  throw new Error("run it with --check, or by just taxonomy");
 }
 
 if (import.meta.main && process.argv[2] === "--urls") {

@@ -23,9 +23,12 @@ export const settled = () => new Promise((resolve) => setTimeout(resolve));
 
 let map: NovatrailSkillMap | undefined;
 
+/** The learner's view, the attributes a test mounts the map with unless it names others. */
+const LEARNER: Readonly<Record<string, string>> = { view: "learner" };
+
 /** A map of example/fair-shares on the page, with the attributes and the state given. */
 export async function mount(
-  attributes: Readonly<Record<string, string>> = { view: "learner" },
+  attributes: Readonly<Record<string, string>> = LEARNER,
   state: NovatrailSkillMap["skillMap"] = SKILL_MAP,
   parent: HTMLElement = document.body,
 ): Promise<NovatrailSkillMap> {
