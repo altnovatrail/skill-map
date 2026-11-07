@@ -114,7 +114,7 @@
 - Навык с оцениваемостью `rubric` — пометка «отзыв по критериям», `none` — «без оценки»; состояния у них нет, а выбрать их можно всегда.
 - Навык с вердиктом, которого ответ не называет, — как навык без свидетельств.
 - Навык-опора, которого граф называет, а ответ нет, — «неизвестно», без причины. Причина видна, только если подходит к владению: «не освоен» и «нет свидетельств» — у «не владеет», «никто не учит» и «учат только без вердикта» — у «неизвестно», а у «владеет» её нет. Из двух записей ответа об одном навыке в счёт идёт первая (вторая поправка 2026-11-07 к R03).
-- Состояние называется словом и иконкой, не только цветом (R90 spec). Слова — таблица пакета на `en` и `ru` (R91 spec), иконки — из набора Material Symbols (R78 spec); какие именно, — эпик кода.
+- Состояние называется словом и иконкой, не только цветом (R90 spec). Слова — таблица пакета на `en` и `ru` (R91 spec), иконки — из набора Material Symbols (R78 spec); какие именно — раздел 3.8.
 
 **Пример на синтетическом графе.** Модуль `example/fair-shares` с языком объяснений `en`; граф — так, как его даёт открытый вид, а ярусы — `skill_tiers`:
 
@@ -171,7 +171,7 @@ skills:
 - Типы элемента — в объявлениях пакета, а элемент в `HTMLElementTagNameMap` и событие в `GlobalEventHandlersEventMap` ставит сам пакет. Типы данных — `@altnovatrail/spec` и `@altnovatrail/contracts` по той же точной версии, что тег подмодуля `spec` (R73 spec, R83 spec).
 - Английские названия навыков-опор пакет вшивает при сборке из `format/schemas/shared-taxonomy.schema.json` файла формата релиза `spec`, проверенного `release-verify`, по каждой версии формата, которую читает его сборка; неизвестный ID показывает как есть, с `lang="en"` (R04; R64 spec, R77 spec).
 - Касание, Enter или Space раскрывают навык, а выбирают его для занятия кнопкой «Заниматься» в подробностях: она и отдаёт `skillchoose`. С клавиатуры — Tab по плиткам (R06, раздел 3.4).
-- Как элемент устроен в коде — R09. Дерево обновляется на месте, по ID навыка; присвоения одной задачи сливаются в одно обновление. Слова — таблица пакета, пока только `en`. Английские названия навыков-опор вшиты из файла формата релиза `spec` v0.9.5: рецепт `taxonomy` проверяет файл `release-verify` и закрепляет его sha256, а `ci-lint` сверяет таблицу с файлом. Стили проверены под строгой CSP, а объявления — пробным потребителем.
+- Как элемент устроен в коде — R09. Дерево обновляется на месте, по ID навыка; присвоения одной задачи сливаются в одно обновление. Слова — таблица пакета на `en` и `ru`, язык — атрибут `lang` (R10, раздел 3.8). Английские названия навыков-опор вшиты из файла формата релиза `spec` v0.9.5: рецепт `taxonomy` проверяет файл `release-verify` и закрепляет его sha256, а `ci-lint` сверяет таблицу с файлом. Стили проверены под строгой CSP, а объявления — пробным потребителем.
 
 ### 3.4. Раскладка
 
@@ -211,7 +211,7 @@ skills:
 - Каждая плитка — кнопка в порядке Tab: полоса за полосой, в порядке раскладки. Enter или Space раскрывает навык, фокус остаётся на плитке, а «Заниматься» — следующая остановка Tab: подробности стоят сразу за плиткой (2.4.3). Своего липкого у карты нет, а чтобы фокус не закрывало липкое на странице — шапка или строка `app`, — отвечает `app` (2.4.11).
 - Текстовая замена — само дерево DOM: полоса — заголовок и список плиток, доступное имя плитки — «название, состояние», а у подсвеченной — ещё и подпись, которая стоит внутри кнопки: «название, состояние, нужен раньше». Связи названы словами в подробностях и подписях. SVG линий — `aria-hidden`. Порядок DOM — порядок на экране (1.3.2).
 
-Слова — слово яруса в заголовке полосы, «Заниматься», «Опирается на», «Открывает», «Учит», «ждёт», «нужен раньше», «откроется после», заголовок полосы навыков-опор — своя таблица пакета на `en` и `ru` (R91 spec); окончательные строки и иконки — эпик кода.
+Слова — слово яруса в заголовке полосы, «Заниматься», «Опирается на», «Открывает», «Учит», «ждёт», «нужен раньше», «откроется после», заголовок полосы навыков-опор — своя таблица пакета на `en` и `ru` (R91 spec); строки и иконки — раздел 3.8.
 
 **Пример** — модуль `example/fair-shares` раздела 3.2, с его синтетическим ответом `GetSkillMap`:
 
@@ -253,10 +253,86 @@ skills:
   - Набор иконок `@iconify-json/material-symbols` — в `devDependencies`, по точной версии, а вшиваются при сборке только свои иконки (R78 spec; поправка 2026-11-02 к R39 spec).
   - Английские названия навыков-опор — из файла формата релиза `spec`, проверенного `release-verify` (R04; R64 spec, R77 spec).
   - Только лицензии, совместимые с Apache-2.0; лицензии lock-файла проверяет рецепт `spec` `licenses-check-repo` в своём `ci-licenses` (R39 spec; RULES.md, Hard rules).
-- **Инструменты разработки.** Вид devcontainer — `typescript` (R02): Biome пришёл с ним форматтером TypeScript раньше решения `skill-map` о линтере. Линтер — тоже Biome, 2.6.4, а с ним сборка `tsc` TypeScript 7.0.2 в `lib/` без сборщика и тесты Vitest 5.1.0 в Node и в Chromium (R08). Точка входа у пакета одна — элемент, а ядро без DOM, `src/core/`, — своей программой `tsc`, вне `exports`. Элемент — свой код, без библиотеки. Отличий от контейнера `spec` код не вводит (R08). Тесты в браузере — Chrome Headless Shell из образа Playwright в стадии `toolchain`, названным исключением из правила лицензий (R02; R79 spec). Контейнер на этом образе собран 2026-11-07 — Д2 в таблице 4 [RUN.md](../RUN.md) закрыт.
+- **Инструменты разработки.** Вид devcontainer — `typescript` (R02): Biome пришёл с ним форматтером TypeScript раньше решения `skill-map` о линтере. Линтер — тоже Biome, 2.6.4, а с ним сборка `tsc` TypeScript 7.0.2 в `lib/` без сборщика и тесты Vitest 5.1.0 в Node и в Chromium (R08). Точка входа у пакета одна — элемент, а ядро без DOM, `src/core/`, — своей программой `tsc`, вне `exports`. Элемент — свой код, без библиотеки. Отличий от контейнера `spec` код не вводит (R08). Тесты в браузере — Chrome Headless Shell из образа Playwright в стадии `toolchain`, названным исключением из правила лицензий (R02; R79 spec); в них же axe-core, тоже названным исключением (R10). Контейнер на этом образе собран 2026-11-07 — Д2 в таблице 4 [RUN.md](../RUN.md) закрыт.
 - **Тесты и покрытие.** Код — со своими тестами, а покрытие идёт в Codecov, и мерж ждёт `codecov/patch` не ниже 90 % изменённых строк (R48 spec; RULES.md, How we work). README несёт значки статуса (R48 spec). Проверки — рецепты `ci-lint`, `ci-test`, `ci-vuln` и `ci-licenses` для общего `typescript.yml` `.github`, а локально — `just ci` (R08). Правила, которые тесты проверяют первыми: состояния на карте (раздел 3.2), порядок в полосе и раскрытие (раздел 3.4) — на синтетических графах, как пример `example/fair-shares`.
 - **Релиз и публикация.** Всё, что выходит у `skill-map`, — файлы одного релиза GitHub с подписью общего `release.yml` `.github`, и тот же файл пакета уходит в npm, `@altnovatrail/skill-map` (R37 spec). Пакет из npm `app` принимает, когда `release-verify-npm` принял lock-файл, в CI pull request, который его меняет (R77 spec; RULES.md, Hard rules). До первого релиза у репозитория — неизменяемые релизы и ruleset тегов `v*` (Д54 в таблице 4 RUN.md `spec`).
 - **Лицензия и доступ** — Apache-2.0 (R20 spec); все репозитории организации публичные (R18 spec).
+
+### 3.8. Слова, иконки и вид
+
+Как они устроены в коде — R10; стандарт — WCAG 2.2 AA с 2.5.5 и 2.3.3 (R90 spec).
+
+**Слова** — своя таблица пакета, `src/element/words.ts` (R91 spec, R92 spec). Язык — атрибут `lang` элемента: тег ищется усечением, а не найденный — английский. Места шаблонов — в фигурных скобках; число в «ответах» берёт форму CLDR своего языка.
+
+| Ключ | `en` | `ru` |
+|---|---|---|
+| ярус без имени | Tier {tier} | Ярус {tier} |
+| ярус с именем | Tier {tier} · {name} | Ярус {tier} · {name} |
+| полоса навыков-опор | Skills from other modules | Навыки других модулей |
+| «пора повторить» | Time to review | Пора повторить |
+| «освоено» | Mastered | Освоено |
+| «в работе» | In progress | В работе |
+| «можно начинать» | Ready to start | Можно начинать |
+| «ещё закрыт» | Locked | Ещё закрыт |
+| «отзыв по критериям» | Feedback by criteria | Отзыв по критериям |
+| «без оценки» | Not assessed | Без оценки |
+| «владеет» | Held | Владеет |
+| «не владеет» | Not held | Не владеет |
+| «неизвестно» | Unknown | Неизвестно |
+| причина «не освоен» | a skill that teaches it is not mastered yet | не освоен навык, который ему учит |
+| причина «нет свидетельств» | no skill that teaches it has answers yet | у навыков, которые ему учат, ещё нет ответов |
+| причина «никто не учит» | no module teaches it | ему не учит ни один модуль |
+| причина «учат только без вердикта» | only skills without a verdict teach it | ему учат только навыки без вердикта |
+| «нужен раньше» | needed before | нужен раньше |
+| «откроется после» | opens after | откроется после |
+| «Опирается на» | Builds on | Опирается на |
+| «Открывает» | Opens | Открывает |
+| «Учит» | Teaches | Учит |
+| «Нужен для» — у навыка-опоры | Needed by | Нужен для |
+| неосвоенный пререквизит | {skill} — not mastered yet | {skill} — ещё не освоен |
+| владение с причиной | {holding} — {reason} | {holding} — {reason} |
+| навык-опора, которому учит навык | {skill} — {holding} | {skill} — {holding} |
+| «Заниматься» | Practise | Заниматься |
+| «ждёт» | Waits for: {skills} | Ждёт: {skills} |
+| ответы | one: {count} answer; other: {count} answers | one: {count} ответ; few: {count} ответа; many: {count} ответов; other: {count} ответа |
+| последняя практика | Last practised {date} | Последнее занятие: {date} |
+| полоса освоения | Mastery band: {band} | Полоса освоения: {band} |
+| срок повторения | Review on {date} | Повторить {date} |
+
+Между частями доступного имени плитки — «, » в обоих языках. Названия навыков модуля и имена ярусов — на языке объяснений модуля, а навыков-опор — английские, с `lang="en"`. Слов, которые показывает и другой пакет, у карты нет: таблицы слов architecture 6 spec её слова не касаются.
+
+**Иконки** — Material Symbols, Rounded, контуром, `material-symbols:<база>-outline-rounded`, из `@iconify-json/material-symbols` 1.2.97 (R78 spec). Каждая — значение одного `skill-map`: ни одной нет в таблице architecture 6 spec, и ни одна не отражается справа налево.
+
+| Значение | База |
+|---|---|
+| «пора повторить» | `update` |
+| «освоено» | `check-circle` |
+| «в работе» | `timelapse` |
+| «можно начинать» | `lock-open-right` |
+| «ещё закрыт» | `lock` |
+| «отзыв по критериям» | `rate-review` |
+| «без оценки» | `remove-done` |
+| «владеет» | `verified` |
+| «не владеет» | `radio-button-unchecked` |
+| «неизвестно» | `question-mark` |
+
+Иконка стоит перед словом — на плитке и в подробностях, — скрыта от дерева доступности и цвета текста. Подпись видна всегда, а имя — её текст (R90 spec).
+
+**Тема** — переменными CSS: они наследуются от родителя, и элемент читает их внутри своего дерева, как у `canvas` (раздел 4):
+- `--novatrail-skill-map-paper` — фон карты, плиток и подробностей, по умолчанию `#fff`;
+- `--novatrail-skill-map-ink` — текст, рамки и иконки, `#111`;
+- `--novatrail-skill-map-accent` — раскрытая плитка, рамки связанных плиток и подробностей, «Заниматься», кольцо фокуса, а с T15 и линии; `#1d4ed8`, 6,7:1 к белому;
+- умолчание стоит при каждом `var()`, а не в `:host`. Недопустимое значение умолчания не даёт: свойство вычисляется как `unset`, текст берёт цвет хоста, фон — прозрачный;
+- своих цветов у состояний нет. Закрытая плитка — с рамкой пунктиром, связанные — с рамкой акцента в 2 px, раскрытая — залита акцентом;
+- в режиме принудительных цветов — системные: плитки и «Заниматься» — ButtonFace, ButtonText и ButtonBorder, раскрытая — Highlight и HighlightText, связанные — рамка Highlight, карта и подробности — Canvas и CanvasText.
+
+Контраст умолчаний пакет проверяет сам, axe-core в тестах. Контраст темы, которую ставит потребитель, — его: `app` проверяет свои цвета.
+
+**Цели и перенос.** Плитка и «Заниматься» — не меньше 44 × 44 CSS px. Размеры — в `rem` и `em`, и текст растёт с масштабом страницы; длинное название переносится, и на 320 CSS px вбок ничего не прокручивается. Кольцо фокуса — 3 px акцента с отступом 2 px, `:focus-visible`.
+
+**Движение.** Его нет: ни перехода, ни анимации, так что выключать по `prefers-reduced-motion` нечего. Линии T15 появляются с движением только при `prefers-reduced-motion: no-preference`.
+
+**Объявленные несоответствия** (R90 spec) — нет: axe-core с тегами WCAG 2.0, 2.1 и 2.2 A и AA не находит нарушений ни на одном виде и языке, а тесты держат то, чего axe не видит: цели, перенос, тему, принудительные цвета, движение и фокус. За что отвечает `app`, а не пакет: чтобы фокус не закрывала липкая шапка (2.4.11; раздел 3.4) и контраст своей темы. Что найдёт проба руками (T16), встанет сюда — критерий, что есть вместо и когда уйдёт.
 
 ## 4. Источники
 
@@ -282,4 +358,15 @@ skills:
   - [`elkjs`](https://www.npmjs.com/package/elkjs) 0.12.1, `EPL-2.0 OR GPL-3.0-or-later`: «Automatic graph layout based on Sugiyama's algorithm»; «elkjs is not a diagramming framework itself - it computes positions for the elements of a diagram»;
   - [`d3-dag`](https://www.npmjs.com/package/d3-dag) 1.3.0, MIT: «`d3-dag` provides layered graph layout algorithms for directed acyclic graphs».
 - **Инструменты кода** (раздел 3.7; R08) — реестр npm, `npm view <пакет>@<версия> license time` и `peerDependencies`, прочитано 2026-11-07: `typescript` 7.0.2 — Apache-2.0, последний; `@biomejs/biome` 2.6.4 от 2026-10-28 — `MIT OR Apache-2.0`, а 2.6.6 вышел 2026-11-06; `vitest`, `@vitest/browser-playwright` и `@vitest/coverage-v8` 5.1.0 от 2026-11-02 — MIT; `vite` 8.3.5 — MIT, а 8.3.6 вышел 2026-11-05; `playwright` 1.64.1 — Apache-2.0, а 1.65.0 вышел 2026-11-05; `@types/node` 24.19.2 — MIT; `lightningcss` 1.33.0 — MPL-2.0; `typescript-eslint` 8.72.1 требует `"typescript": ">=4.8.4 <6.1.0"`; `lit` 3.3.3 — BSD-3-Clause. `@altnovatrail/contracts` 0.9.5 — Apache-2.0, с зависимостью `@bufbuild/protobuf` 2.16.0 (`Apache-2.0 AND BSD-3-Clause`), а в `novatrail/api/v1/progress_pb.d.ts` пакета перечисления — `export enum`, сгенерированные protoc-gen-es v2.16.0.
+- **WCAG 2.2 для вида карты** (раздел 3.8; R10) — [Web Content Accessibility Guidelines (WCAG) 2.2](https://www.w3.org/TR/WCAG22/), W3C Recommendation 12 December 2024, прочитано 2026-11-07:
+  - 1.4.3 Contrast (Minimum): «The visual presentation of text and images of text has a contrast ratio of at least 4.5:1»;
+  - 1.4.11 Non-text Contrast: «Visual information required to identify user interface components and states» — «a contrast ratio of at least 3:1 against adjacent color(s)»;
+  - 1.4.12 Text Spacing: «no loss of content or functionality occurs by setting all of the following and by changing no other style property: Line height (line spacing) to at least 1.5 times the font size»;
+  - 2.4.7 Focus Visible: «Any keyboard operable user interface has a mode of operation where the keyboard focus indicator is visible»;
+  - 2.5.5 Target Size (Enhanced): «The size of the target for pointer inputs is at least 44 by 44 CSS pixels»;
+  - 2.3.3 Animation from Interactions: «Motion animation triggered by interaction can be disabled, unless the animation is essential to the functionality or the information being conveyed».
+- **Принудительные цвета и переменные CSS** (раздел 3.8; R10), прочитано 2026-11-07:
+  - [Media Queries Level 5](https://www.w3.org/TR/mediaqueries-5/), W3C Working Draft 19 February 2026, `forced-colors`: «active — Indicates that forced colors mode is active: the user agent enforces a user-chosen limited color palette on the page» и «When forced colors mode is active, the only colors that are available to the author are system colors»;
+  - [CSS Custom Properties for Cascading Variables Level 1](https://www.w3.org/TR/css-variables-1/), CR Snapshot 16 June 2022, раздел 3.1: значение недопустимого после подстановки `var()` — «Either the property's inherited value or its initial value depending on whether the property is inherited or not, respectively, as if the property's value had been specified as the unset keyword».
+- **Пакеты слов, иконок и проверки** (раздел 3.8; R10) — реестр npm, `npm view <пакет> version license time dependencies`, прочитано 2026-11-07: `@iconify-json/material-symbols` 1.2.97 от 2026-10-28 — Apache-2.0, а 1.2.98 вышел 2026-11-07, позже паузы в три дня (R08); `@iconify/utils` 3.1.7 от 2026-09-06 — MIT, с зависимостями `@iconify/types`, `@antfu/install-pkg` и `import-meta-resolve`; `axe-core` 4.14.0 от 2026-10-05 — MPL-2.0, без зависимостей, и в нём у тега `wcag22aa` одно правило, `target-size`, а у `wcag22a` — ни одного.
 - **Карта тем прототипа** (раздел 3.4; R06) — `spec/draft/NovaTrail Widget.html` на теге v0.9.5, код экрана карты, `tsteps`: ступени — «Step 1 · Basics», «Step 2 · Rules», «Step 3 · Hard tasks» — идут друг под другом, ступень открыта, когда она не дальше одной от выбранной темы, а иначе свёрнута в строку названий; у тем — пометки `BEFORE` и `AFTER` относительно выбранной; у выбранной — панель, где кнопка «Practise: …», а у закрытой — «Opens in grade 5».

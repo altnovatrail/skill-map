@@ -9,7 +9,7 @@ import type { Manifest, SkillGraph } from "@altnovatrail/spec/formatv0/open";
 import { headingLevel, type View, viewOf } from "../core/attributes.js";
 import { styles } from "./styles.js";
 import { MapTree } from "./tree.js";
-import { EN } from "./words.js";
+import { wordsFor } from "./words.js";
 
 /** The element's name. */
 export const TAG = "novatrail-skill-map";
@@ -131,7 +131,7 @@ export class NovatrailSkillMap extends HTMLElement {
             view: viewOf(this.getAttribute("view")),
             headingLevel: headingLevel(this.getAttribute("heading-level")),
             now: new Date(),
-            words: EN,
+            words: wordsFor(this.getAttribute("lang")),
           },
     );
   }

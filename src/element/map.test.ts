@@ -1,61 +1,27 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import {
   anchorState,
   GRAPH,
-  MODULE,
-  NOW,
   SKILL_MAP,
   skillMap,
   skillState,
   TIERS,
 } from "../core/fair-shares.fixture.js";
 import { NovatrailSkillMap, type SkillChooseEvent, TAG } from "./index.js";
+import {
+  adopt,
+  button,
+  MANIFEST,
+  mount,
+  mounted,
+  settled,
+  shadow,
+  tile,
+  useMap,
+} from "./map.fixture.js";
 
-const MANIFEST = {
-  module_format_version: "0.3",
-  id: MODULE,
-  version: "1.0.0",
-  title: "Fair shares",
-  subject: "mathematics",
-  audience: { grades: [2] },
-  languages: { explanation: "en" },
-  bands: [{ id: "b1", title: "Starter" }],
-} as unknown as NovatrailSkillMap["manifest"];
-
-/** Lets the element follow what was assigned: it updates once, after the task. */
-const settled = () => new Promise((resolve) => setTimeout(resolve));
-
-let map: NovatrailSkillMap;
-
-async function mount(
-  attributes: Readonly<Record<string, string>> = { view: "learner" },
-  state: NovatrailSkillMap["skillMap"] = SKILL_MAP,
-): Promise<NovatrailSkillMap> {
-  map = document.createElement(TAG);
-  for (const [name, value] of Object.entries(attributes)) map.setAttribute(name, value);
-  map.graph = GRAPH;
-  map.tiers = TIERS;
-  map.manifest = MANIFEST;
-  map.skillMap = state;
-  document.body.append(map);
-  await settled();
-  return map;
-}
-
-const tile = (name: string) => page.getByRole("button", { name, exact: true });
-const button = (name: string) => tile(name).element() as HTMLButtonElement;
-const shadow = () => map.shadowRoot as ShadowRoot;
-
-beforeEach(() => {
-  vi.useFakeTimers({ toFake: ["Date"] });
-  vi.setSystemTime(NOW);
-});
-
-afterEach(() => {
-  map?.remove();
-  vi.useRealTimers();
-});
+useMap();
 
 describe("the tree of example/fair-shares on the learner's view", () => {
   test("each band is a heading of level 3 and a list of tiles, the anchor skills first", async () => {
@@ -98,7 +64,7 @@ describe("the tree of example/fair-shares on the learner's view", () => {
   test("the level of the headings follows heading-level, and is 3 for another value", async () => {
     await mount({ view: "learner", "heading-level": "5" });
     expect(shadow().querySelectorAll("h5")).toHaveLength(4);
-    map.setAttribute("heading-level", "9");
+    mounted().setAttribute("heading-level", "9");
     await settled();
     expect(shadow().querySelectorAll("h3")).toHaveLength(4);
     expect(shadow().querySelectorAll("h5")).toHaveLength(0);
@@ -135,7 +101,7 @@ describe("the tree of example/fair-shares on the learner's view", () => {
     expect(Object.isFrozen(event?.detail)).toBe(true);
     expect(event?.bubbles).toBe(true);
     expect(event?.composed).toBe(true);
-    expect(event?.target).toBe(map);
+    expect(event?.target).toBe(mounted());
   });
 
   test("Enter expands, the focus stays on the tile, and Tab goes to Practise, then to the next tile", async () => {
@@ -202,7 +168,7 @@ describe("the tree of example/fair-shares on the learner's view", () => {
     );
     await mount({ view: "learner" }, skillMap(unmastered));
     const { quarters } = GRAPH.skills;
-    map.graph = {
+    mounted().graph = {
       ...GRAPH,
       skills: {
         ...GRAPH.skills,
@@ -231,7 +197,7 @@ describe("new data", () => {
     await userEvent.click(tile("Share with a remainder, Ready to start"));
     const practise = page.getByRole("button", { name: "Practise" }).element() as HTMLElement;
     practise.focus();
-    map.skillMap = skillMap(
+    mounted().skillMap = skillMap(
       SKILL_MAP.skills.map((state) =>
         state.skill === "share-with-remainder"
           ? skillState({ skill: "share-with-remainder", evidenceCount: 2 })
@@ -251,7 +217,7 @@ describe("new data", () => {
     await mount();
     await userEvent.click(tile("Share with a remainder, Ready to start"));
     (page.getByRole("button", { name: "Practise" }).element() as HTMLElement).focus();
-    map.skillMap = skillMap(
+    mounted().skillMap = skillMap(
       SKILL_MAP.skills.map((state) =>
         state.skill === "equal-groups"
           ? skillState({ skill: "equal-groups", evidenceCount: 7 })
@@ -270,7 +236,7 @@ describe("new data", () => {
     quarters.focus();
     // Share with a remainder now builds on halves, at place 2: quarters, at 1.5, goes first.
     const share = GRAPH.skills["share-with-remainder"];
-    map.graph = {
+    mounted().graph = {
       ...GRAPH,
       skills: { ...GRAPH.skills, "share-with-remainder": { ...share, prerequisites: ["halves"] } },
     } as NovatrailSkillMap["graph"];
@@ -282,7 +248,7 @@ describe("new data", () => {
   test("a band gone with its skills is gone from the map", async () => {
     await mount();
     const { quarters: _quarters, "share-with-remainder": _share, ...skills } = GRAPH.skills;
-    map.graph = { ...GRAPH, skills } as NovatrailSkillMap["graph"];
+    mounted().graph = { ...GRAPH, skills } as NovatrailSkillMap["graph"];
     await settled();
     expect([...shadow().querySelectorAll("h3")].map((heading) => heading.textContent)).toEqual([
       "Tier 1 · Counting",
@@ -295,7 +261,7 @@ describe("new data", () => {
     await userEvent.click(tile("Halves, In progress"));
     const { halves: _gone, ...skills } = GRAPH.skills;
     const quarters = skills.quarters;
-    map.graph = {
+    mounted().graph = {
       ...GRAPH,
       skills: { ...skills, quarters: { ...quarters, prerequisites: ["explain-sharing"] } },
     } as NovatrailSkillMap["graph"];
@@ -306,10 +272,10 @@ describe("new data", () => {
 
   test("a map without one of graph, tiers and manifest is empty, and comes back with it", async () => {
     await mount();
-    map.tiers = null;
+    mounted().tiers = null;
     await settled();
     expect(shadow().querySelectorAll("section")).toHaveLength(0);
-    map.tiers = TIERS;
+    mounted().tiers = TIERS;
     await settled();
     expect(shadow().querySelectorAll("section")).toHaveLength(4);
   });
@@ -371,7 +337,7 @@ describe("the views", () => {
       await userEvent.click(tile("Share with a remainder, Ready to start"));
       expect(page.getByRole("button", { name: "Practise" }).query()).toBeNull();
       expect(shadow().getElementById("details")?.textContent).not.toContain("Waits for");
-      map.remove();
+      mounted().remove();
     }
   });
 
@@ -391,7 +357,7 @@ describe("the views", () => {
 });
 
 test("an anchor skill the build does not know shows its ID, in English", async () => {
-  map = document.createElement(TAG);
+  const map = adopt(document.createElement(TAG));
   map.graph = {
     skills: { s: { title: "S", assessability: "verdict", prerequisites: ["core.unknown-one"] } },
   } as unknown as NovatrailSkillMap["graph"];
@@ -403,10 +369,10 @@ test("an anchor skill the build does not know shows its ID, in English", async (
   expect(anchor.querySelector(".title")?.getAttribute("lang")).toBe("en");
 });
 
-test("the package's own words are English, though the page is not", async () => {
+test("the map's own words are English for a language the package has not, whatever the page's", async () => {
   document.documentElement.lang = "ru";
   try {
-    await mount({ view: "learner", lang: "ru" });
+    await mount({ view: "learner", lang: "de" });
     expect(shadow().querySelector(".map")?.getAttribute("lang")).toBe("en");
   } finally {
     document.documentElement.lang = "en";
@@ -429,17 +395,17 @@ test("properties set before the element was registered are taken when it is", as
   early.skillMap = SKILL_MAP;
   document.body.append(early as unknown as HTMLElement);
   customElements.define(name, class extends NovatrailSkillMap {});
-  map = early;
+  adopt(early);
   await settled();
-  expect(map.graph).toBe(GRAPH);
-  expect(Object.hasOwn(map, "graph")).toBe(false);
+  expect(early.graph).toBe(GRAPH);
+  expect(Object.hasOwn(early, "graph")).toBe(false);
   await expect.element(tile("Quarters, Locked")).toBeVisible();
 });
 
 test("the properties give back what was assigned", async () => {
   await mount();
-  expect(map.graph).toBe(GRAPH);
-  expect(map.tiers).toBe(TIERS);
-  expect(map.manifest).toBe(MANIFEST);
-  expect(map.skillMap).toBe(SKILL_MAP);
+  expect(mounted().graph).toBe(GRAPH);
+  expect(mounted().tiers).toBe(TIERS);
+  expect(mounted().manifest).toBe(MANIFEST);
+  expect(mounted().skillMap).toBe(SKILL_MAP);
 });

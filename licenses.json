@@ -2,5 +2,9 @@
   "lightningcss": {
     "license": "MPL-2.0",
     "reason": "Vite's CSS minifier, a tool of development: it comes with vite, which Vitest requires, never ships and puts nothing of its own into the package; its builds for each platform come with it (R08 in skill-map's docs/decisions.md)"
+  },
+  "axe-core": {
+    "license": "MPL-2.0",
+    "reason": "The checker of accessibility the browser tests run, a tool of development: it never ships and puts nothing of its own into the package, and the package is built, run and checked otherwise without it (R10 in skill-map's docs/decisions.md)"
   }
 }
