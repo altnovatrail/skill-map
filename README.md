@@ -17,7 +17,7 @@ A component of [NovaTrail](https://github.com/altnovatrail/spec/tree/v0.9.5), a 
 
 ## Status
 
-Detailing done. The first epic of [RUN.md](RUN.md) decided what the component's card left open, and section 3 of [docs/architecture.md](docs/architecture.md) describes the package. There is no code here yet: the next epic, the first code, is proposed in RUN.md, and it comes after the first code of stage 2, in tutor and canvas, together with api, app and infra.
+Detailing done. The first epic of the plan, now in [docs/plan/E1.md](docs/plan/E1.md), decided what the component's card left open, and section 3 of [docs/architecture.md](docs/architecture.md) describes the package. There is no code here yet: the first code is the current epic, E2 of RUN.md, and it comes after the first code of stage 2, in tutor and canvas, together with api, app and infra.
 
 ## Documents
 
