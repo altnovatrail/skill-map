@@ -66,10 +66,18 @@ build: _install
 
 # Write the English titles of the anchor skills, src/element/anchor-titles.ts, anew from the format
 # file of the release of spec that scripts/taxonomy.ts names: after a move to a new tag of spec
-# (R09). It verifies the file by spec's release-verify, so spec/ has to be checked out, and pins the
-# file's sha256, which ci-lint holds it to from then on.
+# (R09). The recipe downloads the file and its bundle into a folder of its own, which it removes
+# after; the script verifies them by spec's release-verify, so spec/ has to be checked out, and
+# pins the file's sha256, which ci-lint holds it to from then on.
 taxonomy:
-    JUST={{ quote(just_executable()) }} node scripts/taxonomy.ts
+    #!/usr/bin/env bash
+    set -euo pipefail
+    folder="$(mktemp -d)"
+    trap 'rm -rf "$folder"' EXIT
+    for url in $(node scripts/taxonomy.ts --urls); do
+        curl --fail --silent --show-error --location --output "$folder/${url##*/}" "$url"
+    done
+    JUST={{ quote(just_executable()) }} node scripts/taxonomy.ts "$folder"
 
 # Format and fix the code in place, the way ci-lint checks it.
 fmt: _install
