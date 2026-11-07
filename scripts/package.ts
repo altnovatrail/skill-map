@@ -24,9 +24,11 @@ const BUILT = /^lib\/(core|element)\/(?:[^/]+\/)*[^/]+\.(js|d\.ts)$/;
 const NOT_SHIPPED = /\.(test|fixture|check)\.(js|d\.ts)$/;
 /**
  * A module specifier of @altnovatrail/contracts in JavaScript: `from "…"`, `import "…"` or
- * `import("…")`. A comment that names the package imports nothing, and does not count.
+ * `import("…")`. A comment that names the package imports nothing, and does not count. The space
+ * after the keyword goes to one quantifier, and the space after `(` to another that only follows
+ * `(`, so that no input has two ways to match it.
  */
-const CONTRACTS = /(?:\bfrom\s*|\bimport\s*\(?\s*)["']@altnovatrail\/contracts(?:["'/])/;
+const CONTRACTS = /\b(?:from|import)\s*(?:\(\s*)?["']@altnovatrail\/contracts["'/]/;
 
 /** Every problem with the files npm pack takes. */
 export function packProblems(paths: readonly string[]): string[] {
