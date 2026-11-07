@@ -1,0 +1,13 @@
+# What npm ci installs from package-lock.json.
+/node_modules/
+# The package's build: just build writes it, npm pack takes it (R08 in docs/decisions.md).
+/lib/
+# What tsc -b leaves beside the programs of the root tsconfig.json, should anyone run it.
+*.tsbuildinfo
+# The release's files, which a later recipe writes (RUN.md, T17).
+/dist/
+# The coverage of the tests: ci-test writes it, and Vitest clears it before each run.
+/coverage/
+# The screenshots Vitest takes of a failed test in the browser: Vitest 5 puts them under .vitest/.
+__screenshots__/
+/.vitest/

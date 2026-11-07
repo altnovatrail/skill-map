@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/altnovatrail/skill-map/actions/workflows/ci.yml/badge.svg)](https://github.com/altnovatrail/skill-map/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/altnovatrail/skill-map/actions/workflows/codeql.yml/badge.svg)](https://github.com/altnovatrail/skill-map/actions/workflows/codeql.yml)
+[![TypeScript version](https://img.shields.io/github/package-json/dependency-version/altnovatrail/skill-map/dev/typescript)](package.json)
+[![Coverage](https://codecov.io/gh/altnovatrail/skill-map/branch/main/graph/badge.svg)](https://codecov.io/gh/altnovatrail/skill-map)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/altnovatrail/skill-map/badge)](https://scorecard.dev/viewer/?uri=github.com/altnovatrail/skill-map)
 [![License](https://img.shields.io/github/license/altnovatrail/skill-map)](LICENSE)
 
@@ -17,7 +19,7 @@ A component of [NovaTrail](https://github.com/altnovatrail/spec/tree/v0.9.5), a 
 
 ## Status
 
-Detailing done. The first epic of the plan, now in [docs/plan/E1.md](docs/plan/E1.md), decided what the component's card left open, and section 3 of [docs/architecture.md](docs/architecture.md) describes the package. There is no code here yet: the first code is the current epic, E2 of RUN.md, and it comes after the first code of stage 2, in tutor and canvas, together with api, app and infra.
+Detailing done. The first epic of the plan, now in [docs/plan/E1.md](docs/plan/E1.md), decided what the component's card left open, and section 3 of [docs/architecture.md](docs/architecture.md) describes the package. The first code is the current epic, E2 of RUN.md: so far the skeleton of the package `@altnovatrail/skill-map`, its tools and CI, with no release yet. Inside the devcontainer, `just ci` runs the four checks CI runs — lint and types, the tests in Node and in Chromium with their coverage, advisories and licenses.
 
 ## Documents
 
