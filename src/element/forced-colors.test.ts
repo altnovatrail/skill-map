@@ -48,6 +48,14 @@ test("with forced colours the tiles are the system's buttons, whatever the consu
     expect(getComputedStyle(button("Halves, In progress, needed before")).borderTopColor).toBe(
       system("Highlight"),
     );
+    // The lines and their points take the system's highlight, as the tiles linked by them do.
+    const lines = mounted().shadowRoot?.querySelector(".lines") as Element;
+    expect(getComputedStyle(lines.querySelector("path") as Element).stroke).toBe(
+      system("Highlight"),
+    );
+    expect(getComputedStyle(lines.querySelector("circle") as Element).fill).toBe(
+      system("Highlight"),
+    );
     const details = mounted().shadowRoot?.getElementById("details") as HTMLElement;
     expect(getComputedStyle(details).color).toBe(system("CanvasText"));
     expect(getComputedStyle(details).backgroundColor).toBe(system("Canvas"));

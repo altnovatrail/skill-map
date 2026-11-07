@@ -99,6 +99,14 @@ export class NovatrailSkillMap extends HTMLElement {
     this.#schedule();
   }
 
+  connectedCallback(): void {
+    this.#tree.connect();
+  }
+
+  disconnectedCallback(): void {
+    this.#tree.disconnect();
+  }
+
   attributeChangedCallback(): void {
     this.#schedule();
   }

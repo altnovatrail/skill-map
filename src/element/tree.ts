@@ -12,9 +12,11 @@ import type { Manifest, SkillGraph } from "@altnovatrail/spec/formatv0/open";
 import type { View } from "../core/attributes.js";
 import { fullSkillId } from "../core/index.js";
 import { type Band, focusAfter, type Layout, type Links, layout, linksOf } from "../core/layout.js";
+import { type Box, linesOf } from "../core/lines.js";
 import { type AnchorOnMap, type MapStates, mapStates, type SkillOnMap } from "../core/states.js";
 import { ANCHOR_TITLES } from "./anchor-titles.js";
 import { ICONS, type IconValue } from "./icons.js";
+import { Lines, SVG } from "./lines.js";
 import { formatsOf, formOf, type Words } from "./words.js";
 
 /** What the tree is drawn from. */
@@ -44,8 +46,6 @@ interface TileNodes {
 
 /** The ID of the details, the one item that a tile's aria-controls names. */
 const DETAILS = "details";
-/** The namespace of the icons' SVG. */
-const SVG = "http://www.w3.org/2000/svg";
 
 /** The tree of one element's map. */
 export class MapTree {
@@ -65,6 +65,17 @@ export class MapTree {
   /** Each icon, built once from its paths, and cloned wherever it stands. */
   readonly #icons = new Map<IconValue, SVGSVGElement>();
   #data: MapData | null = null;
+  /** The expanded skill's links, which its lines are drawn by, or null with none expanded. */
+  #links: Links | null = null;
+  readonly #lines: Lines;
+  /**
+   * Draws the lines anew whenever the map, a tile or the details changes its size: the width of the
+   * page, its zoom, a font that came late (R11). It watches only while the element is on a page.
+   */
+  readonly #observer = new ResizeObserver(() => {
+    if (this.#expanded !== null) this.#drawLines();
+  });
+  #connected = false;
 
   constructor(root: ShadowRoot, choose: (skill: string) => void) {
     this.#root = root;
@@ -76,7 +87,25 @@ export class MapTree {
     this.#practise = this.#element("button", "practise");
     this.#practise.type = "button";
     this.#practise.addEventListener("click", () => this.#choose(this.#chosen));
+    this.#lines = new Lines(root.ownerDocument);
     root.append(this.#container);
+  }
+
+  /**
+   * The element is on a page: the map, the details and each tile are watched from now on. A node
+   * starts to be watched with a first notice, which draws the lines anew.
+   */
+  connect(): void {
+    this.#connected = true;
+    this.#observer.observe(this.#container);
+    this.#observer.observe(this.#details);
+    for (const { button } of this.#tiles.values()) this.#observer.observe(button);
+  }
+
+  /** The element is off the page: nothing is watched until it is back. */
+  disconnect(): void {
+    this.#connected = false;
+    this.#observer.disconnect();
   }
 
   /** Draws the map from new data, or clears it without any. */
@@ -88,9 +117,11 @@ export class MapTree {
     if (data === null) {
       this.#container.replaceChildren();
       this.#bands.clear();
+      for (const { button } of this.#tiles.values()) this.#observer.unobserve(button);
       this.#tiles.clear();
       this.#expanded = null;
       this.#layout = null;
+      this.#links = null;
       return;
     }
 
@@ -122,10 +153,18 @@ export class MapTree {
       place(nodes.list, items);
       sections.push(nodes.section);
     }
-    place(this.#container, sections);
+    // The lines lie under the bands: first in the map, and drawn once the tiles have their places.
+    place(this.#container, [this.#lines.svg, ...sections]);
     for (const key of [...this.#bands.keys()]) if (!bandsUsed.has(key)) this.#bands.delete(key);
-    for (const id of [...this.#tiles.keys()]) if (!tilesUsed.has(id)) this.#tiles.delete(id);
+    for (const [id, { button }] of [...this.#tiles]) {
+      if (!tilesUsed.has(id)) {
+        this.#observer.unobserve(button);
+        this.#tiles.delete(id);
+      }
+    }
     this.#layout = map;
+    this.#links = links;
+    this.#drawLines();
 
     // A node the focus was on stays focused where it still is, though it was moved; one that is
     // gone hands the focus to a tile by R06.
@@ -137,6 +176,34 @@ export class MapTree {
         if (target !== null) this.#tiles.get(target)?.button.focus({ preventScroll: true });
       }
     }
+  }
+
+  /** The expanded skill's lines, by the places of the tiles as they are measured now (R11). */
+  #drawLines(): void {
+    const expanded = this.#expanded;
+    const links = this.#links;
+    if (expanded === null || links === null || !this.#connected) {
+      this.#lines.draw([]);
+      return;
+    }
+    const origin = this.#container.getBoundingClientRect();
+    const box = (node: Element): Box => {
+      const { left, top, right, bottom } = node.getBoundingClientRect();
+      return {
+        left: left - origin.left,
+        top: top - origin.top,
+        right: right - origin.left,
+        bottom: bottom - origin.top,
+      };
+    };
+    // The links name tiles of the layout just drawn, and an expanded skill has its details there.
+    const boxes = new Map<string, Box>(
+      [expanded, ...links.buildsOn, ...links.opens].map((id) => [
+        id,
+        box((this.#tiles.get(id) as TileNodes).button),
+      ]),
+    );
+    this.#lines.draw(linesOf(expanded, links, boxes, box(this.#details)));
   }
 
   #band(key: string, band: Band, data: MapData): BandNodes {
@@ -179,6 +246,7 @@ export class MapTree {
         this.render(this.#data);
       });
       this.#skillOf.set(button, id);
+      if (this.#connected) this.#observer.observe(button);
       item.append(button);
       nodes = { item, button };
       this.#tiles.set(id, nodes);
