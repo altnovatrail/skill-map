@@ -11,8 +11,9 @@
 // host's ancestors would never reach the shadow tree. A value that is not a colour gives none: the
 // property is then as if unset, and the text takes the host's colour, the ground none. A state has
 // no colour of its own: its word and its icon name it (1.4.1). With forced colours the system's
-// colours stand in for the theme. Nothing moves: no transition and no animation, so there is
-// nothing for prefers-reduced-motion to stop. The size of text is the consumer's, in em and rem,
+// colours stand in for the theme. The expanded skill's lines lie under the bands, in the accent,
+// and their places are attributes of SVG (R11). Nothing moves: no transition and no animation, the
+// lines' too, so there is nothing for prefers-reduced-motion to stop. The size of text is the consumer's, in em and rem,
 // and a target is 44 by 44 CSS pixels at least.
 
 /** The defaults of the theme: light, as canvas's. The accent is 6.7:1 against the paper. */
@@ -32,9 +33,33 @@ const CSS = `
   display: none;
 }
 .map {
+  position: relative;
   background: ${paper};
   color: ${ink};
   overflow-wrap: anywhere;
+}
+/* The lines fill the map under its bands: a band is positioned, and comes after them. */
+/* The lines are drawn in the colour of .lines, the accent, and so fall back to the ink when the
+   accent is no colour, as the tiles do. */
+.lines {
+  color: ${accent};
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.lines path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2px;
+}
+.lines circle {
+  fill: currentColor;
+}
+.band {
+  position: relative;
 }
 .band > :is(h2, h3, h4, h5, h6) {
   margin: 1rem 0 0.5rem;
@@ -145,6 +170,10 @@ const CSS = `
   .tile:focus-visible,
   .practise:focus-visible {
     outline-color: Highlight;
+  }
+  /* The lines take the system's highlight, as the frames of the tiles they link do. */
+  .lines {
+    color: Highlight;
   }
 }
 `;

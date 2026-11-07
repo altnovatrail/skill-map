@@ -5,6 +5,7 @@ interface Result {
   readonly display: string;
   readonly sheets: number;
   readonly inline: number;
+  readonly lines: number;
 }
 
 /** A frame under a strict consumer's policy: styles and scripts from its own origin alone. */
@@ -20,10 +21,10 @@ async function strictFrame(): Promise<{ frame: HTMLIFrameElement; result: Result
   return { frame, result: window()?.cspResult as Result };
 }
 
-test("under a policy without 'unsafe-inline' the map is styled, and nothing is refused", async () => {
+test("under a policy without 'unsafe-inline' the map is styled, its lines drawn, and nothing is refused", async () => {
   const { frame, result } = await strictFrame();
   try {
-    expect(result).toEqual({ violations: [], display: "flex", sheets: 1, inline: 0 });
+    expect(result).toEqual({ violations: [], display: "flex", sheets: 1, inline: 0, lines: 2 });
   } finally {
     frame.remove();
   }
