@@ -24,7 +24,7 @@
   ],
   "devDependencies": {
     "@altnovatrail/contracts": "0.9.5",
-    "@biomejs/biome": "2.6.4",
+    "@biomejs/biome": "2.6.5",
     "@iconify-json/material-symbols": "1.2.97",
     "@iconify/utils": "3.1.7",
     "@types/node": "24.19.2",
