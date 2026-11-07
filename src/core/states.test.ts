@@ -201,16 +201,20 @@ test("a due review without a mastery band is no review: the skill is in practice
 });
 
 test("the first state the answer gives a skill counts, and a skill not in the graph is left out", () => {
+  const first = skillState({ skill: "base", masteryBand: "b1" });
   const states = mapStates(
     CHAIN,
     skillMap([
-      skillState({ skill: "base", masteryBand: "b1" }),
+      first,
       skillState({ skill: "base" }),
       skillState({ skill: "retired", masteryBand: "b1" }),
     ]),
     NOW,
   );
   expect(states.skills.get("base")?.state).toBe("mastered");
+  // The record the state comes from, for the adult's details.
+  expect(states.skills.get("base")?.record).toBe(first);
+  expect(states.skills.get("next")?.record).toBeUndefined();
   expect([...states.skills.keys()]).toEqual(["base", "next"]);
 });
 
