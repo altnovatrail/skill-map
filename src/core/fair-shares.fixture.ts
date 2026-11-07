@@ -18,7 +18,11 @@ export const NOW = new Date("2026-11-07T12:00:00Z");
 export const GRAPH: SkillGraph = {
   tiers: ["Counting", "Sharing"],
   skills: {
-    "count-objects": { title: "Count objects", assessability: "verdict" },
+    "count-objects": {
+      title: "Count objects",
+      description: "Counts up to twenty things, one by one.",
+      assessability: "verdict",
+    },
     "draw-shares": { title: "Draw shares", assessability: "none" },
     halves: {
       title: "Halves",

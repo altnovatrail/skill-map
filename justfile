@@ -14,21 +14,25 @@ bin := "node_modules/.bin"
 # Run the four checks CI runs, before a pull request.
 ci: ci-lint ci-test ci-vuln ci-licenses
 
-# Fail on code Biome would format or flag, and on a type error in any of the three programs: the
+# Fail on code Biome would format or flag, on a type error in any of the three programs — the
 # DOM-free part sees neither the DOM nor Node, the element sees the DOM, and the scripts, the
-# configuration and the tests see Node too (R08).
+# configuration and the tests see Node too (R08) — and on titles of anchor skills that are not what
+# the pinned format file of spec's release gives (R09). That check downloads the file from the
+# release, so the network has to be reachable.
 ci-lint: _install
     {{ bin }}/biome ci
     {{ bin }}/tsc --noEmit -p tsconfig.core.json
     {{ bin }}/tsc --noEmit -p tsconfig.element.json
     {{ bin }}/tsc --noEmit -p tsconfig.node.json
+    node scripts/taxonomy.ts --check
 
 # Build the package, run the tests in Node and in Chromium with their coverage, which .github's
 # TypeScript wrapper sends to Codecov from coverage/lcov.info, and check the package the way a
-# consumer takes it.
+# consumer takes it: its files, and its declarations under a consumer's TypeScript (R09).
 ci-test: build
     {{ bin }}/vitest run --coverage
     node scripts/package.ts
+    node scripts/consumer.ts
 
 # Fail on a published advisory, high or above, for a package the package ships with. Of the tools
 # of development, Dependabot's alerts tell (R08). npm audit reads the lock file and asks the
@@ -59,6 +63,13 @@ ci-licenses:
 build: _install
     rm -rf lib
     {{ bin }}/tsc -p tsconfig.build.json
+
+# Write the English titles of the anchor skills, src/element/anchor-titles.ts, anew from the format
+# file of the release of spec that scripts/taxonomy.ts names: after a move to a new tag of spec
+# (R09). It verifies the file by spec's release-verify, so spec/ has to be checked out, and pins the
+# file's sha256, which ci-lint holds it to from then on.
+taxonomy:
+    JUST={{ quote(just_executable()) }} node scripts/taxonomy.ts
 
 # Format and fix the code in place, the way ci-lint checks it.
 fmt: _install

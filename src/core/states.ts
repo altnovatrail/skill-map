@@ -41,6 +41,11 @@ export interface SkillOnMap {
    * mastery band is empty, in the order the graph lists them. Empty for every other skill.
    */
   readonly waitsFor: readonly string[];
+  /**
+   * The record of the answer the state comes from, the first that names the skill (R03), for the
+   * adult's details; absent for a skill the answer does not name, and on a map without state.
+   */
+  readonly record?: SkillState;
 }
 
 /** A moment of the contract, google.protobuf.Timestamp, as the contracts give it. */
@@ -143,13 +148,15 @@ export function mapStates(
           !mastered(prerequisite),
       );
       // A skill the answer does not name reads as one without evidence (R03).
-      const state = stateOf(records.get(id), waitsFor.length === 0, now);
+      const record = records.get(id);
+      const state = stateOf(record, waitsFor.length === 0, now);
       skills.set(id, {
         id,
         assessability,
         state,
         open: state !== "locked",
         waitsFor: state === "locked" ? waitsFor : [],
+        ...(record === undefined ? {} : { record }),
       });
     }
   }
