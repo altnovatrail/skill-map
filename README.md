@@ -19,7 +19,19 @@ A component of [NovaTrail](https://github.com/altnovatrail/spec/tree/v0.9.5), a 
 
 ## Status
 
-Detailing done. The first epic of the plan, now in [docs/plan/E1.md](docs/plan/E1.md), decided what the component's card left open, and section 3 of [docs/architecture.md](docs/architecture.md) describes the package. The first code is the current epic, E2 of RUN.md: so far the skeleton of the package `@altnovatrail/skill-map`, its tools and CI, with no release yet. Inside the devcontainer, `just ci` runs the four checks CI runs — lint and types, the tests in Node and in Chromium with their coverage, advisories and licenses.
+Detailing done. The first epic of the plan, now in [docs/plan/E1.md](docs/plan/E1.md), decided what the component's card left open, and section 3 of [docs/architecture.md](docs/architecture.md) describes the package. The first code is the current epic, E2 of RUN.md: so far the element `<novatrail-skill-map>` of the package `@altnovatrail/skill-map` — its tree, its words in English and Russian, its icons and its look — with its tools and CI, and no release yet. Inside the devcontainer, `just ci` runs the four checks CI runs — lint and types, the tests in Node and in Chromium with their coverage, advisories and licenses.
+
+## Theme and accessibility
+
+The map holds the standard of NovaTrail's packages of the interface: WCAG 2.2 AA, with targets of 44 by 44 CSS pixels and no motion triggered by interaction, as R90 spec decides. A consumer fits it to its theme by three custom properties, which the element's shadow tree inherits; their defaults are light:
+
+| Property | What | Default |
+|---|---|---|
+| `--novatrail-skill-map-paper` | the ground of the map, its tiles and the details | `#fff` |
+| `--novatrail-skill-map-ink` | text, frames and icons | `#111` |
+| `--novatrail-skill-map-accent` | the expanded tile, the frames of the tiles linked to it and of the details, the button that chooses a skill, the ring of the focus | `#1d4ed8` |
+
+The contrast of a theme the consumer sets is the consumer's to check. With forced colours the system's colours stand in for the theme. The map's own words are in English and Russian, by the element's attribute `lang`, and English for any other language. What the package does not meet yet is declared in section 3.8 of [docs/architecture.md](docs/architecture.md): nothing so far. The icons are Material Symbols, by Google, under the Apache License 2.0, as [NOTICE](NOTICE) says.
 
 ## Documents
 

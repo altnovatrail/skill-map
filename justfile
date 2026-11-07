@@ -16,14 +16,16 @@ ci: ci-lint ci-test ci-vuln ci-licenses
 
 # Fail on code Biome would format or flag, on a type error in any of the three programs — the
 # DOM-free part sees neither the DOM nor Node, the element sees the DOM, and the scripts, the
-# configuration and the tests see Node too (R08) — and on titles of anchor skills that are not what
-# the pinned format file of spec's release gives (R09). That check downloads the file from the
-# release, so the network has to be reachable.
+# configuration and the tests see Node too (R08) — on icons and a NOTICE that are not what the set
+# package-lock.json pins gives (R10), and on titles of anchor skills that are not what the pinned
+# format file of spec's release gives (R09). That check downloads the file from the release, so the
+# network has to be reachable.
 ci-lint: _install
     {{ bin }}/biome ci
     {{ bin }}/tsc --noEmit -p tsconfig.core.json
     {{ bin }}/tsc --noEmit -p tsconfig.element.json
     {{ bin }}/tsc --noEmit -p tsconfig.node.json
+    node scripts/icons.ts --check
     node scripts/taxonomy.ts --check
 
 # Build the package, run the tests in Node and in Chromium with their coverage, which .github's
@@ -66,10 +68,27 @@ build: _install
 
 # Write the English titles of the anchor skills, src/element/anchor-titles.ts, anew from the format
 # file of the release of spec that scripts/taxonomy.ts names: after a move to a new tag of spec
-# (R09). It verifies the file by spec's release-verify, so spec/ has to be checked out, and pins the
-# file's sha256, which ci-lint holds it to from then on.
+# (R09). The recipe downloads the file and its bundle into node_modules/.taxonomy, the folder the
+# script names, and removes it after; the script verifies them by spec's release-verify, so spec/ has to be checked out, and
+# pins the file's sha256, which ci-lint holds it to from then on.
 taxonomy:
-    JUST={{ quote(just_executable()) }} node scripts/taxonomy.ts
+    #!/usr/bin/env bash
+    set -euo pipefail
+    folder=node_modules/.taxonomy
+    rm -rf "$folder"
+    mkdir -p "$folder"
+    trap 'rm -rf "$folder"' EXIT
+    urls="$(node scripts/taxonomy.ts --urls)"
+    for url in $urls; do
+        curl --fail --silent --show-error --location --output "$folder/${url##*/}" "$url"
+    done
+    JUST={{ quote(just_executable()) }} node scripts/taxonomy.ts --write
+
+# Write the icons of the map's states, marks and holdings, src/element/icons.ts, and NOTICE anew from
+# the set of Material Symbols that package-lock.json pins: after a new version of the set, or a new
+# icon in scripts/icons.ts's table (R10). Nothing goes to the network.
+icons: _install
+    node scripts/icons.ts
 
 # Format and fix the code in place, the way ci-lint checks it.
 fmt: _install

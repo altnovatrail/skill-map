@@ -5,17 +5,19 @@
 //   just taxonomy                      verify the file, pin its digest and write the titles
 //   node scripts/taxonomy.ts --check   fail unless the pinned file gives the titles as written
 //
-// Writing, which `just taxonomy` runs, downloads the file and its bundle from the release, runs
+// Writing, which `just taxonomy` runs as --write, takes the file and its bundle from FOLDER, where
+// the recipe has downloaded them — `--urls` names their addresses. The folder is the script's own,
+// not an argument: nothing of the command line goes into a path or a command. It runs
 // `just -f spec/justfile release-verify spec <tag> <file> <bundle>` on them, and writes
-// src/element/anchor-titles.ts with the file's sha256. From then on the digest holds the file:
-// --check, which ci-lint runs, downloads it again, holds it to the digest the source names, and
-// fails unless what it gives is what the source says. Neither needs anything installed: the
-// network, tar and, to write, just and spec/.
+// src/element/anchor-titles.ts with the file's sha256. From then on the digest holds the file: --check, which ci-lint runs, downloads it again,
+// into memory, holds it to the digest the source names, and fails unless what it gives is what the
+// source says. The script writes no bytes of the network to a file (CodeQL js/http-to-file-access):
+// tar reads the archive from its standard input. Neither needs anything installed: the network,
+// tar and, to write, curl, just and spec/.
 
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { TAR } from "./tar.ts";
 
@@ -28,6 +30,12 @@ const FILE = `format-${RELEASE.format}.tar.gz`;
 const SCHEMA = `format-${RELEASE.format}/format/schemas/shared-taxonomy.schema.json`;
 const URL_OF = (name: string) =>
   `https://github.com/altnovatrail/${RELEASE.repository}/releases/download/${RELEASE.tag}/${name}`;
+
+/** Where `just taxonomy` downloads the file and its bundle, and removes them after. */
+export const FOLDER = "node_modules/.taxonomy";
+
+/** The addresses of the file and its bundle, which `just taxonomy` downloads. */
+export const URLS = [URL_OF(FILE), URL_OF(`${FILE}.sigstore.json`)] as const;
 
 /** The ID and English title of each anchor skill of the shared taxonomy, by ID. */
 export function titlesOf(schema: unknown): [string, string][] {
@@ -72,57 +80,60 @@ export function pinned(source: string): string | undefined {
   return /\bsha256: "([0-9a-f]{64})"/.exec(source)?.[1];
 }
 
-async function download(name: string, folder: string): Promise<string> {
-  const response = await fetch(URL_OF(name));
-  if (!response.ok) throw new Error(`${URL_OF(name)}: HTTP ${response.status}`);
-  const path = join(folder, name);
-  writeFileSync(path, Buffer.from(await response.arrayBuffer()));
-  return path;
+function sha256Of(bytes: Buffer): string {
+  return createHash("sha256").update(bytes).digest("hex");
 }
 
-function sha256Of(path: string): string {
-  return createHash("sha256").update(readFileSync(path)).digest("hex");
+/** The titles the archive's schema gives: tar reads the archive from its standard input. */
+function titlesFrom(archive: Buffer): [string, string][] {
+  const schema = execFileSync(TAR, ["-xzOf", "-", SCHEMA], { input: archive, maxBuffer: 1 << 26 });
+  return titlesOf(JSON.parse(schema.toString("utf8")));
 }
 
-function titlesFrom(archive: string, folder: string): [string, string][] {
-  execFileSync(TAR, ["-xzf", archive, "-C", folder, SCHEMA]);
-  return titlesOf(JSON.parse(readFileSync(join(folder, SCHEMA), "utf8")));
-}
-
-async function main(check: boolean): Promise<string> {
-  const folder = mkdtempSync(join(tmpdir(), "taxonomy-"));
-  try {
-    const archive = await download(FILE, folder);
-    const sha256 = sha256Of(archive);
-    if (check) {
-      const source = readFileSync(TARGET, "utf8");
-      const want = pinned(source);
-      if (want !== sha256) {
-        throw new Error(`${FILE} of ${RELEASE.tag} is sha256 ${sha256}, not ${want ?? "none"}`);
-      }
-      if (render(sha256, titlesFrom(archive, folder)) !== source) {
-        throw new Error(`${TARGET} is not what ${FILE} gives: run just taxonomy`);
-      }
-      return `${TARGET} is what ${FILE} of ${RELEASE.tag} gives, sha256 ${sha256}`;
-    }
-    // The just that runs the recipe, by its path: none is looked up in PATH.
-    const just = process.env.JUST;
-    if (just === undefined) throw new Error("run it by just taxonomy, which names its just");
-    const bundle = await download(`${FILE}.sigstore.json`, folder);
-    execFileSync(
-      just,
-      ["-f", "spec/justfile", "release-verify", RELEASE.repository, RELEASE.tag, archive, bundle],
-      { stdio: "inherit" },
-    );
-    writeFileSync(TARGET, render(sha256, titlesFrom(archive, folder)));
-    return `wrote ${TARGET} from ${FILE} of ${RELEASE.tag}, sha256 ${sha256}`;
-  } finally {
-    rmSync(folder, { recursive: true, force: true });
+async function check(): Promise<string> {
+  const response = await fetch(URLS[0]);
+  if (!response.ok) throw new Error(`${URLS[0]}: HTTP ${response.status}`);
+  const archive = Buffer.from(await response.arrayBuffer());
+  const sha256 = sha256Of(archive);
+  const source = readFileSync(TARGET, "utf8");
+  const want = pinned(source);
+  if (want !== sha256) {
+    throw new Error(`${FILE} of ${RELEASE.tag} is sha256 ${sha256}, not ${want ?? "none"}`);
   }
+  if (render(sha256, titlesFrom(archive)) !== source) {
+    throw new Error(`${TARGET} is not what ${FILE} gives: run just taxonomy`);
+  }
+  return `${TARGET} is what ${FILE} of ${RELEASE.tag} gives, sha256 ${sha256}`;
 }
 
-if (import.meta.main) {
-  main(process.argv.includes("--check")).then(
+/** Verifies the file in FOLDER, with its bundle, by release-verify, and writes the titles. */
+function write(): string {
+  // The just that runs the recipe, by its path: none is looked up in PATH.
+  const just = process.env.JUST;
+  if (just === undefined) throw new Error("run it by just taxonomy, which names its just");
+  const archive = join(FOLDER, FILE);
+  const bundle = `${archive}.sigstore.json`;
+  execFileSync(
+    just,
+    ["-f", "spec/justfile", "release-verify", RELEASE.repository, RELEASE.tag, archive, bundle],
+    { stdio: "inherit" },
+  );
+  const bytes = readFileSync(archive);
+  const sha256 = sha256Of(bytes);
+  writeFileSync(TARGET, render(sha256, titlesFrom(bytes)));
+  return `wrote ${TARGET} from ${FILE} of ${RELEASE.tag}, sha256 ${sha256}`;
+}
+
+async function main(argument: string | undefined): Promise<string> {
+  if (argument === "--check") return check();
+  if (argument === "--write") return write();
+  throw new Error("run it with --check, or by just taxonomy");
+}
+
+if (import.meta.main && process.argv[2] === "--urls") {
+  console.log(URLS.join("\n"));
+} else if (import.meta.main) {
+  main(process.argv[2]).then(
     (done) => console.log(`taxonomy: ${done}`),
     (error: Error) => {
       console.error(`taxonomy: ${error.message}`);

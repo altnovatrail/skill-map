@@ -16,8 +16,11 @@ import { fileURLToPath } from "node:url";
 
 /** The one entry point: the element, which registers itself when imported (R04). */
 const ENTRY = { types: "./lib/element/index.d.ts", default: "./lib/element/index.js" };
-/** The paths npm pack takes, besides the build: package.json and the files npm always adds. */
-const ALWAYS = new Set(["package.json", "README.md", "LICENSE"]);
+/**
+ * The paths npm pack takes, besides the build: package.json, the files npm always adds, and NOTICE,
+ * which names the icons the package embeds (R78 spec; R10 in docs/decisions.md).
+ */
+const ALWAYS = new Set(["package.json", "README.md", "LICENSE", "NOTICE"]);
 /** A file of the build: JavaScript or a declaration, at any depth under lib/core or lib/element. */
 const BUILT = /^lib\/(core|element)\/(?:[^/]+\/)*[^/]+\.(js|d\.ts)$/;
 /** What the build leaves out (tsconfig.build.json): tests, their fixtures and type-only checks. */
@@ -39,7 +42,13 @@ export function packProblems(paths: readonly string[]): string[] {
       problems.push(`npm pack takes ${path}, which is not part of the build`);
     }
   }
-  for (const path of ["package.json", "LICENSE", ENTRY.default.slice(2), ENTRY.types.slice(2)]) {
+  for (const path of [
+    "package.json",
+    "LICENSE",
+    "NOTICE",
+    ENTRY.default.slice(2),
+    ENTRY.types.slice(2),
+  ]) {
     if (!paths.includes(path)) problems.push(`npm pack leaves out ${path}`);
   }
   return problems;

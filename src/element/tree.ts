@@ -12,15 +12,10 @@ import type { Manifest, SkillGraph } from "@altnovatrail/spec/formatv0/open";
 import type { View } from "../core/attributes.js";
 import { fullSkillId } from "../core/index.js";
 import { type Band, focusAfter, type Layout, type Links, layout, linksOf } from "../core/layout.js";
-import {
-  type AnchorOnMap,
-  type Holding,
-  type MapStates,
-  mapStates,
-  type SkillOnMap,
-} from "../core/states.js";
+import { type AnchorOnMap, type MapStates, mapStates, type SkillOnMap } from "../core/states.js";
 import { ANCHOR_TITLES } from "./anchor-titles.js";
-import type { Words } from "./words.js";
+import { ICONS, type IconValue } from "./icons.js";
+import { formatsOf, formOf, type Words } from "./words.js";
 
 /** What the tree is drawn from. */
 export interface MapData {
@@ -49,6 +44,8 @@ interface TileNodes {
 
 /** The ID of the details, the one item that a tile's aria-controls names. */
 const DETAILS = "details";
+/** The namespace of the icons' SVG. */
+const SVG = "http://www.w3.org/2000/svg";
 
 /** The tree of one element's map. */
 export class MapTree {
@@ -65,6 +62,8 @@ export class MapTree {
   /** The full ID of the skill «Practise» chooses, set when it is drawn. */
   #chosen = "";
   #layout: Layout | null = null;
+  /** Each icon, built once from its paths, and cloned wherever it stands. */
+  readonly #icons = new Map<IconValue, SVGSVGElement>();
   #data: MapData | null = null;
 
   constructor(root: ShadowRoot, choose: (skill: string) => void) {
@@ -196,21 +195,25 @@ export class MapTree {
     data: MapData,
   ): void {
     const { words } = data;
-    const parts: string[] = [];
+    const parts: HTMLElement[] = [];
     const skill = states.skills.get(id);
-    const state =
+    const value =
       band.kind === "anchors"
-        ? anchorWord(states, id, words)
+        ? (states.anchors.get(id)?.holding ?? null)
         : skill === undefined
           ? null
-          : skillWord(skill, words);
-    if (state !== null) parts.push(state);
-    if (links?.buildsOn.includes(id)) parts.push(words.neededBefore);
-    if (links?.opens.includes(id)) parts.push(words.opensAfter);
+          : shownOf(skill);
+    if (value !== null) parts.push(this.#status(value, words));
+    const linked = links?.buildsOn.includes(id) || links?.opens.includes(id) || false;
+    if (links?.buildsOn.includes(id)) parts.push(this.#text("span", words.neededBefore));
+    if (links?.opens.includes(id)) parts.push(this.#text("span", words.opensAfter));
     tile.button.replaceChildren(
       this.#title(id, band.kind === "anchors", data),
-      ...parts.flatMap((part) => [words.separator, this.#text("span", part)]),
+      ...parts.flatMap((part) => [words.separator, part]),
     );
+    // Marks of the look beside the words: a locked tile's frame is dashed, a linked one's thicker.
+    tile.button.classList.toggle("locked", value === "locked");
+    tile.button.classList.toggle("linked", linked);
     const expanded = id === this.#expanded;
     tile.button.setAttribute("aria-expanded", String(expanded));
     if (expanded) tile.button.setAttribute("aria-controls", DETAILS);
@@ -225,7 +228,8 @@ export class MapTree {
     if (band.kind === "anchors") {
       const anchor = states.anchors.get(id);
       if (anchor !== undefined && anchor.holding !== null) {
-        content.push(this.#paragraph(anchorPhrase(anchor.holding, anchor, words)));
+        const holding = this.#status(anchor.holding, words);
+        content.push(this.#paragraph(anchorPhrase(holding, anchor, words)));
       }
       content.push(...this.#list(words.neededBy, links.opens, data));
     } else {
@@ -236,8 +240,8 @@ export class MapTree {
           this.#paragraph([this.#text("span", description, data.manifest.languages.explanation)]),
         );
       }
-      const word = skill === undefined ? null : skillWord(skill, words);
-      if (word !== null) content.push(this.#paragraph([word]));
+      const value = skill === undefined ? null : shownOf(skill);
+      if (value !== null) content.push(this.#paragraph([this.#status(value, words)]));
       content.push(...this.#list(words.buildsOn, links.buildsOn, data, skill?.waitsFor));
       content.push(...this.#list(words.opens, links.opens, data));
       content.push(...this.#teaches(links.teaches, states, data));
@@ -297,7 +301,7 @@ export class MapTree {
           ? [title]
           : fill(data.words.taught, {
               skill: title,
-              holding: anchorPhrase(anchor.holding, anchor, data.words),
+              holding: anchorPhrase(this.#status(anchor.holding, data.words), anchor, data.words),
             })),
       );
       list.append(item);
@@ -308,9 +312,15 @@ export class MapTree {
   /** The adult's details of a skill of verdict (R03): no estimate, uncertainty or retention. */
   #numbers(state: SkillState | undefined, data: MapData): Node[] {
     const { words, manifest } = data;
-    const lines: (string | Node)[][] = [[words.evidence(state?.evidenceCount ?? 0)]];
+    const formats = formatsOf(words);
+    const count = state?.evidenceCount ?? 0;
+    const lines: (string | Node)[][] = [
+      fill(formOf(words.evidence, count, formats), { count: formats.number.format(count) }),
+    ];
     if (state?.lastPracticedAt !== undefined) {
-      lines.push([words.lastPractised(dateOf(state.lastPracticedAt))]);
+      lines.push(
+        fill(words.lastPractised, { date: formats.date.format(dateOf(state.lastPracticedAt)) }),
+      );
     }
     if (state !== undefined && state.masteryBand !== "") {
       const band = manifest.bands?.find(({ id }) => id === state.masteryBand);
@@ -321,7 +331,7 @@ export class MapTree {
       lines.push(fill(words.band, { band: title }));
       if (state.reviewDue) lines.push([words.reviewDue]);
       else if (state.reviewDate !== undefined)
-        lines.push([words.reviewOn(dateOf(state.reviewDate))]);
+        lines.push(fill(words.reviewOn, { date: formats.date.format(dateOf(state.reviewDate)) }));
     }
     return lines.map((line) => this.#paragraph(line));
   }
@@ -340,13 +350,39 @@ export class MapTree {
 
   /** The titles of skills of the module, as a list of the words' language. */
   #titles(ids: readonly string[], data: MapData): Node[] {
-    return data.words.list
-      .formatToParts(ids)
+    return formatsOf(data.words)
+      .list.formatToParts(ids)
       .map((part) =>
         part.type === "element"
           ? this.#title(part.value, false, data)
           : this.#root.ownerDocument.createTextNode(part.value),
       );
+  }
+
+  /**
+   * A state, a mark or a holding: its icon, then its word, which names it (R90 spec). The icon is
+   * hidden from the tree of accessibility and has no title, and it is drawn in the text's colour,
+   * by attributes of SVG alone: no attribute style (R78 spec; R09).
+   */
+  #status(value: IconValue, words: Words): HTMLElement {
+    let icon = this.#icons.get(value);
+    if (icon === undefined) {
+      const { viewBox, paths } = ICONS[value];
+      icon = this.#root.ownerDocument.createElementNS(SVG, "svg");
+      icon.setAttribute("class", "icon");
+      icon.setAttribute("viewBox", viewBox);
+      icon.setAttribute("aria-hidden", "true");
+      icon.setAttribute("focusable", "false");
+      for (const d of paths) {
+        const path = this.#root.ownerDocument.createElementNS(SVG, "path");
+        path.setAttribute("d", d);
+        icon.append(path);
+      }
+      this.#icons.set(value, icon);
+    }
+    const status = this.#element("span", "status");
+    status.append(icon.cloneNode(true), wordOf(value, words));
+    return status;
   }
 
   #paragraph(children: readonly (Node | string)[]): HTMLParagraphElement {
@@ -391,21 +427,27 @@ export function fill(
   });
 }
 
-/** The word of a skill of the module's state or mark, or null on a map without state. */
-function skillWord(skill: SkillOnMap, words: Words): string | null {
-  if (skill.assessability !== "verdict") return words.marks[skill.assessability];
-  return skill.state === null ? null : words.states[skill.state];
+/** A skill of the module's state or mark, or null on a map without state. */
+function shownOf(skill: SkillOnMap): IconValue | null {
+  return skill.assessability !== "verdict" ? skill.assessability : skill.state;
 }
 
-/** The word of an anchor skill's holding, or null on a map without state. */
-function anchorWord(states: MapStates, id: string, words: Words): string | null {
-  const holding = states.anchors.get(id)?.holding ?? null;
-  return holding === null ? null : words.holdings[holding];
+/** The word of a state, a mark or a holding. */
+function wordOf(value: IconValue, words: Words): string {
+  const named: Readonly<Record<IconValue, string>> = {
+    ...words.states,
+    ...words.marks,
+    ...words.holdings,
+  };
+  return named[value];
 }
 
-/** An anchor skill's holding with its reason, if it has one. */
-function anchorPhrase(held: Holding, anchor: AnchorOnMap, words: Words): (string | Node)[] {
-  const holding = words.holdings[held];
+/** An anchor skill's holding — its word, or its icon and word — with its reason, if it has one. */
+function anchorPhrase(
+  holding: string | Node,
+  anchor: AnchorOnMap,
+  words: Words,
+): (string | Node)[] {
   return anchor.reason === null
     ? [holding]
     : fill(words.holdingReason, { holding, reason: words.reasons[anchor.reason] });
