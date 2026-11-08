@@ -111,7 +111,7 @@ E2 автор выбрал 2026-11-07 из таблицы 2, куда его п�
 | [x] | T14 | Слова, иконки и вид | Claude, проверяю я | да | T13 |
 | [x] | T15 | Линии раскрытого навыка | Claude, проверяю я | да | T13 |
 | [x] | T16 | Демо и проба руками | я + Claude | да | T14, T15 |
-| [ ] | T17 | Сборка релиза и пробный прогон | я + Claude | да | T16 |
+| [x] | T17 | Сборка релиза и пробный прогон | я + Claude | да | T16 |
 | [ ] | T18 | Первый релиз и публикация в npm | я + Claude | — | T17 |
 | [ ] | T19 | Итог E2 | Claude, проверяю я | — | T18 |
 
@@ -412,11 +412,39 @@ E2 автор выбрал 2026-11-07 из таблицы 2, куда его п�
 - **Мой шаг:** неизменяемые релизы и ruleset тегов `v*` — до первого релиза (Д54 в таблице 4 RUN.md `spec`).
 - **Как проверить:** пробный прогон на pull request зелёный, архив пакета проверен; `/code-review high`, один круг.
 - **Разделы:** R37 spec, R77 spec; Д54 в таблице 4 RUN.md `spec`; [docs/architecture.md](docs/architecture.md), раздел 3.7.
+- **Почему:** первый релиз необратим — неизменяемый релиз не заменить, а номер, который npm однажды занял, не вернуть. Поэтому весь путь релиза строится и прогоняется без публикации до T18, и ошибку рецепта ловит проба, а не релиз.
+- **Решено автором (2026-11-08), при планировании — ответы на четыре вопроса плана, все по рекомендациям:**
+  - **пути — как у `canvas`:** код пакета без тестов, фикстур и `*.check.ts`, `package.json`, `tsconfig.base.json` и `tsconfig.build.json`, `justfile`, README, `LICENSE`, `NOTICE`, `.devcontainer/Dockerfile` и сам `release.yml`. Отвергнуто: ещё и `package-lock.json` — новую версию давал бы каждый pull request Dependabot;
+  - **проба — на каждом pull request и на `main`,** с `publish: false` и `npm-package` до T18. Отвергнуто: только пробный pull request без мержа;
+  - **пробный потребитель — в рецепте:** `release-files` проверяет выпускаемый архив `scripts/release.ts` и `scripts/consumer.ts`. Отвергнуто: пробный проект руками один раз, как у `canvas`;
+  - **неизменяемые релизы и ruleset тегов `v*` — исполнитель, в T17,** по поручению автора — это подтверждение по правилу 4. Отвергнуто: руками автора после T17.
+- **Выяснилось при планировании:**
+  - общий `release.yml` `.github` v0.1.15 (`89d3cee…`) принимает `paths`, `publish`, `npm-package` и `previous-file`; с `publish: false` он идёт на любом событии и ничего не публикует, а о пакете, которого в реестре нет, пишет «matters not with publish false»;
+  - рецепт зовётся `just release-files "$VERSION"` в стадии `toolchain` на дереве `git archive`, без `.git`, подмодуля и токена;
+  - у `skill-map` неизменяемые релизы были выключены, а ruleset тегов не было; у `canvas` — `v-tags` (26336827): `refs/tags/v*`, `update`, `deletion`, `non_fast_forward`, без обхода;
+  - `codecov/patch` Codecov пишет как check run, а не как статус коммита.
+- **Сделано (2026-11-08):**
+  - перед задачей (правило 12): находок по T16 нет — у SonarCloud ноль, у Scorecard шесть;
+  - шаг автора, по его поручению: неизменяемые релизы включены (`immutable-releases`: `enabled: true`), ruleset `v-tags` — ID 26779303, `refs/tags/v*`, `update`, `deletion` и `non_fast_forward`, без обхода;
+  - `.github/workflows/release.yml` — общий `release.yml` v0.1.15 по SHA, линия 0.1, на каждом pull request, после CI push в `main` и по кнопке, `publish: false` и `npm-package`;
+  - рецепт `release-files <версия>`; `scripts/release.ts` с тестами — проверка того, что сделал `npm pack`; `scripts/consumer.ts --release` — пробный потребитель выпускаемого архива из `dist/`;
+  - R13; [docs/architecture.md](docs/architecture.md), раздел 3.7; README — рецепт и проба; T18 — что релиз включает `publish`;
+  - проверено:
+    - `just release-files v0.1.0` — в `dist/` ровно `altnovatrail-skill-map-0.1.0.tgz`, `LICENSE` и `SHA256SUMS`; в архиве 24 файла сборки, `package.json` с версией `0.1.0` и `repository`, README, `LICENSE` и `NOTICE`, без `private` и `publishConfig`; потребитель принял типы под `NodeNext` и `Bundler`;
+    - два прогона подряд — одна сумма, и под масками 022, 077 и 002 — тоже;
+    - `v1.2`, `0.1.0`, `v01.0.0` и `v0.1.0-rc.1` рецепт отвергает, не трогая `dist/`; архив без `LICENSE` и `NOTICE`, с чужими именем, версией или файлом отвергает `release.ts`; `consumer.ts` с незнакомым аргументом — отказ;
+    - перечень путей даёт 12 модулей и девять файлов;
+    - проба «Release / release» на pull request #25 зелёная: архив `altnovatrail-skill-map-0.1.0.tgz`, подпись проверена — «Verified OK», шаг npm — «@altnovatrail/skill-map is not in the npm registry yet, which matters not with publish false», а сумма архива `0697f201…` — та же, что локально;
+    - `just ci` зелёный — 171 тест; `just -f spec/justfile docs-check-repo` зелёный;
+  - выяснилось при работе: `npm pack` хранит права файлов, а права `lib/` давала маска того, кто собирал, — под маской 077 сумма была другой; рецепт нормализует права копии;
+  - ревью `/code-review high`, один круг, — десять находок. Исправлены восемь: суммы зависели от маски прав; `release.yml` пропускал прогон после CI pull request из ветки форка с именем `main`; R13 неверно говорил, что правка README и `justfile` версии не даёт; правило имени архива — в двух скриптах, а выбор архива — по префиксу; копия для `npm pack` — по списку руками; `consumer.ts` молча принимал незнакомый аргумент; `basename`; длинная строка комментария. Не исправлены: двойная проверка состава — `scripts/package.ts` сверяет ещё точку входа и `contracts`, а прогон дешёв; `npm` в рецепте из `PATH` — так рецепты зовут `node` и `npm` везде, а правило S4036 — о коде скриптов;
+  - ветку, коммиты, pull request и мерж этой задачи делает исполнитель, как в T10–T16.
+- **Открыто:** нет.
 
 #### T18. Первый релиз и публикация в npm
 
 - **Цель:** вышел релиз 0.1.0, а его файл пакета — в npm, `@altnovatrail/skill-map`, и `app` может его поставить, а `release-verify-npm` — принять (R37 spec, R77 spec).
-- **Сделать:** первый релиз; проверка его архива; первая публикация в npm руками тем же файлом; trusted publisher и следующая публикация шагом npm общего `release.yml` — как у `canvas` (T70 и T71 `canvas`).
+- **Сделать:** первый релиз; проверка его архива; первая публикация в npm руками тем же файлом; trusted publisher и следующая публикация шагом npm общего `release.yml` — как у `canvas` (T70 и T71 `canvas`). Дополнено T17: проба уже идёт с `npm-package` и `publish: false` (R13), и релиз включает `publish` — как у `canvas`, `${{ github.event_name != 'pull_request' }}`, чтобы pull request по-прежнему только пробовал.
 - **Мой шаг:** публикация и `npm trust`, с предупреждением и подтверждением по правилу 4.
 - **Риски:** ошибка npm/cli#9969 — у репозиториев с неизменяемым subject OIDC реестр отказывает в обмене токена. `canvas` записал её риском своих T70 и T71: перед шагом проверить, открыта ли она.
 - **Как проверить:** `npm view @altnovatrail/skill-map` называет 0.1.0; подпись файла проверяет `release-verify-npm`; `/code-review high`, один круг.
