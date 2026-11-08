@@ -1,11 +1,11 @@
 # NovaTrail's shared release (R18 .github), pinned to a release of .github by SHA with its version
 # beside it, as canvas's release is. RELEASE_LINE is the line the releases are numbered in; paths,
 # what they are built from: all a consumer gets of the package (R13 in docs/decisions.md). A run
-# after CI on main, and the button, publish the release; a pull request tries it, publishing
-# nothing: it builds the files, signs them and checks them, and npm's step checks the package's
-# archive and tries its publishing without doing it. Until the package is in npm, its first version
-# published by hand from the release, npm's step is the pull request's alone: with publish, the
-# shared release would stop at a package the registry does not have (RUN.md, T18).
+# after CI on main, and the button, publish the release and the same archive to npm, through
+# trusted publishing, with no token kept anywhere; a pull request tries it, publishing nothing: it
+# builds the files, signs them and checks them, and npm's step checks the package's archive and
+# tries its publishing without doing it. The first version, v0.1.0, was published by hand from its
+# release (RUN.md, T18).
 
 name: Release
 
@@ -62,4 +62,4 @@ jobs:
         .devcontainer/Dockerfile
         .github/workflows/release.yml
       publish: ${{ github.event_name != 'pull_request' }}
-      npm-package: ${{ github.event_name == 'pull_request' && '@altnovatrail/skill-map' || '' }}
+      npm-package: "@altnovatrail/skill-map"

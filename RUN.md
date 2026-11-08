@@ -449,6 +449,13 @@ E2 автор выбрал 2026-11-07 из таблицы 2, куда его п�
 - **Риски:** ошибка npm/cli#9969 — у репозиториев с неизменяемым subject OIDC реестр отказывает в обмене токена. `canvas` записал её риском своих T70 и T71: перед шагом проверить, открыта ли она.
 - **Как проверить:** `npm view @altnovatrail/skill-map` называет 0.1.0; подпись файла проверяет `release-verify-npm`; `/code-review high`, один круг.
 - **Разделы:** R37 spec, R77 spec; RULES.md, Hard rules; T70 и T71 `canvas`.
+- **Сделано (2026-11-08):**
+  - перед задачей: очередь Dependabot пуста — #5–#9 автор закрыл, других открытых pull request нет; npm/cli#9969 открыта, последнее обновление — 2026-10-28, как видел `canvas`;
+  - pull request #26: `publish` — `${{ github.event_name != 'pull_request' }}`, а `npm-package` — только пробе в pull request; README — значки Release и номера релиза и раздел установки; поправка 2026-11-08 к R13. Проба на #26 — «Verified OK», сумма архива `19b5b9c6…` та же, что у локального `release-files`. Мерж, который выпускает неизменяемый релиз, автор подтвердил по правилу 4;
+  - мерж #26 — 294b20c. Release после CI выпустил v0.1.0 в 00:37:00Z: неизменяемый релиз с `altnovatrail-skill-map-0.1.0.tgz`, `LICENSE`, `SHA256SUMS` и подписью `.sigstore.json` у каждого. `sha256sum --check` — OK, сумма архива — `19b5b9c6d4808ffd0f74e9d2a9d9260b80443f063d719cce92e8ae37997a1de0`, а `release-verify` — «skill-map v0.1.0, signed by the shared release.yml of .github v0.1.15»;
+  - шаг автора: тот же архив из релиза он проверил рецептом и опубликовал из пустой папки, `npm publish ./altnovatrail-skill-map-0.1.0.tgz --access public`, с подтверждением входа в браузере. Версия 0.1.0 в npm — тот же архив, байт в байт: `npm pack @altnovatrail/skill-map@0.1.0` даёт `19b5b9c6…`, `cmp` с файлом релиза — без расхождений, `shasum` реестра — `d142a40db1ada14a606347589993553e1fde5ec9`. Тег `latest` — 0.1.0; npm создал и заглушку `0.0.0-stage`, как у `canvas`;
+  - пробный проект, как `app`: `@altnovatrail/skill-map` 0.1.0 в `dependencies`, `@altnovatrail/spec` и `@altnovatrail/contracts` 0.9.5 в `devDependencies`, все `--save-exact`. TypeScript 7.0.2 с `Bundler` и `skipLibCheck: false` принял `scripts/consumer/main.ts`, а `release-verify-npm` принял lock-файл — у `skill-map` «signed by the shared release.yml of .github v0.1.15, and its integrity is the verified bytes», у `spec` и `contracts` — релиз `spec` v0.9.5;
+  - следующий pull request даёт шаг npm всем событиям; его мерж выпускает v0.1.1 и публикует его по OIDC — после `npm trust`, шага автора.
 
 #### T19. Итог E2
 
