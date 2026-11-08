@@ -111,7 +111,7 @@ E2 автор выбрал 2026-11-07 из таблицы 2, куда его п�
 | [x] | T14 | Слова, иконки и вид | Claude, проверяю я | да | T13 |
 | [x] | T15 | Линии раскрытого навыка | Claude, проверяю я | да | T13 |
 | [x] | T16 | Демо и проба руками | я + Claude | да | T14, T15 |
-| [ ] | T17 | Сборка релиза и пробный прогон | я + Claude | да | T16 |
+| [x] | T17 | Сборка релиза и пробный прогон | я + Claude | да | T16 |
 | [ ] | T18 | Первый релиз и публикация в npm | я + Claude | — | T17 |
 | [ ] | T19 | Итог E2 | Claude, проверяю я | — | T18 |
 
@@ -423,6 +423,23 @@ E2 автор выбрал 2026-11-07 из таблицы 2, куда его п�
   - рецепт зовётся `just release-files "$VERSION"` в стадии `toolchain` на дереве `git archive`, без `.git`, подмодуля и токена;
   - у `skill-map` неизменяемые релизы были выключены, а ruleset тегов не было; у `canvas` — `v-tags` (26336827): `refs/tags/v*`, `update`, `deletion`, `non_fast_forward`, без обхода;
   - `codecov/patch` Codecov пишет как check run, а не как статус коммита.
+- **Сделано (2026-11-08):**
+  - перед задачей (правило 12): находок по T16 нет — у SonarCloud ноль, у Scorecard шесть;
+  - шаг автора, по его поручению: неизменяемые релизы включены (`immutable-releases`: `enabled: true`), ruleset `v-tags` — ID 26779303, `refs/tags/v*`, `update`, `deletion` и `non_fast_forward`, без обхода;
+  - `.github/workflows/release.yml` — общий `release.yml` v0.1.15 по SHA, линия 0.1, на каждом pull request, после CI push в `main` и по кнопке, `publish: false` и `npm-package`;
+  - рецепт `release-files <версия>`; `scripts/release.ts` с тестами — проверка того, что сделал `npm pack`; `scripts/consumer.ts --release` — пробный потребитель выпускаемого архива из `dist/`;
+  - R13; [docs/architecture.md](docs/architecture.md), раздел 3.7; README — рецепт и проба; T18 — что релиз включает `publish`;
+  - проверено:
+    - `just release-files v0.1.0` — в `dist/` ровно `altnovatrail-skill-map-0.1.0.tgz`, `LICENSE` и `SHA256SUMS`; в архиве 24 файла сборки, `package.json` с версией `0.1.0` и `repository`, README, `LICENSE` и `NOTICE`, без `private` и `publishConfig`; потребитель принял типы под `NodeNext` и `Bundler`;
+    - два прогона подряд — одна сумма, и под масками 022, 077 и 002 — тоже;
+    - `v1.2`, `0.1.0`, `v01.0.0` и `v0.1.0-rc.1` рецепт отвергает, не трогая `dist/`; архив без `LICENSE` и `NOTICE`, с чужими именем, версией или файлом отвергает `release.ts`; `consumer.ts` с незнакомым аргументом — отказ;
+    - перечень путей даёт 12 модулей и девять файлов;
+    - проба «Release / release» на pull request #25 зелёная: архив `altnovatrail-skill-map-0.1.0.tgz`, подпись проверена — «Verified OK», шаг npm — «@altnovatrail/skill-map is not in the npm registry yet, which matters not with publish false», а сумма архива `0697f201…` — та же, что локально;
+    - `just ci` зелёный — 171 тест; `just -f spec/justfile docs-check-repo` зелёный;
+  - выяснилось при работе: `npm pack` хранит права файлов, а права `lib/` давала маска того, кто собирал, — под маской 077 сумма была другой; рецепт нормализует права копии;
+  - ревью `/code-review high`, один круг, — десять находок. Исправлены восемь: суммы зависели от маски прав; `release.yml` пропускал прогон после CI pull request из ветки форка с именем `main`; R13 неверно говорил, что правка README и `justfile` версии не даёт; правило имени архива — в двух скриптах, а выбор архива — по префиксу; копия для `npm pack` — по списку руками; `consumer.ts` молча принимал незнакомый аргумент; `basename`; длинная строка комментария. Не исправлены: двойная проверка состава — `scripts/package.ts` сверяет ещё точку входа и `contracts`, а прогон дешёв; `npm` в рецепте из `PATH` — так рецепты зовут `node` и `npm` везде, а правило S4036 — о коде скриптов;
+  - ветку, коммиты, pull request и мерж этой задачи делает исполнитель, как в T10–T16.
+- **Открыто:** нет.
 
 #### T18. Первый релиз и публикация в npm
 
