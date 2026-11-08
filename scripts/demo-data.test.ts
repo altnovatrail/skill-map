@@ -89,7 +89,7 @@ test("a vector of tiers gives its graph and its tiers, and one without them is r
   );
   expect(vector).toEqual({
     name: "chain",
-    source: "spec v0.9.8, format/vectors/tiers/chain.yaml",
+    source: "spec v0.9.9, format/vectors/tiers/chain.yaml",
     graph: { skills: { a: { title: "A", assessability: "verdict" } } },
     tiers: { a: 1 },
     manifest: null,

@@ -23,7 +23,7 @@ import { download } from "./download.ts";
 import { TAR } from "./tar.ts";
 
 /** The release of spec whose format file the titles come from: the tag spec/ stands on. */
-export const RELEASE = { repository: "spec", tag: "v0.9.8", format: "0.3" } as const;
+export const RELEASE = { repository: "spec", tag: "v0.9.9", format: "0.3" } as const;
 /** Where the titles are written. */
 export const TARGET = "src/element/anchor-titles.ts";
 
