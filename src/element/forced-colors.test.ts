@@ -56,6 +56,8 @@ test("with forced colours the tiles are the system's buttons, whatever the consu
     expect(getComputedStyle(lines.querySelector("circle") as Element).fill).toBe(
       system("Highlight"),
     );
+    const heading = mounted().shadowRoot?.querySelector("h3") as HTMLElement;
+    expect(getComputedStyle(heading).backgroundColor).toBe(system("Canvas"));
     const details = mounted().shadowRoot?.getElementById("details") as HTMLElement;
     expect(getComputedStyle(details).color).toBe(system("CanvasText"));
     expect(getComputedStyle(details).backgroundColor).toBe(system("Canvas"));

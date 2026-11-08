@@ -61,8 +61,12 @@ const CSS = `
 .band {
   position: relative;
 }
+/* A band's heading covers the lines that pass under it, as a tile does, but no wider than its text:
+   a line across a tier stays in sight beside it (RUN.md, Д5). */
 .band > :is(h2, h3, h4, h5, h6) {
+  width: fit-content;
   margin: 1rem 0 0.5rem;
+  background: ${paper};
 }
 .band > ul {
   display: flex;
@@ -152,6 +156,9 @@ const CSS = `
   }
   .details {
     border-color: CanvasText;
+  }
+  .band > :is(h2, h3, h4, h5, h6) {
+    background: Canvas;
   }
   .tile,
   .practise {
