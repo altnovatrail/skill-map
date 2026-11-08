@@ -21,6 +21,7 @@ import { join } from "node:path";
 import { parse } from "yaml";
 import { RELEASE } from "../demo/release.ts";
 import { SOURCE } from "../src/element/anchor-titles.ts";
+import { download } from "./download.ts";
 import { TAR } from "./tar.ts";
 import { RELEASE as FORMAT_RELEASE, URLS as FORMAT_URLS, sha256Of } from "./taxonomy.ts";
 
@@ -160,12 +161,6 @@ export function vectorOf(name: string, text: string): DemoGraph {
 /** One file of an archive in memory, which tar reads from its standard input. */
 function fileOf(archive: Uint8Array, path: string): Buffer {
   return execFileSync(TAR, ["-xzOf", "-", path], { input: archive, maxBuffer: 1 << 26 });
-}
-
-async function download(url: string): Promise<Uint8Array> {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
-  return new Uint8Array(await response.arrayBuffer());
 }
 
 /** The graphs of the modules of the pinned index, each from the release its entry names. */
