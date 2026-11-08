@@ -1,7 +1,9 @@
 # skill-map
 
 [![CI](https://github.com/altnovatrail/skill-map/actions/workflows/ci.yml/badge.svg)](https://github.com/altnovatrail/skill-map/actions/workflows/ci.yml)
+[![Release](https://github.com/altnovatrail/skill-map/actions/workflows/release.yml/badge.svg)](https://github.com/altnovatrail/skill-map/actions/workflows/release.yml)
 [![CodeQL](https://github.com/altnovatrail/skill-map/actions/workflows/codeql.yml/badge.svg)](https://github.com/altnovatrail/skill-map/actions/workflows/codeql.yml)
+[![Latest release](https://img.shields.io/github/v/release/altnovatrail/skill-map)](https://github.com/altnovatrail/skill-map/releases/latest)
 [![TypeScript version](https://img.shields.io/github/package-json/dependency-version/altnovatrail/skill-map/dev/typescript)](package.json)
 [![Coverage](https://codecov.io/gh/altnovatrail/skill-map/branch/main/graph/badge.svg)](https://codecov.io/gh/altnovatrail/skill-map)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/altnovatrail/skill-map/badge)](https://scorecard.dev/viewer/?uri=github.com/altnovatrail/skill-map)
@@ -19,7 +21,7 @@ A component of [NovaTrail](https://github.com/altnovatrail/spec/tree/v0.9.5), a 
 
 ## Status
 
-Detailing done. The first epic of the plan, now in [docs/plan/E1.md](docs/plan/E1.md), decided what the component's card left open, and section 3 of [docs/architecture.md](docs/architecture.md) describes the package. The first code is the current epic, E2 of RUN.md: so far the element `<novatrail-skill-map>` of the package `@altnovatrail/skill-map` — its tree, its words in English and Russian, its icons and its look — with its tools and CI, and no release yet. Inside the devcontainer, `just ci` runs the four checks CI runs — lint and types, the tests in Node and in Chromium with their coverage, advisories and licenses. `just release-files v0.1.0` writes the files a release would hold into `dist/` — the package's archive at that version, checked as a consumer takes it, `LICENSE` and `SHA256SUMS` — and every pull request tries the release through .github's shared workflow, publishing nothing until the first release.
+Detailing done. The first epic of the plan, now in [docs/plan/E1.md](docs/plan/E1.md), decided what the component's card left open, and section 3 of [docs/architecture.md](docs/architecture.md) describes the package. The first code is the current epic, E2 of RUN.md: so far the element `<novatrail-skill-map>` of the package `@altnovatrail/skill-map` — its tree, its words in English and Russian, its icons and its look — with its tools and CI, and its first release, v0.1.0. Inside the devcontainer, `just ci` runs the four checks CI runs — lint and types, the tests in Node and in Chromium with their coverage, advisories and licenses. `just release-files v0.1.0` writes the files a release would hold into `dist/` — the package's archive at that version, checked as a consumer takes it, `LICENSE` and `SHA256SUMS` — and a release comes out by itself after CI passes on `main`, when a path it is built from has changed: the package's archive, with its NOTICE, LICENSE and their sums, built, signed and checked by .github's shared release. Its first version goes to npm by hand, the same archive; a pull request from a branch of this repository tries the release and publishes nothing.
 
 To try the map by hand, `just demo` serves a page at http://127.0.0.1:5173, which VS Code forwards to a browser outside the container. It draws the tests' example, a graph of eight tiers, the modules of the first slice and spec's vectors of tiers, with switches for the view, the language, the state, the theme and the width. For a tablet, `just demo-build` writes the same page into `demo/dist/`, with the graphs inside it, and any server of files on your network serves that folder — for one, `python3 -m http.server -d demo/dist` on your computer. A browser loads no modules from `file://`.
 
@@ -34,6 +36,17 @@ The map holds the standard of NovaTrail's packages of the interface: WCAG 2.2 AA
 | `--novatrail-skill-map-accent` | the expanded tile, the frames of the tiles linked to it and of the details, the button that chooses a skill, the ring of the focus | `#1d4ed8` |
 
 The contrast of a theme the consumer sets is the consumer's to check. With forced colours the system's colours stand in for the theme. The map's own words are in English and Russian, by the element's attribute `lang`, and English for any other language. What the package does not meet yet is declared in section 3.8 of [docs/architecture.md](docs/architecture.md): nothing so far. The icons are Material Symbols, by Google, under the Apache License 2.0, as [NOTICE](NOTICE) says.
+
+## Install
+
+The app takes the package from npm at an exact version, and the packages of spec whose types the element's contract is in — the module format's `@altnovatrail/spec`, at the version the package has in its `dependencies`, and the contracts' `@altnovatrail/contracts`, the app's own, at the same version:
+
+```sh
+npm install --save-exact @altnovatrail/skill-map@<version>
+npm install --save-exact --save-dev @altnovatrail/spec@<its version>
+```
+
+A pull request that changes the lock file has spec's recipe check it, as NovaTrail's rules ask of every package of `@altnovatrail`: `just -f spec/justfile release-verify-npm package-lock.json`, from a checkout of spec at a tag. It takes the archive from the registry only if it is the same bytes as the file of skill-map's release, signed by .github's shared release at the call of skill-map's `release.yml` on `main`.
 
 ## Documents
 
