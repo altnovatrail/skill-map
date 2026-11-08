@@ -1,0 +1,63 @@
+# NovaTrail's shared release (R18 .github), pinned to a release of .github by SHA with its version
+# beside it, as canvas's release is. RELEASE_LINE is the line the releases are numbered in; paths,
+# what they are built from: all a consumer gets of the package (R13 in docs/decisions.md). Until
+# the first release (RUN.md, T18) every run publishes nothing: a pull request, a run after CI on
+# main and the button each build the files, sign them and check them, the npm package's archive
+# too, and npm's step tries the publishing of that archive without doing it.
+
+name: Release
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main]
+  # Every pull request, with no paths of its own: a filter would copy the list below in another
+  # syntax, and a run of a change outside the list ends once the version is worked out.
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  RELEASE_LINE: "0.1"
+
+jobs:
+  release:
+    name: Release
+    # A trial asks no CI to have passed, so this asks it of a run after CI: a commit whose checks
+    # failed is no release to try. And that run is CI of a push to this repository's main: CI of a
+    # pull request from a fork's branch named main passes the filter of branches above too.
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository)
+    permissions:
+      contents: write
+      id-token: write
+      actions: read
+    uses: altnovatrail/.github/.github/workflows/release.yml@89d3ceee0b9977b3334488a4133d084d76474e0d # v0.1.15
+    with:
+      # The package's code without its tests, fixtures and type checks — a pathspec's * takes any
+      # depth — the icons and the anchor skills' titles written into it among it, what builds it,
+      # what npm pack takes besides it, the toolchain stage that runs npm, and this file, so that a
+      # change of the line gives a release. The lock file is no part of the archive, and the
+      # compiler is pinned in package.json.
+      paths: |
+        src/*.ts
+        :(exclude)src/*.test.ts
+        :(exclude)src/*.fixture.ts
+        :(exclude)src/*.check.ts
+        package.json
+        tsconfig.base.json
+        tsconfig.build.json
+        justfile
+        README.md
+        LICENSE
+        NOTICE
+        .devcontainer/Dockerfile
+        .github/workflows/release.yml
+      publish: false
+      npm-package: "@altnovatrail/skill-map"

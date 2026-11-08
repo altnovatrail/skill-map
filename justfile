@@ -3,7 +3,8 @@
 # runner's user, with HOME=/tmp and with CI from the step's environment (R08 in docs/decisions.md).
 # Only ci-licenses reads spec/: it runs spec's recipes licenses-check-repo and release-verify-npm,
 # and the licenses job alone gets the submodule. The code and its tests read nothing of spec/, and
-# the documents are checked by spec's own recipe, just -f spec/justfile docs-check-repo.
+# the documents are checked by spec's own recipe, just -f spec/justfile docs-check-repo. One more
+# recipe is .github's shared release.yml's: release-files writes the files of a release (R13).
 
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
@@ -65,6 +66,44 @@ ci-licenses:
 build: _install
     rm -rf lib
     {{ bin }}/tsc -p tsconfig.build.json
+
+# Write the files of the release of a version, v0.1.0 say, into dist/, as .github's shared
+# release.yml runs it: in the toolchain stage, on the tree of the commit alone, with no git, no spec
+# submodule and no token (R13). They are the package's archive, as npm pack makes it, with the
+# version without its v and NOTICE in it (R10); LICENSE; and SHA256SUMS of the two. The archive is
+# packed from a copy of what npm pack takes of the tree, by npm's own list, with the version set there, so that the package.json
+# of the tree keeps 0.0.0. scripts/release.ts checks the archive itself and names it, and the
+# trial consumer takes it as a consumer's TypeScript does, under NodeNext and Bundler: a release a
+# consumer could not build with is no release. npm pack fixes every file's time and order, so a
+# build of the same commit gives the same sums, and the sums are printed for whoever builds it again
+# to compare. As canvas's release-files does (R08 canvas).
+release-files version: build
+    #!/usr/bin/env bash
+    set -euo pipefail
+    version={{ quote(version) }}
+    if ! [[ "$version" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+        echo "release-files: the version is v<major>.<minor>.<patch>, as v0.1.0, not ${version}" >&2
+        exit 1
+    fi
+    number="${version#v}"
+    node scripts/package.ts
+    rm -rf dist
+    mkdir dist
+    stage="$(mktemp -d)"
+    trap 'rm -rf "$stage"' EXIT
+    # What npm pack takes of the tree, copied as it is: the list is npm's own, from package.json.
+    npm pack --dry-run --json --ignore-scripts \
+        | node -e 'for (const { path } of JSON.parse(require("fs").readFileSync(0, "utf8"))[0].files) console.log(path)' \
+        | while IFS= read -r path; do cp --parents -- "$path" "$stage"; done
+    # npm pack keeps the modes of what it packs, which the umask of whoever built lib/ and copied it
+    # gave: one set of modes, whoever builds, for the same sums.
+    chmod -R u=rwX,go=rX "$stage"
+    packed="$(cd "$stage" && npm pkg set version="$number" && npm pack --json --ignore-scripts --pack-destination "$OLDPWD/dist")"
+    archive="$(node scripts/release.ts "$number" <<< "$packed")"
+    node scripts/consumer.ts --release
+    cp LICENSE dist/LICENSE
+    (cd dist && sha256sum -- "$archive" LICENSE > SHA256SUMS)
+    cat dist/SHA256SUMS
 
 # Write the English titles of the anchor skills, src/element/anchor-titles.ts, anew from the format
 # file of the release of spec that scripts/taxonomy.ts names: after a move to a new tag of spec
