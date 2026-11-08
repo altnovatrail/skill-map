@@ -251,3 +251,27 @@ test("an accent that is no colour gives the lines the ink's colour, as it gives 
     theme.remove();
   }
 });
+
+test("a band's heading lies over the lines, as wide as its text: a line across a tier passes under its words", async () => {
+  await mount();
+  await userEvent.click(tile("Share with a remainder, Ready to start"));
+  const heading = [...shadow().querySelectorAll("h3")].find(
+    (node) => node.textContent === "Tier 2 · Sharing",
+  ) as HTMLElement;
+  expect(getComputedStyle(heading).backgroundColor).toBe("rgb(255, 255, 255)");
+  const band = (heading.parentElement as HTMLElement).getBoundingClientRect();
+  expect(heading.getBoundingClientRect().width).toBeLessThan(band.width);
+  // The line from the anchor skill's band to tier 3 crosses tier 2's heading row, within the
+  // heading's width, and under it: the SVG comes first in the map, unlayered, and the bands after it
+  // are positioned, so they paint over it.
+  const line = lines().find(({ from }) => from === "core.multiplication-table");
+  const box = boxOf(heading);
+  expect(line?.start.y).toBeLessThan(box.top);
+  expect(line?.end.y).toBeGreaterThan(box.bottom);
+  expect(Math.min(line?.start.x ?? 0, line?.end.x ?? 0)).toBeLessThan(box.right);
+  const map = shadow().querySelector(".map") as HTMLElement;
+  const svg = shadow().querySelector("svg.lines") as SVGSVGElement;
+  expect(map.firstElementChild).toBe(svg);
+  expect(getComputedStyle(svg).zIndex).toBe("auto");
+  expect(getComputedStyle(heading.parentElement as HTMLElement).position).toBe("relative");
+});

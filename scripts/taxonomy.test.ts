@@ -29,7 +29,7 @@ test("a schema without branches, or a branch without a const and a title of stri
 
 test("the source names the release, the file and its digest, and quotes each title", () => {
   const source = render(SHA, [["core.a", 'Say "hi"']]);
-  expect(source).toContain('release: "spec v0.9.5",');
+  expect(source).toContain('release: "spec v0.9.8",');
   expect(source).toContain('file: "format-0.3.tar.gz",');
   expect(source).toContain(`sha256: "${SHA}",`);
   expect(source).toContain('  "core.a": "Say \\"hi\\"",');
