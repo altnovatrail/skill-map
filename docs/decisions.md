@@ -461,3 +461,5 @@
 - у pull request из форка нет прав на запись и OIDC, и проба там не стартует. Форков у `skill-map` пока нет, а проба не в ruleset `main`.
 
 — `.github/workflows/release.yml`, `justfile`, `scripts/release.ts`, `scripts/consumer.ts`; [architecture.md](architecture.md), раздел 3.7; R08, R09; RUN.md, T17 и T18.
+
+— *Поправка 2026-11-08:* **первый релиз включает публикацию: `publish` — `${{ github.event_name != 'pull_request' }}`, и релиз выходит после CI push в `main` и по кнопке, а pull request только пробует. Шаг npm, `npm-package`, остаётся пробе в pull request, пока пакета нет в реестре: с публикацией общий `release.yml` остановил бы релиз на пакете, которого реестр не знает. Первую версию, v0.1.0, автор публикует руками тем же архивом из релиза, а шаг npm для всех событий включает следующий pull request — после `npm trust`, как у `canvas` (T70 и T71 `canvas`). До него пути релиза не трогает ни один pull request: иначе вышла бы версия без npm.** README получил значки Release и номера релиза (repositories 2.3 spec) и раздел установки по точной версии с проверкой `release-verify-npm`. — RUN.md, T18; `.github/workflows/release.yml`, README.
