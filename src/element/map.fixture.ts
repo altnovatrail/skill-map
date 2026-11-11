@@ -8,7 +8,7 @@ import { GRAPH, MODULE, NOW, SKILL_MAP, TIERS } from "../core/fair-shares.fixtur
 import { type NovatrailSkillMap, TAG } from "./index.js";
 
 export const MANIFEST = {
-  module_format_version: "0.3",
+  module_format_version: "0.4",
   id: MODULE,
   version: "1.0.0",
   title: "Fair shares",

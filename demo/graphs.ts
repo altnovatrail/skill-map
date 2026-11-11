@@ -20,7 +20,7 @@ export interface Choice {
 /** A manifest of a module of the page's own, for a graph that comes without one. */
 function manifestOf(id: string, title: string): Manifest {
   return {
-    module_format_version: "0.3",
+    module_format_version: "0.4",
     id,
     version: "1.0.0",
     title,

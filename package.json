@@ -23,9 +23,9 @@
     "./src/element/index.ts"
   ],
   "devDependencies": {
-    "@altnovatrail/contracts": "0.9.9",
+    "@altnovatrail/contracts": "0.15.0",
     "@biomejs/biome": "2.6.5",
-    "@iconify-json/material-symbols": "1.2.97",
+    "@iconify-json/material-symbols": "1.2.98",
     "@iconify/utils": "3.1.7",
     "@types/node": "24.19.2",
     "@vitest/browser-playwright": "5.1.0",
@@ -38,6 +38,6 @@
     "yaml": "2.9.1"
   },
   "dependencies": {
-    "@altnovatrail/spec": "0.9.9"
+    "@altnovatrail/spec": "0.15.0"
   }
 }

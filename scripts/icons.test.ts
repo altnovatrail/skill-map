@@ -52,7 +52,7 @@ test("the set package-lock.json pins has every icon of the table, as filled path
 test("no two values share an icon, and none takes an icon of the table of architecture 6 of spec", () => {
   const bases = Object.values(TABLE);
   expect(new Set(bases).size).toBe(bases.length);
-  // The bases the table of architecture 6 of spec names, at v0.9.9 (R78 spec): the tests read
+  // The bases the table of architecture 6 of spec names, at v0.15.0 (R78 spec): the tests read
   // nothing of spec/, which CI checks out for the licenses alone.
   const shared = [
     "ink-pen",
