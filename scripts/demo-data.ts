@@ -28,7 +28,7 @@ import { RELEASE as FORMAT_RELEASE, URLS as FORMAT_URLS, sha256Of } from "./taxo
 export { sha256Of };
 
 /** The release of modules whose index is pinned, and the file of it. */
-export const MODULES = { repository: "modules", tag: "v0.1.0", file: "module-index.json" } as const;
+export const MODULES = { repository: "modules", tag: "v0.2.5", file: "module-index.json" } as const;
 /** Where `just demo-pin` downloads the index and its bundle, and removes them after. */
 export const PIN_FOLDER = "node_modules/.demo-pin";
 /** Where the pinned digest is written. */

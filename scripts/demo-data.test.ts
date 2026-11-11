@@ -16,17 +16,17 @@ const bytes = (text: string) => new TextEncoder().encode(text);
 
 const INDEX = bytes(
   JSON.stringify({
-    module_format_version: "0.3",
+    module_format_version: "0.4",
     modules: {
       "z/last": {
-        "0.1.0": { module_format_version: "0.3", package_digest: "sha256:z", release: "v0.1.0" },
+        "0.1.0": { module_format_version: "0.4", package_digest: "sha256:z", release: "v0.1.0" },
       },
       "a/first": {
-        "0.9.0": { module_format_version: "0.3", package_digest: "sha256:old", release: "v0.1.0" },
-        "0.10.0": { module_format_version: "0.3", package_digest: "sha256:new", release: "v0.2.0" },
-        "0.11.0": { module_format_version: "0.3", package_digest: "sha256:no-release" },
+        "0.9.0": { module_format_version: "0.4", package_digest: "sha256:old", release: "v0.1.0" },
+        "0.10.0": { module_format_version: "0.4", package_digest: "sha256:new", release: "v0.2.0" },
+        "0.11.0": { module_format_version: "0.4", package_digest: "sha256:no-release" },
         "1.0.0": {
-          module_format_version: "0.3",
+          module_format_version: "0.4",
           package_digest: "sha256:gone",
           withdrawn: { reason: "x" },
         },
@@ -89,7 +89,7 @@ test("a vector of tiers gives its graph and its tiers, and one without them is r
   );
   expect(vector).toEqual({
     name: "chain",
-    source: "spec v0.9.9, format/vectors/tiers/chain.yaml",
+    source: "spec v0.15.0, format/vectors/tiers/chain.yaml",
     graph: { skills: { a: { title: "A", assessability: "verdict" } } },
     tiers: { a: 1 },
     manifest: null,
@@ -104,7 +104,7 @@ test("the pinned digest in the demo is what render writes for it, and names the 
   expect(readFileSync(TARGET, "utf8")).toBe(render(RELEASE.sha256));
   expect(RELEASE.release).toBe(`${MODULES.repository} ${MODULES.tag}`);
   expect(URLS).toEqual([
-    "https://github.com/altnovatrail/modules/releases/download/v0.1.0/module-index.json",
-    "https://github.com/altnovatrail/modules/releases/download/v0.1.0/module-index.json.sigstore.json",
+    "https://github.com/altnovatrail/modules/releases/download/v0.2.5/module-index.json",
+    "https://github.com/altnovatrail/modules/releases/download/v0.2.5/module-index.json.sigstore.json",
   ]);
 });

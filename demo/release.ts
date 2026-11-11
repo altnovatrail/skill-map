@@ -4,7 +4,7 @@
 
 /** The module index the demo's graphs come from, and its digest. */
 export const RELEASE = {
-  release: "modules v0.1.0",
+  release: "modules v0.2.5",
   file: "module-index.json",
-  sha256: "ed4d8bb325fdcb3ea54da439e08c58d927f773ba0f097338f7767ad76be8c90e",
+  sha256: "cebf23cf94456ef313ca00c97ca05db7fccb2575780f8dfd899623ea60aaec6a",
 } as const;
