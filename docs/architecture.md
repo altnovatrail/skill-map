@@ -1,6 +1,6 @@
 # skill-map — архитектура
 
-> Статус: каркас из заготовки `spec`, 2026-10-19; сверен с `spec` v0.2.9 2026-10-20 (R01), с v0.9.4 2026-11-07 (R02), с v0.9.5 в тот же день (R05), с v0.9.8 2026-11-08 (R14), с v0.9.9 в тот же день (R15) и с v0.15.0 2026-11-11 (R16); детализация закончена 2026-11-07 (T05; архив эпика — [plan/E1.md](plan/E1.md)).
+> Статус: каркас из заготовки `spec`, 2026-10-19; сверен с `spec` v0.2.9 2026-10-20 (R01), с v0.9.4 2026-11-07 (R02), с v0.9.5 в тот же день (R05), с v0.9.8 2026-11-08 (R14), с v0.9.9 в тот же день (R15) с v0.15.0 2026-11-11 (R16) и с v0.16.3 2026-11-12 (R18); детализация закончена 2026-11-07 (T05; архив эпика — [plan/E1.md](plan/E1.md)).
 >
 > Что делает компонент, чего не делает и что о нём ещё предстоит решить. Это подробности его карточки — architecture 3.3 spec. Карточка остаётся сводкой: если подробности меняют то, что в ней сказано, она правится в `spec` тем же путём, что и вопросы в его реестры (RULES.md, Across repositories).
 >
@@ -37,13 +37,13 @@
 
 ## 2. Решить при детализации
 
-Детализация закончена 2026-11-07 (T05, [plan/E1.md](plan/E1.md)): решены все пункты «Решить при детализации» карточки, а решения — в разделе 3. Подразделы ниже остались указателями: на них ссылаются журнал и RUN.md.
+Детализация закончена 2026-11-07 (T05, [plan/E1.md](plan/E1.md)): решены все пункты «Решить при детализации» карточки, а решения — в разделе 3. Подразделы 2.1–2.4 остались указателями: на них ссылаются журнал и RUN.md. Подраздел 2.5 — вопрос, который пришёл с полем контракта в v0.16.3 (R18): он открыт.
 
 На `spec` v0.9.4 и v0.9.5 у карточки было три пункта — данные и раскладка, как карта показывает ярусы, ранги (architecture 3.3 spec), — а с v0.9.8 она говорит «решено всё» (R14). Данные и договор элемента решила T01 — R03 и R04, — раскладку и ярусы на карте — T08, R06, ранги на карте — T03, R07. Что решил сам `spec` — ярусы и публикацию, — разделы 3.6 и 3.7. Задачи T02 и T04, которые разбирали 2.2 и 2.4, не делались (R02).
 
 **Отложено сознательно:**
 - что такое ранг в NovaTrail — О-13 (product 13 spec), который с v0.9.8 дополнен выводами детализации карты (В4, закрыт переходом R14). До решения рангов на карте нет (R07; раздел 3.5);
-- сворачивание далёких ярусов — Д3 в таблице 4 [RUN.md](../RUN.md): вернуться, когда у модуля станет больше шести ярусов (R06).
+- сворачивание далёких ярусов — Д3 в [DEBT.md](../DEBT.md): вернуться, когда у модуля станет больше шести ярусов (R06).
 
 ### 2.1. Раскладка графа — решено (R06)
 
@@ -60,6 +60,16 @@
 ### 2.4. Где публикуется пакет — решено в `spec` (R37 spec, R77 spec)
 
 - **Суть:** Т-26 и Т-27 закрыты — пакет выходит в npm, в области `@altnovatrail` (R37 spec), а подпись файла релиза проверяет рецепт `spec` `release-verify` (R77 spec). Что решено, — раздел 3.7; сделает это эпик кода.
+
+### 2.5. Модули, которые учат навыку-опоре «неизвестно» — открыто (Д211 spec)
+
+- **Суть:** с v0.16.3 у навыка-опоры в ответе `GetSkillMap` есть `teaching_modules` — ID модулей каталога `api`, которые учат навыку-опоре и не подключены к профилю: их текущая версия подходит профилю по аудитории и называет навык в `teaches`. Ответ `spec` на строку `engine` В36 велит показать их взрослому и ученику при «неизвестно» — с названием из открытого вида паспорта и подключением, `ConnectModule`, — а где, на карте или рядом с ней, решают детализации `app` и `skill-map` (Д211 spec; поправка 2026-11-11 к R99 spec). Пока карта поле не читает (раздел 3.1).
+- **Что известно:** карта рисует то, что ей дал `app`, и сама ничего не делает, кроме события выбора `skillchoose` (R03, R04). Названий навыков других модулей у неё нет, поэтому `teaching_skills` она не показывает (раздел 3.1); названий модулей каталога в её данных тоже нет — открытые виды их паспортов держит `app`. Подключение модуля — запрос `app` к `api`. Своё «где» `app` решает с картой навыков, эпиком E3 своего RUN.md (Д211 spec).
+- **Варианты:**
+  - (а) не на карте: модули показывает `app` рядом с ней, а карта, как и сейчас, говорит «неизвестно» с причиной. Договор элемента не меняется;
+  - (б) на карте, в подробностях навыка-опоры «неизвестно»: модули по названию и кнопка подключения. Нужны новое свойство с названиями модулей — их `app` берёт из паспортов — и новое событие с ID модуля, то есть поправки к R03 и R04 и правка карточки architecture 3.3 spec строкой «В реестр spec».
+- **Рекомендация:** (а), пока `app` не решил свой экран: подключение — действие над профилем, а не над картой, и договор элемента остаётся тем, что `app` уже собирает. Если `app` решит показывать модули в подробностях навыка-опоры, — (б), своей задачей.
+- **Решает:** автор — строка В11 таблицы 3 [RUN.md](../RUN.md).
 
 ## 3. Устройство
 
@@ -93,9 +103,10 @@
 | «владеет», «не владеет», «неизвестно» | `AnchorSkillState.holding` | навык-опора | да | да |
 | почему не владеет или неизвестно | `AnchorSkillState.reason` | навык-опора | да | да |
 | навыки, которые учат навыку-опоре | `AnchorSkillState.teaching_skills` | навык-опора | нет | нет |
+| модули каталога, которые учат навыку-опоре и не подключены | `AnchorSkillState.teaching_modules` | навык-опора | нет | нет |
 | дайджест пакета | `GetSkillMapResponse.package_digest` | пакет модуля (R62 spec) | — | — |
 
-«—» — поле не показывается, а служит карте. Навыки, которые учат навыку-опоре, карта не называет: это полные ID навыков других модулей, а их названий у неё нет; навыки своего модуля, которые ему учат, видны по `teaches`. Ловушек на карте нет (R99 spec).
+«—» — поле не показывается, а служит карте. Навыки, которые учат навыку-опоре, карта не называет: это полные ID навыков других модулей, а их названий у неё нет; навыки своего модуля, которые ему учат, видны по `teaches`. Модули, которые учат навыку-опоре и не подключены, — ID модулей каталога, с v0.16.3 (поправка 2026-11-11 к R99 spec; R18): карта их пока не показывает, а покажет ли, — раздел 2.5. Ловушек на карте нет (R99 spec).
 
 ### 3.2. Состояния на карте
 
@@ -171,16 +182,16 @@ skills:
 - Типы элемента — в объявлениях пакета, а элемент в `HTMLElementTagNameMap` и событие в `GlobalEventHandlersEventMap` ставит сам пакет. Типы данных — `@altnovatrail/spec` и `@altnovatrail/contracts` по той же точной версии, что тег подмодуля `spec` (R73 spec, R83 spec).
 - Английские названия навыков-опор пакет вшивает при сборке из `format/schemas/shared-taxonomy.schema.json` файла формата релиза `spec`, проверенного `release-verify`, по каждой версии формата, которую читает его сборка; неизвестный ID показывает как есть, с `lang="en"` (R04; R64 spec, R77 spec).
 - Касание, Enter или Space раскрывают навык, а выбирают его для занятия кнопкой «Заниматься» в подробностях: она и отдаёт `skillchoose`. С клавиатуры — Tab по плиткам (R06, раздел 3.4).
-- Как элемент устроен в коде — R09. Дерево обновляется на месте, по ID навыка; присвоения одной задачи сливаются в одно обновление. Слова — таблица пакета на `en` и `ru`, язык — атрибут `lang` (R10, раздел 3.8). Английские названия навыков-опор вшиты из файла формата релиза `spec` — с 2026-11-11 v0.15.0, формата 0.4 (R16): рецепт `taxonomy` проверяет файл `release-verify` и закрепляет его sha256, а `ci-lint` сверяет таблицу с файлом. Стили проверены под строгой CSP, а объявления — пробным потребителем.
+- Как элемент устроен в коде — R09. Дерево обновляется на месте, по ID навыка; присвоения одной задачи сливаются в одно обновление. Слова — таблица пакета на `en` и `ru`, язык — атрибут `lang` (R10, раздел 3.8). Английские названия навыков-опор вшиты из файла формата релиза `spec` — с 2026-11-12 v0.16.3, формата 0.4 (R18): рецепт `taxonomy` проверяет файл `release-verify` и закрепляет его sha256, а `ci-lint` сверяет таблицу с файлом. Стили проверены под строгой CSP, а объявления — пробным потребителем.
 
 ### 3.4. Раскладка
 
 Карту раскладывает свой код пакета, на устройстве, из открытого вида графа и `skill_tiers` (R06; R03). Графы первого среза малы: `grade-3-math` — 4 навыка в 3 ярусах, `english-essays` — 6 в 4, а пример олимпиадной математики в формате — 17 в 3 (`modules`, `main` 6d061e9; `spec/format/vectors/tiers/olympiad-math.yaml`).
 
 **Полосы.**
-- Ярус — полоса, сверху вниз: сначала навыки-опоры, затем ярус 1, 2 и дальше — все, сколько есть; свёрнутых нет (Д3 в таблице 4 RUN.md).
+- Ярус — полоса, сверху вниз: сначала навыки-опоры, затем ярус 1, 2 и дальше — все, сколько есть; свёрнутых нет (Д3 в [DEBT.md](../DEBT.md)).
 - Заголовок полосы — слово яруса и номер, а за ними имя яруса из `tiers`, если оно есть: «Ярус 2 · Sharing», «Ярус 3» (R49 spec). У полосы навыков-опор — свой заголовок. Уровень заголовков — атрибут `heading-level` (раздел 3.3).
-- Навыки полосы — плитки в строку с переносом. Прокручивает страница, своего контейнера прокрутки нет: на 320 CSS px и при масштабе 200 % полосы переносятся, и вбок ничего не прокручивается (WCAG 2.2, 1.4.10; раздел 4).
+- Навыки полосы — плитки в строку с переносом. Прокручивает страница, своего контейнера прокрутки нет: на 320 CSS px и при масштабе 200 % полосы переносятся, и вбок ничего не прокручивается (WCAG 2.2, 1.4.10; sources 2.1).
 - Плитка — название навыка с `lang` языка объяснений, а навыка-опоры — с `lang="en"`; состояние или пометка — словом и иконкой (раздел 3.2). Цель — не меньше 44 × 44 CSS px (R90 spec).
 - У последовательного модуля по навыку в полосе — тем же правилом. Своего вида у него нет.
 
@@ -242,7 +253,7 @@ skills:
 - Ярус навыка без пререквизитов среди навыков модуля — 1, а у остальных — на 1 выше самого высокого яруса их пререквизитов в модуле: число навыков в самой длинной цепочке пререквизитов, которой навык кончается. Пререквизит всегда стоит ярусом ниже, и связи из старшего яруса в младший не бывает. Предела числа ярусов нет. Навыки-опоры ярусов не дают (R49 spec с поправкой 2026-10-26).
 - Имена ярусам — необязательный список `tiers` в графе, на языке объяснений: первое имя — у яруса 1. Ярус без имени показывается номером, а имя за последним ярусом ничего не называет (R49 spec).
 - Ярусы вычисляет `module-kit`, когда собирает пакет, и кладёт их в канонический вид, `skill_tiers`; векторы ярусов — в `format/vectors/tiers/` `spec`. До карты ярусы доходят от `api` ответом `GetSkillGraph`, рядом с открытым видом графа (R62 spec, R99 spec). Карта ярусов не вычисляет.
-- Подгонять граф под рисунок карты R49 spec отверг: ради трёх слоёв карты standalone одно ребро там не провели (R164 standalone), — а дальние ярусы карта может свернуть в строку, как прототип. Такое сворачивание R06 отложил — Д3 в таблице 4 [RUN.md](../RUN.md). В MathTrail слоёв было три — «основы», «правила», «сложные задачи», — и тест каталога держал цепочки в пределах трёх слоёв (SPEC 8.12.2 standalone; раздел 4).
+- Подгонять граф под рисунок карты R49 spec отверг: ради трёх слоёв карты standalone одно ребро там не провели (R164 standalone), — а дальние ярусы карта может свернуть в строку, как прототип. Такое сворачивание R06 отложил — Д3 в [DEBT.md](../DEBT.md). В MathTrail слоёв было три — «основы», «правила», «сложные задачи», — и тест каталога держал цепочки в пределах трёх слоёв (SPEC 8.12.2 standalone; sources 1.1).
 - В первом срезе ярусов немного: 3 у `grade-3-math`, 4 у `english-essays` (`modules`, `main` 6d061e9) и 3 у примера олимпиадной математики в формате (`spec/format/vectors/tiers/olympiad-math.yaml`).
 
 ### 3.7. Сборка, зависимости и публикация
@@ -254,7 +265,7 @@ skills:
   - Набор иконок `@iconify-json/material-symbols` — в `devDependencies`, по точной версии, а вшиваются при сборке только свои иконки (R78 spec; поправка 2026-11-02 к R39 spec).
   - Английские названия навыков-опор — из файла формата релиза `spec`, проверенного `release-verify` (R04; R64 spec, R77 spec).
   - Только лицензии, совместимые с Apache-2.0; лицензии lock-файла проверяет рецепт `spec` `licenses-check-repo` в своём `ci-licenses` (R39 spec; RULES.md, Hard rules).
-- **Инструменты разработки.** Вид devcontainer — `typescript` (R02): Biome пришёл с ним форматтером TypeScript раньше решения `skill-map` о линтере. Линтер — тоже Biome, 2.6.4, а 2026-11-07 Dependabot поднял его до 2.6.5 (pull request #17), а с ним сборка `tsc` TypeScript 7.0.2 в `lib/` без сборщика и тесты Vitest 5.1.0 в Node и в Chromium (R08). Точка входа у пакета одна — элемент, а ядро без DOM, `src/core/`, — своей программой `tsc`, вне `exports`. Элемент — свой код, без библиотеки. Отличий от контейнера `spec` код не вводит (R08), кроме одного: с 2026-11-11 браузер тестов — ревизии 1254 из образа Playwright 1.65.0, поднятый здесь раньше заготовки `spec` (R17). Тесты в браузере — Chrome Headless Shell из образа Playwright в стадии `toolchain`, а `playwright` в `package.json` — той же версии, названным исключением из правила лицензий (R02; R79 spec); в них же axe-core, тоже названным исключением (R10). Контейнер на этом образе собран 2026-11-07 — Д2 в таблице 4 [RUN.md](../RUN.md) закрыт.
+- **Инструменты разработки.** Вид devcontainer — `typescript` (R02): Biome пришёл с ним форматтером TypeScript раньше решения `skill-map` о линтере. Линтер — тоже Biome, 2.6.4, а 2026-11-07 Dependabot поднял его до 2.6.5 (pull request #17), а с ним сборка `tsc` TypeScript 7.0.2 в `lib/` без сборщика и тесты Vitest 5.1.0 в Node и в Chromium (R08). Точка входа у пакета одна — элемент, а ядро без DOM, `src/core/`, — своей программой `tsc`, вне `exports`. Элемент — свой код, без библиотеки. Отличий от контейнера `spec` код не вводит (R08): браузер тестов — ревизии 1254 из образа Playwright 1.65.0. С 2026-11-11 его поднимали здесь раньше заготовки `spec` (R17), а с 2026-11-12 `.devcontainer/` снова совпадает с тем, что заготовка v0.16.3 строит для вида `typescript` (R18). Тесты в браузере — Chrome Headless Shell из образа Playwright в стадии `toolchain`, а `playwright` в `package.json` — той же версии, названным исключением из правила лицензий (R02; R79 spec); в них же axe-core, тоже названным исключением (R10). Контейнер на этом образе собран 2026-11-07 — Д2 закрыт ([DEBT.md](../DEBT.md)).
 - **Демо.** Карту пробуют руками на странице `demo/` (R12): `just demo` — сервер Vite на компьютере, `just demo-build` — статическая сборка для планшета. Графы — пример, свой граф на восемь ярусов, модули первого среза из релиза `modules` и векторы ярусов `spec`, по закреплённым дайджестам; `just demo-pin` проверяет индекс модулей `release-verify` и закрепляет его sha256. В пакет и в релиз демо не идёт.
 - **Тесты и покрытие.** Код — со своими тестами, а покрытие идёт в Codecov, и мерж ждёт `codecov/patch` не ниже 90 % изменённых строк (R48 spec; RULES.md, How we work). README несёт значки статуса (R48 spec). Проверки — рецепты `ci-lint`, `ci-test`, `ci-vuln` и `ci-licenses` для общего `typescript.yml` `.github`, а локально — `just ci` (R08). Правила, которые тесты проверяют первыми: состояния на карте (раздел 3.2), порядок в полосе и раскрытие (раздел 3.4) — на синтетических графах, как пример `example/fair-shares`.
 - **Релиз и публикация.** Всё, что выходит у `skill-map`, — файлы одного релиза GitHub с подписью общего `release.yml` `.github`, и тот же файл пакета уходит в npm, `@altnovatrail/skill-map` (R37 spec). Пакет из npm `app` принимает, когда `release-verify-npm` принял lock-файл, в CI pull request, который его меняет (R77 spec; RULES.md, Hard rules). До первого релиза у репозитория — неизменяемые релизы и ruleset тегов `v*` (Д54 в таблице 4 RUN.md `spec`). Как это устроено — R13: свой `release.yml` на общем `release.yml` `.github` v0.1.15, линия 0.1, рецепт `release-files` с проверкой архива и пробным потребителем, проба без публикации на каждом pull request и на `main` до первого релиза (T18). Неизменяемые релизы и ruleset тегов `v*` (`v-tags`, 26779303) включены 2026-11-08.
@@ -320,7 +331,7 @@ skills:
 
 Иконка стоит перед словом — на плитке и в подробностях, — скрыта от дерева доступности и цвета текста. Подпись видна всегда, а имя — её текст (R90 spec).
 
-**Тема** — переменными CSS: они наследуются от родителя, и элемент читает их внутри своего дерева, как у `canvas` (раздел 4):
+**Тема** — переменными CSS: они наследуются от родителя, и элемент читает их внутри своего дерева, как у `canvas` (sources 2.3):
 - `--novatrail-skill-map-paper` — фон карты, плиток и подробностей, по умолчанию `#fff`;
 - `--novatrail-skill-map-ink` — текст, рамки и иконки, `#111`;
 - `--novatrail-skill-map-accent` — раскрытая плитка, рамки связанных плиток и подробностей, «Заниматься», кольцо фокуса, а с T15 и линии; `#1d4ed8`, 6,7:1 к белому;
@@ -338,42 +349,8 @@ skills:
 
 ## 4. Источники
 
-Внешний факт — условия поставщика, цена, закон, документация библиотеки — встаёт сюда с источником и датой прочтения (RULES.md, The bar).
-
-- **Карта тем и ярусы в MathTrail** (разделы 3.4 и 3.6; R06) — [mathtrail/mathtrail-standalone, `SPEC.md`](https://github.com/mathtrail/mathtrail-standalone/blob/c6cbeb2/SPEC.md), раздел 8.12.2 «The site», ветка `main`, коммит c6cbeb2, прочитано 2026-10-19: «a topic's layer is the longest chain of bases below it — 0 the foundations, 1 the rules, 2 the hard problems — computed rather than drawn, and a test on the catalog keeps the chains within three layers»; «The map is laid out when the site is built …: a column for each layer, from left to right in every language as a drawing is»; «a link to the next column is a curve, and a link that skips one runs under every box»; «Pointing at a topic, or reaching it with the keyboard, lights every topic below it and above it and the lines between them … no script runs»; «On a narrow screen the map scrolls sideways inside its panel».
-- **Ранги в MathTrail** (раздел 3.5; R07) — тот же коммит c6cbeb2, прочитано 2026-10-19:
-  - [`SPEC.md`](https://github.com/mathtrail/mathtrail-standalone/blob/c6cbeb2/SPEC.md), раздел 2.4 «The chess scale and the ranks»: «Above the number comes a rank: eleven steps, told by their numbers — "Rank 3", "of 11" — with no names of their own»; рейтинг считается и общий, и по теме: «applied to θ + δ_topic, the rating for a topic»;
-  - [`docs/decisions.md`](https://github.com/mathtrail/mathtrail-standalone/blob/c6cbeb2/docs/decisions.md), запись R213 standalone: «A rank is told by its number»; «a topic's rank is "Rank 4" at the end of its row»; «the eleven names of the dictionaries are gone»;
-  - [`internal/domain/rating/scale.go`](https://github.com/mathtrail/mathtrail-standalone/blob/c6cbeb2/internal/domain/rating/scale.go), функция `Rank`: «It is worked out wherever it is drawn and stored nowhere». Её зовёт сервер, когда собирает прогресс ([`internal/domain/progress/progress.go`](https://github.com/mathtrail/mathtrail-standalone/blob/c6cbeb2/internal/domain/progress/progress.go)), а ответ прогресса несёт общий ранг в поле `rank` и число рангов шкалы в поле `ranks` — «so that a card need not know the number», — а у каждой темы своё поле `rank` ([`internal/transport/mcp/progress.go`](https://github.com/mathtrail/mathtrail-standalone/blob/c6cbeb2/internal/transport/mcp/progress.go), типы `standingOut` и `topicOut`).
-- **Раскладка карты тем в MathTrail** (раздел 3.4; R06) — [mathtrail/mathtrail-standalone, `web/src/site/topicmap.ts`](https://github.com/mathtrail/mathtrail-standalone/blob/6b29dd9/web/src/site/topicmap.ts), ветка `main`, коммит 6b29dd9, прочитано 2026-11-07: «each in the column of its layer, the foundations in the catalog's order and every other column by where its topics' bases stand, so that lines cross as little as a simple rule allows»; «A link to the next column is a curve between the two boxes; a link that skips a column runs down a gutter, along a lane of its own under every box, and up the next gutter»; подсветку дают правила CSS, которые пишутся при сборке, — «and need no script; a browser that cannot read them shows the map unlit». Рисует карту [`web/src/site/TopicMap.tsx`](https://github.com/mathtrail/mathtrail-standalone/blob/6b29dd9/web/src/site/TopicMap.tsx) того же коммита: «it scrolls sideways inside its panel where the screen is narrower than it».
-- **WCAG 2.2** (раздел 3.4; R06 и поправка 2026-11-07 к R04) — [Web Content Accessibility Guidelines (WCAG) 2.2](https://www.w3.org/TR/WCAG22/), W3C Recommendation 12 December 2024, прочитано 2026-11-07:
-  - 1.4.10 Reflow: «Content can be presented without loss of information or functionality, and without requiring scrolling in two dimensions for: Vertical scrolling content at a width equivalent to 320 CSS pixels; Horizontal scrolling content at a height equivalent to 256 CSS pixels. Except for parts of the content which require two-dimensional layout for usage or meaning». Note 2 у [Understanding 1.4.10](https://www.w3.org/WAI/WCAG22/Understanding/reflow.html): «Examples of content which requires two-dimensional layout are images required for understanding (such as maps and diagrams), video, games, presentations, data tables (not individual cells), and interfaces where it is necessary to keep toolbars in view»;
-  - 2.5.7 Dragging Movements: «All functionality that uses dragging movements can be operated by single pointer activation without dragging, unless dragging is essential»;
-  - 1.3.1 Info and Relationships: «Information, structure, and relationships conveyed through presentation can be programmatically determined or are available in text» — к уровню заголовков полос, поправка 2026-11-07 к R04;
-  - 1.3.2 Meaningful Sequence: «When the sequence in which content is presented affects its meaning, a correct reading sequence can be programmatically determined»;
-  - 2.4.3 Focus Order: «focusable components receive focus in an order that preserves meaning and operability»;
-  - 2.4.11 Focus Not Obscured (Minimum): «When a user interface component receives keyboard focus, the component is not entirely hidden due to author-created content»;
-  - 1.4.1 Use of Color: «Color is not used as the only visual means of conveying information»;
-  - 1.4.11 Non-text Contrast: «a contrast ratio of at least 3:1 against adjacent color(s): User Interface Components and Graphical Objects».
-- **Библиотеки раскладки** (раздел 3.4; R06) — реестр npm, `npm view <пакет> version license description` и README пакета, прочитано 2026-11-07:
-  - [`@dagrejs/dagre`](https://www.npmjs.com/package/@dagrejs/dagre) 3.1.3, MIT: «Dagre is a JavaScript library that makes it easy to lay out directed graphs on the client-side»; прежний пакет `dagre` — 0.8.5, а README говорит, что обновляется только тот, что в организации DagreJs;
-  - [`elkjs`](https://www.npmjs.com/package/elkjs) 0.12.1, `EPL-2.0 OR GPL-3.0-or-later`: «Automatic graph layout based on Sugiyama's algorithm»; «elkjs is not a diagramming framework itself - it computes positions for the elements of a diagram»;
-  - [`d3-dag`](https://www.npmjs.com/package/d3-dag) 1.3.0, MIT: «`d3-dag` provides layered graph layout algorithms for directed acyclic graphs».
-- **Инструменты кода** (раздел 3.7; R08) — реестр npm, `npm view <пакет>@<версия> license time` и `peerDependencies`, прочитано 2026-11-07: `typescript` 7.0.2 — Apache-2.0, последний; `@biomejs/biome` 2.6.4 от 2026-10-28 — `MIT OR Apache-2.0`, а 2.6.6 вышел 2026-11-06; `vitest`, `@vitest/browser-playwright` и `@vitest/coverage-v8` 5.1.0 от 2026-11-02 — MIT; `vite` 8.3.5 — MIT, а 8.3.6 вышел 2026-11-05; `playwright` 1.64.1 — Apache-2.0, а 1.65.0 вышел 2026-11-05; 2026-11-11 поднят до 1.65.0 — Apache-2.0, и `playwright-core` той же версии тоже (R17); `@types/node` 24.19.2 — MIT; `lightningcss` 1.33.0 — MPL-2.0; `typescript-eslint` 8.72.1 требует `"typescript": ">=4.8.4 <6.1.0"`; `lit` 3.3.3 — BSD-3-Clause. `@altnovatrail/contracts` 0.9.5 — Apache-2.0, с зависимостью `@bufbuild/protobuf` 2.16.0 (`Apache-2.0 AND BSD-3-Clause`), а в `novatrail/api/v1/progress_pb.d.ts` пакета перечисления — `export enum`, сгенерированные protoc-gen-es v2.16.0.
-- **WCAG 2.2 для вида карты** (раздел 3.8; R10) — [Web Content Accessibility Guidelines (WCAG) 2.2](https://www.w3.org/TR/WCAG22/), W3C Recommendation 12 December 2024, прочитано 2026-11-07:
-  - 1.4.3 Contrast (Minimum): «The visual presentation of text and images of text has a contrast ratio of at least 4.5:1»;
-  - 1.4.11 Non-text Contrast: «Visual information required to identify user interface components and states» — «a contrast ratio of at least 3:1 against adjacent color(s)»;
-  - 1.4.12 Text Spacing: «no loss of content or functionality occurs by setting all of the following and by changing no other style property: Line height (line spacing) to at least 1.5 times the font size»;
-  - 2.4.7 Focus Visible: «Any keyboard operable user interface has a mode of operation where the keyboard focus indicator is visible»;
-  - 2.5.5 Target Size (Enhanced): «The size of the target for pointer inputs is at least 44 by 44 CSS pixels»;
-  - 2.3.3 Animation from Interactions: «Motion animation triggered by interaction can be disabled, unless the animation is essential to the functionality or the information being conveyed».
-- **Принудительные цвета и переменные CSS** (раздел 3.8; R10), прочитано 2026-11-07:
-  - [Media Queries Level 5](https://www.w3.org/TR/mediaqueries-5/), W3C Working Draft 19 February 2026, `forced-colors`: «active — Indicates that forced colors mode is active: the user agent enforces a user-chosen limited color palette on the page» и «When forced colors mode is active, the only colors that are available to the author are system colors»;
-  - [CSS Custom Properties for Cascading Variables Level 1](https://www.w3.org/TR/css-variables-1/), CR Snapshot 16 June 2022, раздел 3.1: значение недопустимого после подстановки `var()` — «Either the property's inherited value or its initial value depending on whether the property is inherited or not, respectively, as if the property's value had been specified as the unset keyword».
-- **Наблюдение за размером** (раздел 3.4; R11) — [Resize Observer](https://www.w3.org/TR/resize-observer/), W3C First Public Working Draft 11 February 2020, прочитано 2026-11-07: «Observation will fire when observation starts if Element is being rendered, and Element's size is not 0,0»; «Observations do not fire for non-replaced inline Elements» — поэтому наблюдаются кнопки плиток, подробности и сама карта, а не строчные части плиток.
-- **Демо** (раздел 3.7; R12), прочитано 2026-11-07:
-  - релиз [`modules` v0.1.0](https://github.com/altnovatrail/modules/releases/tag/v0.1.0) от 2026-11-07: `module-index.json` с тремя модулями формата 0.3 — `novatrail/english-essays`, `novatrail/grade-3-math` и `novatrail/olympiad-math` 0.1.0; пакет — архив `sha256-<дайджест>.tar.gz` с `inventory.json`, `server.json` и `device.json`, а `package_digest` — sha256 `inventory.json`, не архива. `release-verify` принял индекс: «module-index.json: modules v0.1.0, signed by the shared release.yml of .github v0.1.15»;
-  - с 2026-11-11 (поправка к R12; R16) — релиз [`modules` v0.2.5](https://github.com/altnovatrail/modules/releases/tag/v0.2.5) от 2026-11-11, прочитано 2026-11-11: в `module-index.json` — прежние записи формата 0.3 и записи формата 0.4. Последние версии формата 0.4: `novatrail/english-essays` 0.2.0 из релиза v0.2.0, `novatrail/grade-3-math` 0.3.0 и `novatrail/olympiad-math` 0.3.0 из релиза v0.2.1. Пакеты устроены так же. `release-verify` принял индекс: «module-index.json: modules v0.2.5, signed by the shared release.yml of .github v0.1.15»;
-  - `yaml` 2.9.1 от 2026-09-11 — ISC (реестр npm, `npm view yaml@2.9.1 license time`).
-- **Пакеты слов, иконок и проверки** (раздел 3.8; R10) — реестр npm, `npm view <пакет> version license time dependencies`, прочитано 2026-11-07: `@iconify-json/material-symbols` 1.2.97 от 2026-10-28 — Apache-2.0, а 1.2.98 вышел 2026-11-07, позже паузы в три дня (R08); 2026-11-11 набор поднят до 1.2.98 — Apache-2.0, зависимость та же, `@iconify/types` (поправка к R10); `@iconify/utils` 3.1.7 от 2026-09-06 — MIT, с зависимостями `@iconify/types`, `@antfu/install-pkg` и `import-meta-resolve`; `axe-core` 4.14.0 от 2026-10-05 — MPL-2.0, без зависимостей, и в нём у тега `wcag22aa` одно правило, `target-size`, а у `wcag22a` — ни одного.
-- **Карта тем прототипа** (раздел 3.4; R06) — `spec/draft/NovaTrail Widget.html` на теге v0.9.5 — на v0.9.8, v0.9.9 и v0.15.0 тот же, код экрана карты, `tsteps`: ступени — «Step 1 · Basics», «Step 2 · Rules», «Step 3 · Hard tasks» — идут друг под другом, ступень открыта, когда она не дальше одной от выбранной темы, а иначе свёрнута в строку названий; у тем — пометки `BEFORE` и `AFTER` относительно выбранной; у выбранной — панель, где кнопка «Practise: …», а у закрытой — «Opens in grade 5».
+С 2026-11-12 записи этого раздела — в [sources.md](sources.md): запись на источник, с адресом, датой прочтения и цитатой, а утверждения здесь ссылаются на запись, как на раздел, — `sources 2.1` (R18; RULES.md, The bar). Раздел остаётся указателем: на него ссылаются журнал и архивы `docs/plan/`, а их не переписывают. Где теперь прежние пункты:
+- карта тем и ярусы в MathTrail — sources 1.1; ранги в MathTrail — sources 1.2; раскладка карты тем в MathTrail — sources 1.3;
+- WCAG 2.2 для раскладки — sources 2.1, для вида карты — sources 2.2; принудительные цвета и переменные CSS — sources 2.3; наблюдение за размером — sources 2.4;
+- библиотеки раскладки — sources 3.1; инструменты кода — sources 3.2; демо — sources 3.3; пакеты слов, иконок и проверки — sources 3.4;
+- карта тем прототипа — sources 4.1.

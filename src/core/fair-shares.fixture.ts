@@ -99,6 +99,7 @@ export function anchorState(
     holding,
     reason,
     teachingSkills: [],
+    teachingModules: [],
   };
 }
 
