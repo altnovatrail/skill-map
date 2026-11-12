@@ -1,6 +1,22 @@
 {
   "claudeMdExcludes": [
     "**/skill-map/spec/CLAUDE.md",
-    "**/skill-map/spec/**/CLAUDE.md"
-  ]
+    "**/skill-map/spec/**/CLAUDE.md",
+    "**/skill-map/spec/.claude/rules/**"
+  ],
+  "autoCompactWindow": 400000,
+  "disableClaudeAiConnectors": true,
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PROJECT_DIR}/spec/tools/session/main.mjs"]
+          }
+        ]
+      }
+    ]
+  }
 }
