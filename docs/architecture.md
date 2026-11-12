@@ -1,133 +1,133 @@
-# skill-map — архитектура
+# skill-map — architecture
 
-> Статус: каркас из заготовки `spec`, 2026-10-19; сверен с `spec` v0.2.9 2026-10-20 (R01), с v0.9.4 2026-11-07 (R02), с v0.9.5 в тот же день (R05), с v0.9.8 2026-11-08 (R14), с v0.9.9 в тот же день (R15) с v0.15.0 2026-11-11 (R16) и с v0.16.3 2026-11-12 (R18); детализация закончена 2026-11-07 (T05; архив эпика — [plan/E1.md](plan/E1.md)).
+> Status: a skeleton from the template of `spec`, 2026-10-19; checked against `spec` v0.2.9 on 2026-10-20 (R01), against v0.9.4 on 2026-11-07 (R02), against v0.9.5 the same day (R05), against v0.9.8 on 2026-11-08 (R14), against v0.9.9 the same day (R15), against v0.15.0 on 2026-11-11 (R16) and against v0.16.3 on 2026-11-12 (R18); the detailing ended 2026-11-07 (T05; the epic's archive — [plan/E1.md](plan/E1.md)).
 >
-> Что делает компонент, чего не делает и что о нём ещё предстоит решить. Это подробности его карточки — architecture 3.3 spec. Карточка остаётся сводкой: если подробности меняют то, что в ней сказано, она правится в `spec` тем же путём, что и вопросы в его реестры (RULES.md, Across repositories).
+> What the component does, what it does not do and what is still to be decided about it. This is the detail of its card — architecture 3.3 spec. The card stays the summary: if the detail changes what the card says, the card is edited in `spec` by the same route as the questions into its registers (RULES.md, Across repositories).
 >
-> Почему решено так, а не иначе, — в [decisions.md](decisions.md); план работ — в [RUN.md](../RUN.md). Понятия — concepts spec. Документы и решения `spec` лежат в `spec/docs/` и цитируются с суффиксом «spec».
+> Why it was decided so and not otherwise is in [decisions.md](decisions.md); the work plan is in [RUN.md](../RUN.md). The concepts are concepts spec. The documents and decisions of `spec` lie in `spec/docs/` and are cited with the suffix "spec".
 
-## 1. Назначение и границы
+## 1. Purpose and boundaries
 
-**Делает:**
-- рисует граф навыков модуля: навыки по ярусам и связи между ними — пререквизиты (architecture 3.3 spec; concepts 4 spec). Ярус вычисляет `module-kit` по графу, когда собирает пакет, а имена ярусам даёт автор (R49 spec; R62 spec);
-- показывает на графе состояние модели ученика — владение каждым навыком: что освоено, что открывается и на что оно опирается (architecture 3.3 spec; product 4 spec; concepts 11 spec). Модель ученика у ученика одна, а карта навыков — её видимая часть (concepts 11 spec);
-- в первом срезе показывает карты трёх модулей двух предметов (product 10 spec; R41 spec) — по карте на модуль: какой показать, выбирает `app` (R03). Уровень в модели ученика — на модуль, а не на предмет и не на всю модель, и связи между модулями несут только пререквизиты через навыки-опоры, а не уровень (concepts 11 spec);
-- даёт ученику выбрать навык на карте — это вход «Карта навыков» в приложении (product 4 spec; architecture 3.1 spec). По выбранному навыку следующую задачу выбирает движок, в режиме «ученик выбрал навык на карте навыков» (concepts 12 spec);
-- отвечает стандарту пакетов интерфейса: доступность — WCAG 2.2 уровня AA, а сверх него цели не меньше 44 × 44 CSS px и движение по `prefers-reduced-motion`; у карты — текстовая замена графа, `lang` у названия навыка, освоенность не только цветом, клавиатура и сдвиг карты без перетаскивания (R90 spec; architecture 3.3, 6 spec). Переводы — по общим правилам пакетов, на каждый язык интерфейса, `en` и `ru` (R91 spec, R92 spec); иконки — из набора Material Symbols, вшитые при сборке (R78 spec).
+**Does:**
+- draws a module's skill graph: the skills by tiers and the links between them — the prerequisites (architecture 3.3 spec; concepts 4 spec). `module-kit` computes the tier from the graph when it builds the package, and the author gives the tiers their names (R49 spec; R62 spec);
+- shows on the graph the state of the learner model — the mastery of each skill: what is mastered, what opens up and what it rests on (architecture 3.3 spec; product 4 spec; concepts 11 spec). A learner has one learner model, and the skill map is its visible part (concepts 11 spec);
+- in the first slice, shows the maps of three modules of two subjects (product 10 spec; R41 spec) — a map per module: which one to show, `app` chooses (R03). The level in the learner model is per module, not per subject and not for the whole model, and the links between modules carry only prerequisites, through anchor skills, not the level (concepts 11 spec);
+- lets the learner choose a skill on the map — this is the entry "Skill map" in the app (product 4 spec; architecture 3.1 spec). By the chosen skill the engine chooses the next task, in the mode "the learner chose the skill on the skill map" (concepts 12 spec);
+- meets the standard of the UI packages: accessibility — WCAG 2.2 at level AA, and beyond it targets no smaller than 44 × 44 CSS px and motion by `prefers-reduced-motion`; for the map — a text alternative of the graph, `lang` on a skill's title, mastery not by color alone, the keyboard and moving the map without dragging (R90 spec; architecture 3.3, 6 spec). Translations follow the shared rules of the packages, into each interface language, `en` and `ru` (R91 spec, R92 spec); icons are from the set Material Symbols, embedded at build time (R78 spec).
 
-**Не делает:**
-- не ходит за данными: всё, что рисует, приходит к нему готовым от `api` через потребителя — `app` (architecture 3.3 spec);
-- не считает владение и не меняет модель ученика. Владение по свидетельствам оценивает `learner-model` — библиотека внутри `api` (architecture 2 spec, architecture 3.8 spec), а отображение — карта навыков, рейтинги, ранги — выводится из модели и обратно на неё не влияет (concepts 11 spec);
-- не вычисляет ярусы: они приходят к нему готовыми (R49 spec; R62 spec);
-- не выбирает следующий урок или задачу: это делает движок (concepts 12 spec);
-- не показывает рангов в первом срезе: что такое ранг в NovaTrail, решает О-13 (R07; раздел 3.5);
-- не загружается во время работы: `app` собирает его при сборке, по точной версии. Во время работы подгружаются только виджеты модулей, в iframe-песочнице (R16 spec; architecture 6 spec).
+**Does not:**
+- does not fetch data: everything it draws comes to it ready from `api` through its consumer, `app` (architecture 3.3 spec);
+- does not compute mastery and does not change the learner model. Mastery by evidence is estimated by `learner-model`, a library inside `api` (architecture 2 spec, architecture 3.8 spec), and the display — the skill map, ratings, ranks — is derived from the model and does not affect it back (concepts 11 spec);
+- does not compute the tiers: they come to it ready (R49 spec; R62 spec);
+- does not choose the next lesson or task: the engine does that (concepts 12 spec);
+- shows no ranks in the first slice: what a rank is in NovaTrail is decided by О-13 (R07; section 3.5);
+- is not loaded at run time: `app` builds it in at build time, at an exact version. At run time only the modules' widgets are loaded, in an iframe sandbox (R16 spec; architecture 6 spec).
 
-**Данные и связи:**
-- рисует то, что ему передали (architecture 3.3 spec). Граф и ярусы `app` берёт у `api` по дайджесту пакета текущей версии модуля, `GetSkillGraph`, а состояние навыков — `GetSkillMap`; это контракт `app` ↔ `api`, пакет `novatrail.api.v1` на protobuf и buf (R97 spec, R99 spec; [текст контрактов](../spec/contracts/README.md), раздел 15);
-- состояние навыков — данные ученика (privacy 4 spec). Модель ученика живёт в базе `api`: журнал свидетельств — только на дозапись, а состояние навыков — кэш (R80 spec; П-7 и Т-22 закрыты). На устройство для карты уходит состояние навыков текущей версии модуля, без ловушек (privacy 4 spec). Сам пакет ничего из этого на устройстве не держит: состояние навыков живёт в памяти элемента, пока он на странице (R03; раздел 3.1). В репозитории — ни данных учеников, ни секретов, а примеры синтетические (RULES.md, Hard rules);
-- потребители (architecture 3.3 spec):
-  - этап 2 — `app`: экран ученика и раздел для взрослых;
-  - позже — `site`, этап 3 (repositories 2.1 spec), и инструменты автора.
+**Data and links:**
+- draws what it was given (architecture 3.3 spec). The graph and the tiers `app` takes from `api` by the package digest of the module's current version, `GetSkillGraph`, and the state of the skills by `GetSkillMap`; this is the contract `app` ↔ `api`, the package `novatrail.api.v1` on protobuf and buf (R97 spec, R99 spec; [contracts text](../spec/contracts/README.md), section 15);
+- the state of the skills is a learner's data (privacy 4 spec). The learner model lives in the database of `api`: the evidence log is append-only, and the state of the skills is a cache (R80 spec; П-7 and Т-22 are closed). What goes to the device for the map is the state of the skills of the module's current version, without traps (privacy 4 spec). The package itself keeps none of it on the device: the state of the skills lives in the element's memory while it is on the page (R03; section 3.1). In the repository there are no learners' data and no secrets, and the examples are synthetic (RULES.md, Hard rules);
+- the consumers (architecture 3.3 spec):
+  - stage 2 — `app`: the learner's screen and the section for adults;
+  - later — `site`, stage 3 (repositories 2.1 spec), and the author's tools.
 
-  Второй потребитель — например, сайт — получает вторую сборку того же пакета (R16 spec; architecture 6 spec). В потребителя пакет интерфейса входит веб-компонентом: данные получает свойствами, работу отдаёт методом, а изменения и просьбы — событиями; свои элементы он называет сам, а типы данных, которые делят репозитории, берёт из релизов `spec` (R36 spec; Т-21 закрыт). У карты это один элемент, `<novatrail-skill-map>`: данные — свойствами, выбор навыка — событием, а методов у него нет (R04, раздел 3.3);
-- при сборке ни от чего не зависит, кроме `spec`; от него самого при сборке зависят `app`, а с этапа 3 — `site` (repositories 2.1 spec, repositories 3 spec). Выходит пакет в npm, в области `@altnovatrail`, файлом подписанного релиза GitHub (R37 spec, R77 spec; Т-26 и Т-27 закрыты); как его собирают, проверяют и принимают, — раздел 3.7;
-- лицензия — Apache-2.0 (R20 spec); зависимости — только с лицензиями, совместимыми с ней (RULES.md, Hard rules);
-- этап 2, «Первый срез с учеником», вместе с `tutor`, `canvas`, `api`, `app` и `infra` (product 11 spec). Код `skill-map` идёт после первого кода этапа — `tutor` и `canvas`, — вместе с `api`, `app` и `infra` (repositories 6 spec).
+  A second consumer — a site, for example — gets a second build of the same package (R16 spec; architecture 6 spec). A UI package enters its consumer as a web component: it gets data through properties, gives the work through a method, and gives changes and requests through events; it names its elements itself, and the data types that the repositories share it takes from the releases of `spec` (R36 spec; Т-21 is closed). For the map this is one element, `<novatrail-skill-map>`: the data through properties, the choice of a skill through an event, and it has no methods (R04, section 3.3);
+- at build time it depends on nothing but `spec`; at build time `app` depends on it, and from stage 3 `site` does too (repositories 2.1 spec, repositories 3 spec). The package comes out in npm, in the scope `@altnovatrail`, as a file of a signed GitHub release (R37 spec, R77 spec; Т-26 and Т-27 are closed); how it is built, checked and accepted is section 3.7;
+- the license is Apache-2.0 (R20 spec); dependencies only with licenses compatible with it (RULES.md, Hard rules);
+- stage 2, "The first slice with a learner", together with `tutor`, `canvas`, `api`, `app` and `infra` (product 11 spec). The code of `skill-map` comes after the stage's first code — `tutor` and `canvas` —, together with `api`, `app` and `infra` (repositories 6 spec).
 
-## 2. Решить при детализации
+## 2. To decide when detailed
 
-Детализация закончена 2026-11-07 (T05, [plan/E1.md](plan/E1.md)): решены все пункты «Решить при детализации» карточки, а решения — в разделе 3. Подразделы 2.1–2.4 остались указателями: на них ссылаются журнал и RUN.md. Подраздел 2.5 — вопрос, который пришёл с полем контракта в v0.16.3 (R18): он открыт.
+The detailing ended 2026-11-07 (T05, [plan/E1.md](plan/E1.md)): every item "To decide when detailed" of the card is decided, and the decisions are in section 3. Subsections 2.1–2.4 stay as pointers: the log and RUN.md cite them. Subsection 2.5 is a question that came with a field of the contract in v0.16.3 (R18): it is open.
 
-На `spec` v0.9.4 и v0.9.5 у карточки было три пункта — данные и раскладка, как карта показывает ярусы, ранги (architecture 3.3 spec), — а с v0.9.8 она говорит «решено всё» (R14). Данные и договор элемента решила T01 — R03 и R04, — раскладку и ярусы на карте — T08, R06, ранги на карте — T03, R07. Что решил сам `spec` — ярусы и публикацию, — разделы 3.6 и 3.7. Задачи T02 и T04, которые разбирали 2.2 и 2.4, не делались (R02).
+On `spec` v0.9.4 and v0.9.5 the card had three items — the data and the layout, how the map shows the tiers, ranks (architecture 3.3 spec) —, and from v0.9.8 it says "everything is decided" (R14). The data and the element's agreement were decided by T01 — R03 and R04 —, the layout and the tiers on the map by T08, R06, and the ranks on the map by T03, R07. What `spec` itself decided — the tiers and publishing — is sections 3.6 and 3.7. The tasks T02 and T04, which were to take up 2.2 and 2.4, were not done (R02).
 
-**Отложено сознательно:**
-- что такое ранг в NovaTrail — О-13 (product 13 spec), который с v0.9.8 дополнен выводами детализации карты (В4, закрыт переходом R14). До решения рангов на карте нет (R07; раздел 3.5);
-- сворачивание далёких ярусов — Д3 в [DEBT.md](../DEBT.md): вернуться, когда у модуля станет больше шести ярусов (R06).
+**Deferred on purpose:**
+- what a rank is in NovaTrail — О-13 (product 13 spec), which from v0.9.8 holds the conclusions of the map's detailing too (В4, closed by the move R14). Until it is decided, there are no ranks on the map (R07; section 3.5);
+- folding the distant tiers — Д3 in [DEBT.md](../DEBT.md): come back to it when a module has more than six tiers (R06).
 
-### 2.1. Раскладка графа — решено (R06)
+### 2.1. The layout of the graph — decided (R06)
 
-- **Суть:** как пакет раскладывает карту на экране. Решила T08 — R06, раздел 3.4.
+- **The gist:** how the package lays out the map on the screen. Decided by T08 — R06, section 3.4.
 
-### 2.2. Ярусы — решено в `spec` (R49 spec, R62 spec)
+### 2.2. Tiers — decided in `spec` (R49 spec, R62 spec)
 
-- **Суть:** О-18 решён — ярус вычисляется по графу, а имена ярусам даёт автор (R49 spec). Что решил `spec`, — раздел 3.6, а как карта рисует ярусы, — R06, раздел 3.4.
+- **The gist:** О-18 is decided — the tier is computed from the graph, and the author gives the tiers their names (R49 spec). What `spec` decided is section 3.6, and how the map draws the tiers is R06, section 3.4.
 
-### 2.3. Ранги (О-13) — решено для карты (R07)
+### 2.3. Ranks (О-13) — decided for the map (R07)
 
-- **Суть:** показывает ли карта ранги и откуда берётся сам ранг. Для карты решила T03 — R07, раздел 3.5: в первом срезе рангов на карте нет, а что такое ранг в NovaTrail, ушло к О-13.
+- **The gist:** whether the map shows ranks and where the rank itself comes from. For the map it was decided by T03 — R07, section 3.5: in the first slice there are no ranks on the map, and what a rank is in NovaTrail went to О-13.
 
-### 2.4. Где публикуется пакет — решено в `spec` (R37 spec, R77 spec)
+### 2.4. Where the package is published — decided in `spec` (R37 spec, R77 spec)
 
-- **Суть:** Т-26 и Т-27 закрыты — пакет выходит в npm, в области `@altnovatrail` (R37 spec), а подпись файла релиза проверяет рецепт `spec` `release-verify` (R77 spec). Что решено, — раздел 3.7; сделает это эпик кода.
+- **The gist:** Т-26 and Т-27 are closed — the package comes out in npm, in the scope `@altnovatrail` (R37 spec), and the signature of the release file is checked by the recipe `release-verify` of `spec` (R77 spec). What is decided is section 3.7; the epic of the code will do it.
 
-### 2.5. Модули, которые учат навыку-опоре «неизвестно» — открыто (Д211 spec)
+### 2.5. Modules that teach an anchor skill whose holding is "unknown" — open (Д211 spec)
 
-- **Суть:** с v0.16.3 у навыка-опоры в ответе `GetSkillMap` есть `teaching_modules` — ID модулей каталога `api`, которые учат навыку-опоре и не подключены к профилю: их текущая версия подходит профилю по аудитории и называет навык в `teaches`. Ответ `spec` на строку `engine` В36 велит показать их взрослому и ученику при «неизвестно» — с названием из открытого вида паспорта и подключением, `ConnectModule`, — а где, на карте или рядом с ней, решают детализации `app` и `skill-map` (Д211 spec; поправка 2026-11-11 к R99 spec). Пока карта поле не читает (раздел 3.1).
-- **Что известно:** карта рисует то, что ей дал `app`, и сама ничего не делает, кроме события выбора `skillchoose` (R03, R04). Названий навыков других модулей у неё нет, поэтому `teaching_skills` она не показывает (раздел 3.1); названий модулей каталога в её данных тоже нет — открытые виды их паспортов держит `app`. Подключение модуля — запрос `app` к `api`. Своё «где» `app` решает с картой навыков, эпиком E3 своего RUN.md (Д211 spec).
-- **Варианты:**
-  - (а) не на карте: модули показывает `app` рядом с ней, а карта, как и сейчас, говорит «неизвестно» с причиной. Договор элемента не меняется;
-  - (б) на карте, в подробностях навыка-опоры «неизвестно»: модули по названию и кнопка подключения. Нужны новое свойство с названиями модулей — их `app` берёт из паспортов — и новое событие с ID модуля, то есть поправки к R03 и R04 и правка карточки architecture 3.3 spec строкой «В реестр spec».
-- **Рекомендация:** (а), пока `app` не решил свой экран: подключение — действие над профилем, а не над картой, и договор элемента остаётся тем, что `app` уже собирает. Если `app` решит показывать модули в подробностях навыка-опоры, — (б), своей задачей.
-- **Решает:** автор — строка В11 таблицы 3 [RUN.md](../RUN.md).
+- **The gist:** from v0.16.3 an anchor skill in the response of `GetSkillMap` has `teaching_modules` — the IDs of the modules of the module catalog of `api` that teach the anchor skill and are not connected to the profile: their current version suits the profile by audience and names the skill in `teaches`. The answer of `spec` to the row В36 of `engine` says to show them to the adult and the learner at "unknown" — with the title from the open view of the module manifest and connecting, `ConnectModule`, — and where, on the map or beside it, the detailings of `app` and `skill-map` decide (Д211 spec; the 2026-11-11 amendment to R99 spec). For now the map does not read the field (section 3.1).
+- **What is known:** the map draws what `app` gave it, and itself does nothing but the choice event `skillchoose` (R03, R04). It has no titles of the skills of other modules, so it does not show `teaching_skills` (section 3.1); the titles of the catalog's modules are not in its data either — the open views of their module manifests are held by `app`. Connecting a module is a request of `app` to `api`. `app` decides its own "where" along with its work on the skill map, in the epic E3 of its RUN.md (Д211 spec).
+- **Options:**
+  - (a) not on the map: `app` shows the modules beside it, and the map, as now, says "unknown" with the reason. The element's agreement does not change;
+  - (b) on the map, in the details of an anchor skill at "unknown": the modules by title and a button to connect. This needs a new property with the modules' titles — `app` takes them from the module manifests — and a new event with the module's ID, that is, amendments to R03 and R04 and an edit of the card architecture 3.3 spec by a row «В реестр spec».
+- **Recommendation:** (a), until `app` has decided its screen: connecting is an action on the profile, not on the map, and the element's agreement stays what `app` already builds in. If `app` decides to show the modules in the details of an anchor skill, then (b), as a task of its own.
+- **Decides:** the author — the row В11 of table 3 of [RUN.md](../RUN.md).
 
-## 3. Устройство
+## 3. How it is built
 
-Сюда переезжает то, что решено по разделу 2: из каких частей компонент состоит, его типы и данные, как он связан с другими репозиториями. Решены данные и договор элемента (T01: R03, R04) и раскладка (T08: R06), а для карты — и ранги (T03: R07); что решил `spec` о ярусах и публикации, — разделы 3.6 и 3.7. Открытых пунктов карточки нет, а что строить, раздел 3 отвечает целиком.
+Here comes what is decided by section 2: which parts the component consists of, its types and data, how it is linked with other repositories. Decided are the data and the element's agreement (T01: R03, R04) and the layout (T08: R06), and for the map also the ranks (T03: R07); what `spec` decided about the tiers and publishing is sections 3.6 and 3.7. The card has no open items, and section 3 answers in full what to build.
 
-### 3.1. Данные для показа
+### 3.1. The data for the display
 
-Всё, что рисует карта, приходит к ней от `app` готовым: открытый вид графа и ярусы — ответ `GetSkillGraph`, паспорт — ответ `GetManifest` по тому же дайджесту, состояние — ответ `GetSkillMap` (R99 spec; [текст контрактов](../spec/contracts/README.md), раздел 15). Полей сверх контракта карте не нужно (R03). Сама она ничего не хранит: состояние живёт в памяти элемента, пока он на странице (R03).
+Everything the map draws comes to it ready from `app`: the open view of the graph and the tiers — the response of `GetSkillGraph`, the module manifest — the response of `GetManifest` by the same digest, the state — the response of `GetSkillMap` (R99 spec; [contracts text](../spec/contracts/README.md), section 15). The map needs no fields beyond the contract (R03). It itself stores nothing: the state lives in the element's memory while it is on the page (R03).
 
-Названия, описания, имена ярусов и полос — на языке объяснений модуля, с его `lang`; названия навыков-опор — английские, с `lang="en"` (R50 spec, R91 spec). «Ученик» и «взрослый» — виды элемента (R03, раздел 3.3); без состояния нет ни отметок состояния, ни подробностей взрослого.
+The titles, the descriptions, the names of the tiers and of the bands are in the module's explanation language, with its `lang`; the titles of anchor skills are English, with `lang="en"` (R50 spec, R91 spec). "Learner" and "adult" are the element's views (R03, section 3.3); without the state there are neither the marks of state nor the adult's details.
 
-| Что на карте | Поле | Понятие `spec` | Ученик | Взрослый |
+| What is on the map | Field | Concept of `spec` | Learner | Adult |
 |---|---|---|---|---|
-| навык, по ID в модуле | ключ `skills` открытого вида графа | навык (concepts 4 spec) | да | да |
-| название навыка | `skills.<id>.title` | навык | да | да |
-| описание | `skills.<id>.description` | навык | да | да |
-| связи и чего ждёт закрытый навык | `skills.<id>.prerequisites` | пререквизит (concepts 4 spec) | да | да |
-| пометка «отзыв по критериям» или «без оценки» | `skills.<id>.assessability` | оцениваемость (concepts 4 spec) | да | да |
-| чему учит навык | `skills.<id>.teaches` | навык-опора (concepts 4 spec; R50 spec) | да | да |
-| ярус навыка | `skill_tiers` ответа `GetSkillGraph` | ярус (R49 spec, R62 spec) | да | да |
-| имя яруса или его номер | `tiers` открытого вида графа | ярус (R49 spec) | да | да |
-| язык названий | `languages.explanation` паспорта | язык объяснений (concepts 13 spec) | — | — |
-| полный ID навыка в событии | `id` паспорта | полный ID ([текст формата](../spec/format/README.md), раздел 10) | — | — |
-| состояние на карте (раздел 3.2) | `SkillState`: `evidence_count`, `mastery_band`, `review_date`, `review_due` | состояние навыка (concepts 11 spec) | да | да |
-| число свидетельств | `SkillState.evidence_count` | свидетельство (concepts 11 spec) | нет | да |
-| последняя практика | `SkillState.last_practiced_at` | состояние навыка | нет | да |
-| полоса освоения | `SkillState.mastery_band` и `bands` паспорта, её `title` | полоса освоения (concepts 11 spec) | нет | да |
-| срок повторения | `SkillState.review_date`, `review_due` | забывание и повторение (concepts 11 spec) | нет | да |
-| оценка, неуверенность, удержание, осторожная вероятность | `SkillState.estimate`, `uncertainty`, `retention`, `cautious_probability` | модель ученика (concepts 11 spec) | нет | нет |
-| навык-опора перед ярусом 1 и в подробностях навыка | `AnchorSkillState.anchor_skill`; название — из словаря (R04) | навык-опора (concepts 4 spec; R50 spec) | да | да |
-| «владеет», «не владеет», «неизвестно» | `AnchorSkillState.holding` | навык-опора | да | да |
-| почему не владеет или неизвестно | `AnchorSkillState.reason` | навык-опора | да | да |
-| навыки, которые учат навыку-опоре | `AnchorSkillState.teaching_skills` | навык-опора | нет | нет |
-| модули каталога, которые учат навыку-опоре и не подключены | `AnchorSkillState.teaching_modules` | навык-опора | нет | нет |
-| дайджест пакета | `GetSkillMapResponse.package_digest` | пакет модуля (R62 spec) | — | — |
+| a skill, by its local ID | the key of `skills` of the graph's open view | skill (concepts 4 spec) | yes | yes |
+| the skill's title | `skills.<id>.title` | skill | yes | yes |
+| the description | `skills.<id>.description` | skill | yes | yes |
+| the links and what a locked skill waits for | `skills.<id>.prerequisites` | prerequisite (concepts 4 spec) | yes | yes |
+| the mark "feedback by criteria" or "not assessed" | `skills.<id>.assessability` | assessability (concepts 4 spec) | yes | yes |
+| what the skill teaches | `skills.<id>.teaches` | anchor skill (concepts 4 spec; R50 spec) | yes | yes |
+| the skill's tier | `skill_tiers` of the response of `GetSkillGraph` | tier (R49 spec, R62 spec) | yes | yes |
+| the tier's name or its number | `tiers` of the graph's open view | tier (R49 spec) | yes | yes |
+| the language of the titles | `languages.explanation` of the module manifest | explanation language (concepts 13 spec) | — | — |
+| the skill's full ID in the event | `id` of the module manifest | full ID ([format text](../spec/format/README.md), section 10) | — | — |
+| the state on the map (section 3.2) | `SkillState`: `evidence_count`, `mastery_band`, `review_date`, `review_due` | the state of a skill (concepts 11 spec) | yes | yes |
+| the number of pieces of evidence | `SkillState.evidence_count` | evidence (concepts 11 spec) | no | yes |
+| the last practice | `SkillState.last_practiced_at` | the state of a skill | no | yes |
+| the mastery band | `SkillState.mastery_band` and `bands` of the module manifest, its `title` | mastery band (concepts 11 spec) | no | yes |
+| the review date | `SkillState.review_date`, `review_due` | forgetting and repetition (concepts 11 spec) | no | yes |
+| the estimate, the uncertainty, the retention, the cautious probability | `SkillState.estimate`, `uncertainty`, `retention`, `cautious_probability` | learner model (concepts 11 spec) | no | no |
+| an anchor skill before tier 1 and in a skill's details | `AnchorSkillState.anchor_skill`; the title — from the dictionary (R04) | anchor skill (concepts 4 spec; R50 spec) | yes | yes |
+| "held", "not held", "unknown" | `AnchorSkillState.holding` | anchor skill | yes | yes |
+| why not held or unknown | `AnchorSkillState.reason` | anchor skill | yes | yes |
+| the skills that teach the anchor skill | `AnchorSkillState.teaching_skills` | anchor skill | no | no |
+| the modules of the catalog that teach the anchor skill and are not connected | `AnchorSkillState.teaching_modules` | anchor skill | no | no |
+| the package digest | `GetSkillMapResponse.package_digest` | module package (R62 spec) | — | — |
 
-«—» — поле не показывается, а служит карте. Навыки, которые учат навыку-опоре, карта не называет: это полные ID навыков других модулей, а их названий у неё нет; навыки своего модуля, которые ему учат, видны по `teaches`. Модули, которые учат навыку-опоре и не подключены, — ID модулей каталога, с v0.16.3 (поправка 2026-11-11 к R99 spec; R18): карта их пока не показывает, а покажет ли, — раздел 2.5. Ловушек на карте нет (R99 spec).
+"—" — the field is not shown but serves the map. The map does not name the skills that teach an anchor skill: they are the full IDs of skills of other modules, and it has no titles for them; the skills of its own module that teach it are seen by `teaches`. The modules that teach an anchor skill and are not connected are IDs of the catalog's modules, from v0.16.3 (the 2026-11-11 amendment to R99 spec; R18): the map does not show them for now, and whether it will is section 2.5. There are no traps on the map (R99 spec).
 
-### 3.2. Состояния на карте
+### 3.2. The states on the map
 
-У навыка с оцениваемостью `verdict` — одно из пяти состояний, первое подходящее по порядку (R03):
+A skill with the assessability `verdict` has one of five states, the first that fits, in order (R03):
 
-| Состояние | Когда | Выбор на виде ученика |
+| State | When | Choice on the learner's view |
 |---|---|---|
-| «пора повторить» | `mastery_band` не пуст, и `review_due` или `review_date` не позже времени устройства | да |
-| «освоено» | `mastery_band` не пуст | да |
-| «в работе» | `evidence_count` больше нуля | да |
-| «можно начинать» | у каждого пререквизита навыка среди навыков модуля с оцениваемостью `verdict` не пуст `mastery_band`, или таких пререквизитов нет | да |
-| «ещё закрыт» | остальное; карта называет пререквизиты, которые ещё не освоены | нет |
+| "time to review" | `mastery_band` is not empty, and `review_due` or `review_date` is no later than the device's time | yes |
+| "mastered" | `mastery_band` is not empty | yes |
+| "in progress" | `evidence_count` is greater than zero | yes |
+| "ready to start" | every prerequisite of the skill among the module's skills with the assessability `verdict` has a non-empty `mastery_band`, or there are no such prerequisites | yes |
+| "locked" | the rest; the map names the prerequisites that are not mastered yet | no |
 
-- Освоенный пререквизит, которому пора повторить, навык не закрывает. Не закрывают его и пререквизит с рубрикой или без оценки, и навык-опора.
-- Навык со свидетельствами открыт, даже если его пререквизит ещё не освоен или уже потерял «освоено»: ученик над ним уже работал.
-- Навык с оцениваемостью `rubric` — пометка «отзыв по критериям», `none` — «без оценки»; состояния у них нет, а выбрать их можно всегда.
-- Навык с вердиктом, которого ответ не называет, — как навык без свидетельств.
-- Навык-опора, которого граф называет, а ответ нет, — «неизвестно», без причины. Причина видна, только если подходит к владению: «не освоен» и «нет свидетельств» — у «не владеет», «никто не учит» и «учат только без вердикта» — у «неизвестно», а у «владеет» её нет. Из двух записей ответа об одном навыке в счёт идёт первая (вторая поправка 2026-11-07 к R03).
-- Состояние называется словом и иконкой, не только цветом (R90 spec). Слова — таблица пакета на `en` и `ru` (R91 spec), иконки — из набора Material Symbols (R78 spec); какие именно — раздел 3.8.
+- A mastered prerequisite whose time to review has come does not lock the skill. Nor does a prerequisite with a rubric or one not assessed, nor an anchor skill.
+- A skill with evidence is open, even if its prerequisite is not mastered yet or has already lost "mastered": the learner has already worked on it.
+- A skill with the assessability `rubric` has the mark "feedback by criteria", and one with `none` — "not assessed"; they have no state, and they can always be chosen.
+- A skill with a verdict that the response does not name is like a skill without evidence.
+- An anchor skill that the graph names and the response does not is "unknown", without a reason. The reason is shown only if it fits the holding: "not mastered" and "no evidence" — at "not held", "nobody teaches" and "taught only without a verdict" — at "unknown", and at "held" there is none. Of two records of the response about one skill, the first counts (the second 2026-11-07 amendment to R03).
+- A state is named by a word and an icon, not by color alone (R90 spec). The words are the package's table in `en` and `ru` (R91 spec), the icons are from the set Material Symbols (R78 spec); which ones exactly is section 3.8.
 
-**Пример на синтетическом графе.** Модуль `example/fair-shares` с языком объяснений `en`; граф — так, как его даёт открытый вид, а ярусы — `skill_tiers`:
+**An example on a synthetic graph.** The module `example/fair-shares` with the explanation language `en`; the graph as its open view gives it, and the tiers as `skill_tiers`:
 
 ```yaml
 tiers: [Counting, Sharing]
@@ -143,214 +143,214 @@ skills:
 #              share-with-remainder 3, quarters 3
 ```
 
-Синтетический ответ `GetSkillMap` при времени устройства 2026-11-07T12:00Z и что из него выходит:
+A synthetic response of `GetSkillMap` at the device's time 2026-11-07T12:00Z, and what comes of it:
 
-| Навык | Ярус | Из ответа | На карте |
+| Skill | Tier | From the response | On the map |
 |---|---|---|---|
-| `count-objects` | 1 Counting | `evidence_count` 9, `mastery_band` `b1`, `review_date` 2026-11-20 | «освоено» |
-| `draw-shares` | 1 Counting | — | «без оценки» |
-| `halves` | 2 Sharing | `evidence_count` 4, `mastery_band` пуст | «в работе» |
-| `equal-groups` | 2 Sharing | `evidence_count` 7, `mastery_band` `b1`, `review_due` | «пора повторить» |
-| `explain-sharing` | 2 Sharing | — | «отзыв по критериям» |
-| `share-with-remainder` | 3 — без имени, номером | `evidence_count` 0 | «можно начинать»: `equal-groups` освоен, хоть ему и пора повторить, а навык-опора не закрывает |
-| `quarters` | 3 — без имени, номером | `evidence_count` 0 | «ещё закрыт»: ждёт `halves`; `explain-sharing` с рубрикой не держит |
+| `count-objects` | 1 Counting | `evidence_count` 9, `mastery_band` `b1`, `review_date` 2026-11-20 | "mastered" |
+| `draw-shares` | 1 Counting | — | "not assessed" |
+| `halves` | 2 Sharing | `evidence_count` 4, `mastery_band` empty | "in progress" |
+| `equal-groups` | 2 Sharing | `evidence_count` 7, `mastery_band` `b1`, `review_due` | "time to review" |
+| `explain-sharing` | 2 Sharing | — | "feedback by criteria" |
+| `share-with-remainder` | 3 — without a name, by its number | `evidence_count` 0 | "ready to start": `equal-groups` is mastered, though its time to review has come, and an anchor skill does not lock |
+| `quarters` | 3 — without a name, by its number | `evidence_count` 0 | "locked": it waits for `halves`; `explain-sharing`, with a rubric, does not hold it back |
 
-| Навык-опора | Из ответа | Где на карте |
+| Anchor skill | From the response | Where on the map |
 |---|---|---|
-| `core.multiplication-table`, Multiplication table | `ANCHOR_SKILL_HOLDING_HELD` | перед ярусом 1, пререквизит `share-with-remainder`: «владеет» |
-| `core.fractions-of-a-whole`, Fractions of a whole | `ANCHOR_SKILL_HOLDING_NOT_HELD`, `ANCHOR_SKILL_REASON_NOT_MASTERED` | в подробностях `halves`, чему он учит: «не владеет» — навык, который учит, ещё не освоен |
-| `core.division-with-remainder`, Division with a remainder | `ANCHOR_SKILL_HOLDING_UNKNOWN`, `ANCHOR_SKILL_REASON_ONLY_UNASSESSABLE` | в подробностях `explain-sharing`: «неизвестно» — учат только навыки без вердикта |
+| `core.multiplication-table`, Multiplication table | `ANCHOR_SKILL_HOLDING_HELD` | before tier 1, a prerequisite of `share-with-remainder`: "held" |
+| `core.fractions-of-a-whole`, Fractions of a whole | `ANCHOR_SKILL_HOLDING_NOT_HELD`, `ANCHOR_SKILL_REASON_NOT_MASTERED` | in the details of `halves`, as what it teaches: "not held" — the skill that teaches it is not mastered yet |
+| `core.division-with-remainder`, Division with a remainder | `ANCHOR_SKILL_HOLDING_UNKNOWN`, `ANCHOR_SKILL_REASON_ONLY_UNASSESSABLE` | in the details of `explain-sharing`: "unknown" — only skills without a verdict teach it |
 
-На виде ученика выбрать можно все навыки, кроме `quarters`. На виде взрослого у `count-objects` ещё видно 9 свидетельств, полосу `b1` по её названию в паспорте и срок повторения 2026-11-20, а у `equal-groups` — «пора повторить». Без ответа `GetSkillMap` те же семь навыков стоят в тех же ярусах, без состояний и пометок навыков-опор, а пометки «без оценки» и «отзыв по критериям» остаются: они — из графа.
+On the learner's view every skill but `quarters` can be chosen. On the adult's view `count-objects` also shows 9 pieces of evidence, the band `b1` by its title in the module manifest and the review date 2026-11-20, and `equal-groups` shows "time to review". Without the response of `GetSkillMap` the same seven skills stand in the same tiers, without states and without the marks of anchor skills, and the marks "not assessed" and "feedback by criteria" stay: they come from the graph.
 
-### 3.3. Элемент `<novatrail-skill-map>`
+### 3.3. The element `<novatrail-skill-map>`
 
-Пакет входит в потребителя одним элементом (R04; R36 spec):
+The package enters its consumer as one element (R04; R36 spec):
 
-| Член | Вид | Что |
+| Member | Kind | What |
 |---|---|---|
-| `graph` | свойство | открытый вид графа, `open.SkillGraph` из `@altnovatrail/spec/formatv0/open`; байты `OpenView` по версии формата читает `app` (R44 spec) |
-| `tiers` | свойство | ярусы `skill_tiers`, `Readonly<Record<string, number>>` |
-| `manifest` | свойство | открытый вид паспорта, `open.Manifest`: ID модуля, язык объяснений, полосы |
-| `skillMap` | свойство | `GetSkillMapResponse` из `@altnovatrail/contracts` или `null` — карта без состояния |
-| `view` | атрибут | `learner` — вид ученика, `adult` — вид взрослого; без него или с другим значением — без выбора и без подробностей взрослого |
-| `lang` | атрибут | язык подписей элемента: усечение тега, а не найденный — английский (R91 spec; architecture 6 spec) |
-| `heading-level` | атрибут | уровень заголовков полос, от 2 до 6, а без него или с другим значением — 3 (поправка 2026-11-07 к R04; раздел 3.4) |
-| `skillchoose` | событие | `CustomEvent` с хоста, `bubbles` и `composed`, с замороженным `detail` `{ skill }` — полным ID навыка для поля `skill` запроса `ChooseNext`. Только на виде ученика, только со `skillMap` и только у незакрытого навыка; отдаёт его кнопка «Заниматься» в подробностях (R06) |
+| `graph` | property | the open view of the graph, `open.SkillGraph` from `@altnovatrail/spec/formatv0/open`; `app` reads the bytes of `OpenView` by the format version (R44 spec) |
+| `tiers` | property | the tiers `skill_tiers`, `Readonly<Record<string, number>>` |
+| `manifest` | property | the open view of the module manifest, `open.Manifest`: the module ID, the explanation language, the bands |
+| `skillMap` | property | `GetSkillMapResponse` from `@altnovatrail/contracts`, or `null` — a map without state |
+| `view` | attribute | `learner` — the learner's view, `adult` — the adult's view; without it or with another value — without choice and without the adult's details |
+| `lang` | attribute | the language of the element's labels: found by truncating the tag, and if not found, English (R91 spec; architecture 6 spec) |
+| `heading-level` | attribute | the level of the bands' headings, from 2 to 6, and without it or with another value — 3 (the 2026-11-07 amendment to R04; section 3.4) |
+| `skillchoose` | event | a `CustomEvent` from the host, `bubbles` and `composed`, with a frozen `detail` `{ skill }` — the skill's full ID for the field `skill` of the request `ChooseNext`. Only on the learner's view, only with `skillMap` and only for a skill that is not locked; the button "Practise" in the details sends it (R06) |
 
-- Карта рисуется, когда есть `graph`, `tiers` и `manifest`, и обновляется на каждое присвоение — на месте, по ID навыка (раздел 3.4); на присвоение событий нет. Методов нет.
-- Типы элемента — в объявлениях пакета, а элемент в `HTMLElementTagNameMap` и событие в `GlobalEventHandlersEventMap` ставит сам пакет. Типы данных — `@altnovatrail/spec` и `@altnovatrail/contracts` по той же точной версии, что тег подмодуля `spec` (R73 spec, R83 spec).
-- Английские названия навыков-опор пакет вшивает при сборке из `format/schemas/shared-taxonomy.schema.json` файла формата релиза `spec`, проверенного `release-verify`, по каждой версии формата, которую читает его сборка; неизвестный ID показывает как есть, с `lang="en"` (R04; R64 spec, R77 spec).
-- Касание, Enter или Space раскрывают навык, а выбирают его для занятия кнопкой «Заниматься» в подробностях: она и отдаёт `skillchoose`. С клавиатуры — Tab по плиткам (R06, раздел 3.4).
-- Как элемент устроен в коде — R09. Дерево обновляется на месте, по ID навыка; присвоения одной задачи сливаются в одно обновление. Слова — таблица пакета на `en` и `ru`, язык — атрибут `lang` (R10, раздел 3.8). Английские названия навыков-опор вшиты из файла формата релиза `spec` — с 2026-11-12 v0.16.3, формата 0.4 (R18): рецепт `taxonomy` проверяет файл `release-verify` и закрепляет его sha256, а `ci-lint` сверяет таблицу с файлом. Стили проверены под строгой CSP, а объявления — пробным потребителем.
+- The map is drawn when there are `graph`, `tiers` and `manifest`, and it is updated on every assignment — in place, by skill ID (section 3.4); an assignment sends no events. There are no methods.
+- The element's types are in the package's declarations, and the package itself puts the element into `HTMLElementTagNameMap` and the event into `GlobalEventHandlersEventMap`. The data types are `@altnovatrail/spec` and `@altnovatrail/contracts`, at the same exact version as the tag of the submodule `spec` (R73 spec, R83 spec).
+- The English titles of anchor skills the package embeds at build time from `format/schemas/shared-taxonomy.schema.json` of the format file of a release of `spec`, checked by `release-verify`, for each format version that its build reads; an unknown ID it shows as it is, with `lang="en"` (R04; R64 spec, R77 spec).
+- A tap, Enter or Space expands a skill, and it is chosen for a session by the button "Practise" in the details: that button sends `skillchoose`. From the keyboard — Tab through the tiles (R06, section 3.4).
+- How the element is built in code is R09. The tree is updated in place, by skill ID; the assignments of one task of the event loop are merged into one update. The words are the package's table in `en` and `ru`, the language is the attribute `lang` (R10, section 3.8). The English titles of anchor skills are embedded from the format file of a release of `spec` — from 2026-11-12 v0.16.3, format 0.4 (R18): the recipe `taxonomy` checks the file by `release-verify` and pins its sha256, and `ci-lint` checks the table against the file. The styles are checked under a strict CSP, and the declarations by a trial consumer.
 
-### 3.4. Раскладка
+### 3.4. The layout
 
-Карту раскладывает свой код пакета, на устройстве, из открытого вида графа и `skill_tiers` (R06; R03). Графы первого среза малы: `grade-3-math` — 4 навыка в 3 ярусах, `english-essays` — 6 в 4, а пример олимпиадной математики в формате — 17 в 3 (`modules`, `main` 6d061e9; `spec/format/vectors/tiers/olympiad-math.yaml`).
+The map is laid out by the package's own code, on the device, from the graph's open view and `skill_tiers` (R06; R03). The graphs of the first slice are small: `grade-3-math` — 4 skills in 3 tiers, `english-essays` — 6 in 4, and the example of olympiad mathematics in the format — 17 in 3 (`modules`, `main` 6d061e9; `spec/format/vectors/tiers/olympiad-math.yaml`).
 
-**Полосы.**
-- Ярус — полоса, сверху вниз: сначала навыки-опоры, затем ярус 1, 2 и дальше — все, сколько есть; свёрнутых нет (Д3 в [DEBT.md](../DEBT.md)).
-- Заголовок полосы — слово яруса и номер, а за ними имя яруса из `tiers`, если оно есть: «Ярус 2 · Sharing», «Ярус 3» (R49 spec). У полосы навыков-опор — свой заголовок. Уровень заголовков — атрибут `heading-level` (раздел 3.3).
-- Навыки полосы — плитки в строку с переносом. Прокручивает страница, своего контейнера прокрутки нет: на 320 CSS px и при масштабе 200 % полосы переносятся, и вбок ничего не прокручивается (WCAG 2.2, 1.4.10; sources 2.1).
-- Плитка — название навыка с `lang` языка объяснений, а навыка-опоры — с `lang="en"`; состояние или пометка — словом и иконкой (раздел 3.2). Цель — не меньше 44 × 44 CSS px (R90 spec).
-- У последовательного модуля по навыку в полосе — тем же правилом. Своего вида у него нет.
+**Bands.**
+- A tier is a band, from top to bottom: first the anchor skills, then tier 1, 2 and on — all there are; none is folded (Д3 in [DEBT.md](../DEBT.md)).
+- The band's heading is the word for tier and the number, and after them the tier's name from `tiers`, if it has one: "Tier 2 · Sharing", "Tier 3" (R49 spec). The band of anchor skills has a heading of its own. The level of the headings is the attribute `heading-level` (section 3.3).
+- The skills of a band are tiles in a row, with wrapping. The page scrolls, and the map has no scroll container of its own: at 320 CSS px and at a zoom of 200 % the bands wrap, and nothing scrolls sideways (WCAG 2.2, 1.4.10; sources 2.1).
+- A tile is the skill's title with the `lang` of the explanation language, and for an anchor skill with `lang="en"`; the state or the mark is by a word and an icon (section 3.2). The target is no smaller than 44 × 44 CSS px (R90 spec).
+- A sequential module has one skill per band — by the same rule. It has no look of its own.
 
-**Порядок в полосе.**
-- Ярус 1 — по ID навыка в модуле.
-- Каждая следующая полоса — по среднему месту пререквизитов навыка среди навыков модуля; место — номер плитки в её полосе, с нуля. При равенстве — по ID.
-- Навыки-опоры места не дают, а в своей полосе стоят по ID. В ней — только пререквизиты навыков модуля (R03); если у модуля их нет, нет и полосы вместе с её заголовком.
-- ID сравниваются по кодам символов. Порядок навыков в графе, состояние и раскрытие места плитки не меняют.
-- На данных, которых правило ярусов не даёт: навык без яруса в `skill_tiers` на карте не стоит, и навыки-опоры, нужные только ему, тоже; навык яруса выше 1 без пререквизитов модуля — в конце полосы, по ID; полоса — только у яруса с навыками (поправка 2026-11-07 к R06).
+**The order in a band.**
+- Tier 1 — by the skill's local ID.
+- Each next band — by the average place of the skill's prerequisites among the module's skills; the place is the tile's number in its band, from zero. On a tie — by ID.
+- Anchor skills give no place, and in their own band they stand by ID. That band holds only the prerequisites of the module's skills (R03); if the module has none, there is no band, and no heading of it either.
+- IDs are compared by character codes. The order of the skills in the graph, the state and the expanding do not change a tile's place.
+- On data that the rule of tiers does not give: a skill without a tier in `skill_tiers` does not stand on the map, nor do the anchor skills needed only by it; a skill of a tier above 1 without prerequisites in the module stands at the end of the band, by ID; there is a band only for a tier with skills (the 2026-11-07 amendment to R06).
 
-**Раскрытие и подробности.**
-- Касание, Enter или Space на плитке раскрывают навык, повторное — закрывает; раскрыт один навык. Раскрыть можно любой навык, закрытый и навык-опору тоже: раскрытие — не выбор навыка для занятия, а выбор — только кнопкой «Заниматься» (раздел 3.2; R04).
-- Раскрытие живёт в памяти элемента и наружу не уходит. На присвоение свойств элемент обновляет плитки на месте, по ID навыка: плитка, на которой фокус, и раскрытые подробности остаются. Если раскрытого навыка с новыми данными больше нет, подробности закрываются. Если пропал узел, на котором фокус, — плитка или кнопка «Заниматься», которую сменило «ждёт», — фокус переходит на плитку того же навыка, а без неё — на первую плитку той же полосы, а без неё — на первую плитку карты (поправка 2026-11-07 к R04).
-- Подробности стоят в DOM сразу за плиткой — отдельным элементом списка полосы, `<li>` за `<li>` плитки, во всю ширину полосы: плитки после раскрытой переносятся под них. Пока подробности открыты, в списке полосы на один элемент больше. Плитка — кнопка-раскрытие, с `aria-expanded` и `aria-controls` на этот элемент.
-- В подробностях навыка: название и описание; состояние или пометка; «Опирается на» — его пререквизиты, у закрытого — с отметкой, какие ещё не освоены; «Открывает» — навыки, у которых он пререквизит; «Учит» — навыки-опоры из `teaches`, с их состоянием; у взрослого — ещё числа раздела 3.1.
-- На виде ученика, со `skillMap`, у незакрытого навыка модуля — кнопка «Заниматься»: она отдаёт `skillchoose` (R04). У закрытого вместо неё — «ждёт» и неосвоенные пререквизиты. У навыка-опоры, на виде взрослого, без `view` или с другим его значением и без состояния кнопки нет.
-- Что ответит `ChooseNext`, показывает `app`, и «нечего дать» тоже — его ответ бывает пустым, когда `api` ограничил пул задачами без ИИ (R104 spec). Карта после `skillchoose` ничего не ждёт.
-- Подробности навыка-опоры — название, состояние, причина и навыки модуля, которым он нужен.
+**Expanding and the details.**
+- A tap, Enter or Space on a tile expands the skill, and a repeated one collapses it; one skill is expanded at a time. Any skill can be expanded, a locked one and an anchor skill too: expanding is not choosing the skill for a session, and choosing is only by the button "Practise" (section 3.2; R04).
+- The expanding lives in the element's memory and does not go outside. On an assignment of properties the element updates the tiles in place, by skill ID: the tile that has the focus and the expanded details stay. If the expanded skill is no longer in the new data, the details close. If the node that had the focus is gone — a tile, or the button "Practise" that "Waits for" replaced —, the focus goes to the tile of the same skill, and without it to the first tile of the same band, and without that to the first tile of the map (the 2026-11-07 amendment to R04).
+- The details stand in the DOM right after the tile — as a separate item of the band's list, an `<li>` after the tile's `<li>`, across the band's whole width: the tiles after the expanded one wrap below them. While the details are open, the band's list has one item more. A tile is a disclosure button, with `aria-expanded` and `aria-controls` on this item.
+- In a skill's details: the title and the description; the state or the mark; "Builds on" — its prerequisites, for a locked skill with a mark of which are not mastered yet; "Opens" — the skills for which it is a prerequisite; "Teaches" — the anchor skills from `teaches`, with their state; for the adult, also the numbers of section 3.1.
+- On the learner's view, with `skillMap`, a module's skill that is not locked has the button "Practise": it sends `skillchoose` (R04). A locked one has instead "Waits for" and the prerequisites not mastered. An anchor skill has no button, nor has any skill on the adult's view, without `view` or with another value of it, or without the state.
+- What `ChooseNext` answers is shown by `app`, and "nothing to give" too — its response can be empty when `api` has limited the pool to tasks without AI (R104 spec). After `skillchoose` the map waits for nothing.
+- The details of an anchor skill — the title, the state, the reason and the module's skills that need it.
 
-**Линии.**
-- Только у раскрытого навыка: от плитки каждого его пререквизита — навыка модуля или навыка-опоры — к нему и от него к каждому навыку, у которого он пререквизит. Связь через ярус — такая же линия.
-- Линии от пререквизитов входят в верхний край плитки. Линии к тому, что навык открывает, выходят из нижнего края его подробностей: плитка и подробности — один блок, и под подробностями линии не идут.
-- Пакет проводит линии по измеренным местам плиток, когда раскладка готова, и проводит заново, когда меняется её размер. Линии лежат под плитками и не закрывают их, а у каждой на обоих концах — точка. Связь через ярус и линия от навыка-опоры проходят под плитками промежуточных полос, а линия из подробностей — и под плитками, перенесёнными под них: что с чем связано, говорят точки на концах и подписи у связанных плиток, а не сама линия.
-- У подсвеченных плиток — подписи «нужен раньше» и «откроется после»: связь видна не только цветом (1.4.1). Контраст линии с фоном — не меньше 3:1 (1.4.11).
-- При `prefers-reduced-motion` линии появляются без анимации (R90 spec).
-- Как линии устроены в коде — R11: кубические кривые в одном SVG под полосами, концы на раскрытой плитке и под подробностями разнесены по её ширине, места пересчитываются после каждой отрисовки и по `ResizeObserver`, анимации нет вовсе.
+**Lines.**
+- Only for the expanded skill: from the tile of each of its prerequisites — a module's skill or an anchor skill — to it, and from it to each skill for which it is a prerequisite. A link across a tier is the same kind of line.
+- The lines from the prerequisites enter the top edge of the tile. The lines to what the skill opens leave from the bottom edge of its details: the tile and the details are one block, and no lines go under the details.
+- The package draws the lines by the measured places of the tiles when the layout is ready, and draws them again when its size changes. The lines lie under the tiles and do not cover them, and each has a dot at both ends. A link across a tier and a line from an anchor skill pass under the tiles of the bands in between, and a line from the details also under the tiles wrapped below them: what is linked with what is told by the dots at the ends and the labels at the linked tiles, not by the line itself.
+- The highlighted tiles have the labels "needed before" and "opens after": a link is seen not by color alone (1.4.1). The line's contrast with the background is no less than 3:1 (1.4.11).
+- With `prefers-reduced-motion` the lines appear without animation (R90 spec).
+- How the lines are built in code is R11: cubic curves in one SVG under the bands, the ends at the expanded tile and under the details spread across its width, the places recalculated after each render and by `ResizeObserver`, and no animation at all.
 
-**Клавиатура и текстовая замена.**
-- Каждая плитка — кнопка в порядке Tab: полоса за полосой, в порядке раскладки. Enter или Space раскрывает навык, фокус остаётся на плитке, а «Заниматься» — следующая остановка Tab: подробности стоят сразу за плиткой (2.4.3). Своего липкого у карты нет, а чтобы фокус не закрывало липкое на странице — шапка или строка `app`, — отвечает `app` (2.4.11).
-- Текстовая замена — само дерево DOM: полоса — заголовок и список плиток, доступное имя плитки — «название, состояние», а у подсвеченной — ещё и подпись, которая стоит внутри кнопки: «название, состояние, нужен раньше». Связи названы словами в подробностях и подписях. SVG линий — `aria-hidden`. Порядок DOM — порядок на экране (1.3.2).
+**The keyboard and the text alternative.**
+- Each tile is a button in the Tab order: band after band, in the order of the layout. Enter or Space expands the skill, the focus stays on the tile, and "Practise" is the next Tab stop: the details stand right after the tile (2.4.3). The map has nothing sticky of its own, and that nothing sticky on the page — a header or a bar of `app` — covers the focus is for `app` to answer for (2.4.11).
+- The text alternative is the DOM tree itself: a band is a heading and a list of tiles, a tile's accessible name is "title, state", and a highlighted tile's name also has the label, which stands inside the button: "title, state, needed before". The links are named by words in the details and the labels. The SVG of the lines is `aria-hidden`. The DOM order is the order on the screen (1.3.2).
 
-Слова — слово яруса в заголовке полосы, «Заниматься», «Опирается на», «Открывает», «Учит», «ждёт», «нужен раньше», «откроется после», заголовок полосы навыков-опор — своя таблица пакета на `en` и `ru` (R91 spec); строки и иконки — раздел 3.8.
+The words — the word for tier in a band's heading, "Practise", "Builds on", "Opens", "Teaches", "Waits for", "needed before", "opens after", the heading of the band of anchor skills — are the package's own table in `en` and `ru` (R91 spec); the strings and the icons are section 3.8.
 
-**Пример** — модуль `example/fair-shares` раздела 3.2, с его синтетическим ответом `GetSkillMap`:
+**An example** — the module `example/fair-shares` of section 3.2, with its synthetic response of `GetSkillMap`:
 
-| Полоса | Плитки по порядку | Почему такой порядок |
+| Band | Tiles in order | Why this order |
 |---|---|---|
-| навыки-опоры | `core.multiplication-table` | только пререквизиты; по ID |
-| 1 · Counting | `count-objects` (0), `draw-shares` (1) | ярус 1 — по ID |
-| 2 · Sharing | `equal-groups` (0), `explain-sharing` (1), `halves` (2) | у всех трёх единственный пререквизит — `count-objects`, место 0: равенство, по ID |
-| 3 | `share-with-remainder` (0), `quarters` (1) | `share-with-remainder` — среднее места `equal-groups`, 0, а навык-опора места не даёт; `quarters` — среднее мест `halves` и `explain-sharing`, (2 + 1) / 2 = 1,5. Имени у яруса 3 нет — только номер |
+| anchor skills | `core.multiplication-table` | only prerequisites; by ID |
+| 1 · Counting | `count-objects` (0), `draw-shares` (1) | tier 1 — by ID |
+| 2 · Sharing | `equal-groups` (0), `explain-sharing` (1), `halves` (2) | all three have one single prerequisite, `count-objects`, place 0: a tie, by ID |
+| 3 | `share-with-remainder` (0), `quarters` (1) | `share-with-remainder` — the average of the place of `equal-groups`, 0, and an anchor skill gives no place; `quarters` — the average of the places of `halves` and `explain-sharing`, (2 + 1) / 2 = 1.5. Tier 3 has no name — only a number |
 
-- **Раскрыт `quarters`** на виде ученика. Подробности встают за его плиткой, в конце полосы 3. Линии идут к нему от `halves` и от `explain-sharing`, а на их плитках — «нужен раньше». «Опирается на»: Halves — ещё не освоен, и Explain how you shared; «Открывает» — ничего. Навык закрыт: вместо «Заниматься» — «ждёт: Halves».
-- **Раскрыт `share-with-remainder`.** Подробности встают за его плиткой, и `quarters` переносится под них. Линии идут к нему от `equal-groups` и от `core.multiplication-table` из полосы навыков-опор, и на обеих плитках — «нужен раньше». Навык — «можно начинать», и кнопка «Заниматься» отдаёт `skillchoose` с `detail` `{ skill: "example/fair-shares/skill/share-with-remainder" }`.
-- **Раскрыт `count-objects`.** Его подробности встают за плиткой, и `draw-shares` переносится под них. Линии идут из нижнего края подробностей к `equal-groups`, `explain-sharing` и `halves`, а на их плитках — «откроется после». Tab с плитки `count-objects` ведёт на «Заниматься», а дальше — на `draw-shares`.
+- **`quarters` is expanded** on the learner's view. The details stand after its tile, at the end of band 3. Lines go to it from `halves` and from `explain-sharing`, and their tiles have "needed before". "Builds on": Halves — not mastered yet, and Explain how you shared; "Opens" — nothing. The skill is locked: instead of "Practise" — "Waits for: Halves".
+- **`share-with-remainder` is expanded.** The details stand after its tile, and `quarters` wraps below them. Lines go to it from `equal-groups` and from `core.multiplication-table` of the band of anchor skills, and both tiles have "needed before". The skill is "ready to start", and the button "Practise" sends `skillchoose` with `detail` `{ skill: "example/fair-shares/skill/share-with-remainder" }`.
+- **`count-objects` is expanded.** Its details stand after the tile, and `draw-shares` wraps below them. Lines go from the bottom edge of the details to `equal-groups`, `explain-sharing` and `halves`, and their tiles have "opens after". Tab from the tile `count-objects` leads to "Practise", and then to `draw-shares`.
 
-### 3.5. Ранги
+### 3.5. Ranks
 
-- **На карте рангов нет** — ни у навыка, ни у модуля, ни у ученика (R07). О владении карта говорит пятью состояниями на карте, а у взрослого — ещё и полосой освоения по её названию из паспорта (разделы 3.1 и 3.2; R03). Ранг — «ступень, которой отображение называет владение» (concepts 15 spec), и что это за ступень в NovaTrail, решает О-13.
-- **Что ушло к О-13** — строкой «В реестр spec» В4, а с v0.9.8 — в сам О-13 (product 13 spec; R14):
-  - общего ранга ученика быть не может: уровень — на модуль, и шкалы модулей не складываются (concepts 11 spec);
-  - ранг модуля — номер полосы, в которой стоит уровень модуля, «ранг k из N», номером без имени (R213 standalone). Уровня модуля в `GetSkillMap` нет: нужны поле контракта и правило `learner-model`;
-  - ранг навыка — номер его полосы освоения. Полей он не просит, но у навыка, которому учат только в нижней полосе, выше «ранга 1» не поднимется;
-  - рекомендация — ранг модуля, если О-13 решит, что ранги видны, а до того — никаких.
-- **Как ранги придут.** Их включит атрибут элемента: его ставит `app` по стилю подачи ученика, на обоих видах карты, а без атрибута рангов нет. Карта стиля подачи не знает и профиля не читает (R04). Имя атрибута и вид ранга назовёт решение, которое придёт вслед за О-13, поправкой к R04; как стиль подачи держит ранги, решают О-13, О-23 и `app`.
+- **There are no ranks on the map** — neither for a skill, nor for a module, nor for a learner (R07). The map speaks of mastery by the five states on the map, and for the adult also by the mastery band, by its title from the module manifest (sections 3.1 and 3.2; R03). A rank is "a step by which the display names mastery" (concepts 15 spec), and what this step is in NovaTrail is decided by О-13.
+- **What went to О-13** — by the row «В реестр spec» В4, and from v0.9.8 into О-13 itself (product 13 spec; R14):
+  - there can be no overall rank of a learner: the level is per module, and the scales of the modules do not add up (concepts 11 spec);
+  - a module's rank is the number of the band in which the module's level stands, "rank k of N", a number without a name (R213 standalone). There is no module level in `GetSkillMap`: it needs a field of the contract and a rule of `learner-model`;
+  - a skill's rank is the number of its mastery band. It asks for no fields, but a skill that is taught only in the lowest band will not rise above "rank 1";
+  - the recommendation is a module's rank, if О-13 decides that ranks are seen, and until then none.
+- **How ranks will come.** An attribute of the element will turn them on: `app` sets it by the learner's presentation style, on both views of the map, and without the attribute there are no ranks. The map does not know the presentation style and does not read the profile (R04). The attribute's name and the look of the rank will be named by the decision that comes after О-13, as an amendment to R04; how the presentation style holds ranks is decided by О-13, О-23 and `app`.
 
-### 3.6. Ярусы — что решил `spec`
+### 3.6. Tiers — what `spec` decided
 
-- Ярус навыка без пререквизитов среди навыков модуля — 1, а у остальных — на 1 выше самого высокого яруса их пререквизитов в модуле: число навыков в самой длинной цепочке пререквизитов, которой навык кончается. Пререквизит всегда стоит ярусом ниже, и связи из старшего яруса в младший не бывает. Предела числа ярусов нет. Навыки-опоры ярусов не дают (R49 spec с поправкой 2026-10-26).
-- Имена ярусам — необязательный список `tiers` в графе, на языке объяснений: первое имя — у яруса 1. Ярус без имени показывается номером, а имя за последним ярусом ничего не называет (R49 spec).
-- Ярусы вычисляет `module-kit`, когда собирает пакет, и кладёт их в канонический вид, `skill_tiers`; векторы ярусов — в `format/vectors/tiers/` `spec`. До карты ярусы доходят от `api` ответом `GetSkillGraph`, рядом с открытым видом графа (R62 spec, R99 spec). Карта ярусов не вычисляет.
-- Подгонять граф под рисунок карты R49 spec отверг: ради трёх слоёв карты standalone одно ребро там не провели (R164 standalone), — а дальние ярусы карта может свернуть в строку, как прототип. Такое сворачивание R06 отложил — Д3 в [DEBT.md](../DEBT.md). В MathTrail слоёв было три — «основы», «правила», «сложные задачи», — и тест каталога держал цепочки в пределах трёх слоёв (SPEC 8.12.2 standalone; sources 1.1).
-- В первом срезе ярусов немного: 3 у `grade-3-math`, 4 у `english-essays` (`modules`, `main` 6d061e9) и 3 у примера олимпиадной математики в формате (`spec/format/vectors/tiers/olympiad-math.yaml`).
+- The tier of a skill without prerequisites among the module's skills is 1, and that of the others is 1 higher than the highest tier of their prerequisites in the module: the number of skills in the longest chain of prerequisites that ends with the skill. A prerequisite always stands a tier lower, and there is no link from a higher tier to a lower one. There is no limit to the number of tiers. Anchor skills give no tiers (R49 spec with the 2026-10-26 amendment).
+- The names of the tiers are the optional list `tiers` in the graph, in the explanation language: the first name is that of tier 1. A tier without a name is shown by its number, and a name beyond the last tier names nothing (R49 spec).
+- The tiers are computed by `module-kit` when it builds the package, and it puts them into the canonical view, `skill_tiers`; the tier vectors are in `format/vectors/tiers/` of `spec`. The tiers reach the map from `api` in the response of `GetSkillGraph`, beside the graph's open view (R62 spec, R99 spec). The map does not compute tiers.
+- Fitting the graph to the map's drawing R49 spec rejected: for the sake of the three layers of the map of standalone one edge was not drawn there (R164 standalone) —, and the map can collapse the distant tiers into a row, as the prototype does. Such collapsing R06 deferred — Д3 in [DEBT.md](../DEBT.md). In MathTrail there were three layers — "the foundations", "the rules", "the hard problems" —, and a test on the catalog kept the chains within three layers (SPEC 8.12.2 standalone; sources 1.1).
+- In the first slice there are few tiers: 3 in `grade-3-math`, 4 in `english-essays` (`modules`, `main` 6d061e9) and 3 in the example of olympiad mathematics in the format (`spec/format/vectors/tiers/olympiad-math.yaml`).
 
-### 3.7. Сборка, зависимости и публикация
+### 3.7. Build, dependencies and publishing
 
-Что решили `spec` и детализация для кода пакета; построил это эпик кода — E2, сделан 2026-11-08, архив — [docs/plan/E2.md](plan/E2.md).
-- **Без фреймворка.** Пакет — веб-компонент: фреймворк ему не нужен, а свой каждый потребитель выбирает сам (R36 spec). Во время разработки `app` подключает рабочую копию пакета, а в релиз идёт только точная версия (R16 spec; architecture 6 spec). Второй потребитель — `site` с этапа 3 — получает вторую сборку того же пакета (repositories 2.1 spec).
-- **Зависимости.**
-  - Типы данных — `@altnovatrail/spec` и `@altnovatrail/contracts`, по точной версии, той же, что тег подмодуля `spec` (R73 spec, R83 spec; R04). `@altnovatrail/spec` — одни объявления, и он в `dependencies`: на его типы ссылаются объявления элемента. `@altnovatrail/contracts` — код protobuf-es с рантаймом, и он в `devDependencies`: пакет берёт из него только `import type`, а значения перечислений — своими константами. Так у `app`, который держит контракты в `dependencies`, одна копия их кода и типов (R08).
-  - Набор иконок `@iconify-json/material-symbols` — в `devDependencies`, по точной версии, а вшиваются при сборке только свои иконки (R78 spec; поправка 2026-11-02 к R39 spec).
-  - Английские названия навыков-опор — из файла формата релиза `spec`, проверенного `release-verify` (R04; R64 spec, R77 spec).
-  - Только лицензии, совместимые с Apache-2.0; лицензии lock-файла проверяет рецепт `spec` `licenses-check-repo` в своём `ci-licenses` (R39 spec; RULES.md, Hard rules).
-- **Инструменты разработки.** Вид devcontainer — `typescript` (R02): Biome пришёл с ним форматтером TypeScript раньше решения `skill-map` о линтере. Линтер — тоже Biome, 2.6.4, а 2026-11-07 Dependabot поднял его до 2.6.5 (pull request #17), а с ним сборка `tsc` TypeScript 7.0.2 в `lib/` без сборщика и тесты Vitest 5.1.0 в Node и в Chromium (R08). Точка входа у пакета одна — элемент, а ядро без DOM, `src/core/`, — своей программой `tsc`, вне `exports`. Элемент — свой код, без библиотеки. Отличий от контейнера `spec` код не вводит (R08): браузер тестов — ревизии 1254 из образа Playwright 1.65.0. С 2026-11-11 его поднимали здесь раньше заготовки `spec` (R17), а с 2026-11-12 `.devcontainer/` снова совпадает с тем, что заготовка v0.16.3 строит для вида `typescript` (R18). Тесты в браузере — Chrome Headless Shell из образа Playwright в стадии `toolchain`, а `playwright` в `package.json` — той же версии, названным исключением из правила лицензий (R02; R79 spec); в них же axe-core, тоже названным исключением (R10). Контейнер на этом образе собран 2026-11-07 — Д2 закрыт ([DEBT.md](../DEBT.md)).
-- **Демо.** Карту пробуют руками на странице `demo/` (R12): `just demo` — сервер Vite на компьютере, `just demo-build` — статическая сборка для планшета. Графы — пример, свой граф на восемь ярусов, модули первого среза из релиза `modules` и векторы ярусов `spec`, по закреплённым дайджестам; `just demo-pin` проверяет индекс модулей `release-verify` и закрепляет его sha256. В пакет и в релиз демо не идёт.
-- **Тесты и покрытие.** Код — со своими тестами, а покрытие идёт в Codecov, и мерж ждёт `codecov/patch` не ниже 90 % изменённых строк (R48 spec; RULES.md, How we work). README несёт значки статуса (R48 spec). Проверки — рецепты `ci-lint`, `ci-test`, `ci-vuln` и `ci-licenses` для общего `typescript.yml` `.github`, а локально — `just ci` (R08). Правила, которые тесты проверяют первыми: состояния на карте (раздел 3.2), порядок в полосе и раскрытие (раздел 3.4) — на синтетических графах, как пример `example/fair-shares`.
-- **Релиз и публикация.** Всё, что выходит у `skill-map`, — файлы одного релиза GitHub с подписью общего `release.yml` `.github`, и тот же файл пакета уходит в npm, `@altnovatrail/skill-map` (R37 spec). Пакет из npm `app` принимает, когда `release-verify-npm` принял lock-файл, в CI pull request, который его меняет (R77 spec; RULES.md, Hard rules). До первого релиза у репозитория — неизменяемые релизы и ruleset тегов `v*` (Д54 в таблице 4 RUN.md `spec`). Как это устроено — R13: свой `release.yml` на общем `release.yml` `.github` v0.1.15, линия 0.1, рецепт `release-files` с проверкой архива и пробным потребителем, проба без публикации на каждом pull request и на `main` до первого релиза (T18). Неизменяемые релизы и ruleset тегов `v*` (`v-tags`, 26779303) включены 2026-11-08.
-- **Лицензия и доступ** — Apache-2.0 (R20 spec); все репозитории организации публичные (R18 spec).
+What `spec` and the detailing decided for the package's code; the epic of the code built it — E2, done 2026-11-08, its archive — [docs/plan/E2.md](plan/E2.md).
+- **No framework.** The package is a web component: it needs no framework, and each consumer chooses its own itself (R36 spec). During development `app` links in the package's working copy, and only an exact version goes into a release (R16 spec; architecture 6 spec). The second consumer — `site`, from stage 3 — gets a second build of the same package (repositories 2.1 spec).
+- **Dependencies.**
+  - The data types are `@altnovatrail/spec` and `@altnovatrail/contracts`, at an exact version, the same as the tag of the submodule `spec` (R73 spec, R83 spec; R04). `@altnovatrail/spec` is declarations alone, and it is in `dependencies`: the element's declarations refer to its types. `@altnovatrail/contracts` is the code of protobuf-es with a runtime, and it is in `devDependencies`: the package takes from it only `import type`, and the values of the enums are its own constants. So `app`, which keeps the contracts in `dependencies`, has one copy of their code and types (R08).
+  - The icon set `@iconify-json/material-symbols` is in `devDependencies`, at an exact version, and only the package's own icons are embedded at build time (R78 spec; the 2026-11-02 amendment to R39 spec).
+  - The English titles of anchor skills come from the format file of a release of `spec`, checked by `release-verify` (R04; R64 spec, R77 spec).
+  - Only licenses compatible with Apache-2.0; the licenses of the lock file are checked by the recipe `licenses-check-repo` of `spec` in the repository's own `ci-licenses` (R39 spec; RULES.md, Hard rules).
+- **Development tools.** The kind of the devcontainer is `typescript` (R02): Biome came with it, as the formatter of TypeScript, before the decision of `skill-map` on a linter. The linter is Biome too, 2.6.4, and on 2026-11-07 Dependabot raised it to 2.6.5 (pull request #17), and with it come the build by `tsc` of TypeScript 7.0.2 into `lib/` without a bundler and the tests by Vitest 5.1.0 in Node and in Chromium (R08). The package has one entry point — the element, and the core without DOM, `src/core/`, is a `tsc` program of its own, outside `exports`. The element is its own code, without a library. The code brings no differences from the container of `spec` (R08): the browser of the tests is revision 1254 from the image of Playwright 1.65.0. From 2026-11-11 it was raised here ahead of the template of `spec` (R17), and from 2026-11-12 `.devcontainer/` again matches what the template v0.16.3 builds for the kind `typescript` (R18). The tests in the browser run on Chrome Headless Shell from the image of Playwright in the stage `toolchain`, and `playwright` in `package.json` is of the same version, a named exception to the rule of licenses (R02; R79 spec); axe-core runs in them too, also a named exception (R10). The container on this image was built 2026-11-07 — Д2 is closed ([DEBT.md](../DEBT.md)).
+- **The demo.** The map is tried by hand on the page `demo/` (R12): `just demo` — a Vite server on the computer, `just demo-build` — a static build for a tablet. The graphs are the example, a graph of its own of eight tiers, the modules of the first slice from the release of `modules` and the tier vectors of `spec`, by pinned digests; `just demo-pin` checks the module index by `release-verify` and pins its sha256. The demo goes neither into the package nor into the release.
+- **Tests and coverage.** The code comes with its tests, the coverage goes to Codecov, and a merge waits for `codecov/patch` at no less than 90 % of the changed lines (R48 spec; RULES.md, How we work). The README carries status badges (R48 spec). The checks are the recipes `ci-lint`, `ci-test`, `ci-vuln` and `ci-licenses` for the shared `typescript.yml` of `.github`, and locally `just ci` (R08). The rules that the tests check first: the states on the map (section 3.2), the order in a band and the expanding (section 3.4) — on synthetic graphs, like the example `example/fair-shares`.
+- **Release and publishing.** Everything that `skill-map` puts out is the files of one GitHub release with the signature of the shared `release.yml` of `.github`, and the same package file goes to npm, `@altnovatrail/skill-map` (R37 spec). `app` accepts the package from npm when `release-verify-npm` has accepted the lock file, in CI of the pull request that changes it (R77 spec; RULES.md, Hard rules). Before the first release the repository has immutable releases and a ruleset of the tags `v*` (Д54 in table 4 of the RUN.md of `spec`). How it is built is R13: its own `release.yml` on the shared `release.yml` of `.github` v0.1.15, the line 0.1, the recipe `release-files` with a check of the archive and a trial consumer, a trial run without publishing on every pull request and on `main` until the first release (T18). The immutable releases and the ruleset of the tags `v*` (`v-tags`, 26779303) were turned on 2026-11-08.
+- **License and access** — Apache-2.0 (R20 spec); all the organization's repositories are public (R18 spec).
 
-### 3.8. Слова, иконки и вид
+### 3.8. Words, icons and look
 
-Как они устроены в коде — R10; стандарт — WCAG 2.2 AA с 2.5.5 и 2.3.3 (R90 spec).
+How they are built in code is R10; the standard is WCAG 2.2 AA with 2.5.5 and 2.3.3 (R90 spec).
 
-**Слова** — своя таблица пакета, `src/element/words.ts` (R91 spec, R92 spec). Язык — атрибут `lang` элемента: тег ищется усечением, а не найденный — английский. Места шаблонов — в фигурных скобках; число в «ответах» берёт форму CLDR своего языка.
+**Words** are the package's own table, `src/element/words.ts` (R91 spec, R92 spec). The language is the element's attribute `lang`: the tag is looked up by truncation, and one not found means English. The places of the templates are in curly braces; the number in "answers" takes the CLDR form of its language.
 
-| Ключ | `en` | `ru` |
+| Key | `en` | `ru` |
 |---|---|---|
-| ярус без имени | Tier {tier} | Ярус {tier} |
-| ярус с именем | Tier {tier} · {name} | Ярус {tier} · {name} |
-| полоса навыков-опор | Skills from other modules | Навыки других модулей |
-| «пора повторить» | Time to review | Пора повторить |
-| «освоено» | Mastered | Освоено |
-| «в работе» | In progress | В работе |
-| «можно начинать» | Ready to start | Можно начинать |
-| «ещё закрыт» | Locked | Ещё закрыт |
-| «отзыв по критериям» | Feedback by criteria | Отзыв по критериям |
-| «без оценки» | Not assessed | Без оценки |
-| «владеет» | Held | Владеет |
-| «не владеет» | Not held | Не владеет |
-| «неизвестно» | Unknown | Неизвестно |
-| причина «не освоен» | a skill that teaches it is not mastered yet | не освоен навык, который ему учит |
-| причина «нет свидетельств» | no skill that teaches it has answers yet | у навыков, которые ему учат, ещё нет ответов |
-| причина «никто не учит» | no module teaches it | ему не учит ни один модуль |
-| причина «учат только без вердикта» | only skills without a verdict teach it | ему учат только навыки без вердикта |
-| «нужен раньше» | needed before | нужен раньше |
-| «откроется после» | opens after | откроется после |
-| «Опирается на» | Builds on | Опирается на |
-| «Открывает» | Opens | Открывает |
-| «Учит» | Teaches | Учит |
-| «Нужен для» — у навыка-опоры | Needed by | Нужен для |
-| неосвоенный пререквизит | {skill} — not mastered yet | {skill} — ещё не освоен |
-| владение с причиной | {holding} — {reason} | {holding} — {reason} |
-| навык-опора, которому учит навык | {skill} — {holding} | {skill} — {holding} |
-| «Заниматься» | Practise | Заниматься |
-| «ждёт» | Waits for: {skills} | Ждёт: {skills} |
-| ответы | one: {count} answer; other: {count} answers | one: {count} ответ; few: {count} ответа; many: {count} ответов; other: {count} ответа |
-| последняя практика | Last practised {date} | Последнее занятие: {date} |
-| полоса освоения | Mastery band: {band} | Полоса освоения: {band} |
-| срок повторения | Review on {date} | Повторить {date} |
+| a tier without a name | Tier {tier} | «Ярус {tier}» |
+| a tier with a name | Tier {tier} · {name} | «Ярус {tier} · {name}» |
+| the band of anchor skills | Skills from other modules | «Навыки других модулей» |
+| "time to review" | Time to review | «Пора повторить» |
+| "mastered" | Mastered | «Освоено» |
+| "in progress" | In progress | «В работе» |
+| "ready to start" | Ready to start | «Можно начинать» |
+| "locked" | Locked | «Ещё закрыт» |
+| "feedback by criteria" | Feedback by criteria | «Отзыв по критериям» |
+| "not assessed" | Not assessed | «Без оценки» |
+| "held" | Held | «Владеет» |
+| "not held" | Not held | «Не владеет» |
+| "unknown" | Unknown | «Неизвестно» |
+| the reason "not mastered" | a skill that teaches it is not mastered yet | «не освоен навык, который ему учит» |
+| the reason "no evidence" | no skill that teaches it has answers yet | «у навыков, которые ему учат, ещё нет ответов» |
+| the reason "nobody teaches" | no module teaches it | «ему не учит ни один модуль» |
+| the reason "taught only without a verdict" | only skills without a verdict teach it | «ему учат только навыки без вердикта» |
+| "needed before" | needed before | «нужен раньше» |
+| "opens after" | opens after | «откроется после» |
+| "Builds on" | Builds on | «Опирается на» |
+| "Opens" | Opens | «Открывает» |
+| "Teaches" | Teaches | «Учит» |
+| "Needed by" — for an anchor skill | Needed by | «Нужен для» |
+| a prerequisite not mastered | {skill} — not mastered yet | «{skill} — ещё не освоен» |
+| holding with a reason | {holding} — {reason} | {holding} — {reason} |
+| an anchor skill that a skill teaches | {skill} — {holding} | {skill} — {holding} |
+| "Practise" | Practise | «Заниматься» |
+| "Waits for" | Waits for: {skills} | «Ждёт: {skills}» |
+| answers | one: {count} answer; other: {count} answers | «one: {count} ответ; few: {count} ответа; many: {count} ответов; other: {count} ответа» |
+| the last practice | Last practised {date} | «Последнее занятие: {date}» |
+| the mastery band | Mastery band: {band} | «Полоса освоения: {band}» |
+| the review date | Review on {date} | «Повторить {date}» |
 
-Между частями доступного имени плитки — «, » в обоих языках. Названия навыков модуля и имена ярусов — на языке объяснений модуля, а навыков-опор — английские, с `lang="en"`. Слов, которые показывает и другой пакет, у карты нет: таблицы слов architecture 6 spec её слова не касаются.
+Between the parts of a tile's accessible name stands ", " in both languages. The titles of the module's skills and the names of the tiers are in the module's explanation language, and those of anchor skills are English, with `lang="en"`. The map has no words that another package shows too: the table of words of architecture 6 spec does not concern its words.
 
-**Иконки** — Material Symbols, Rounded, контуром, `material-symbols:<база>-outline-rounded`, из `@iconify-json/material-symbols` 1.2.98, с 2026-11-11 (поправка к R10; R78 spec). Каждая — значение одного `skill-map`: ни одной нет в таблице architecture 6 spec, и ни одна не отражается справа налево.
+**Icons** are Material Symbols, Rounded, outlined, `material-symbols:<base>-outline-rounded`, from `@iconify-json/material-symbols` 1.2.98, from 2026-11-11 (an amendment to R10; R78 spec). Each stands for a meaning of `skill-map` alone: none is in the table of architecture 6 spec, and none is mirrored right to left.
 
-| Значение | База |
+| Meaning | Base |
 |---|---|
-| «пора повторить» | `update` |
-| «освоено» | `check-circle` |
-| «в работе» | `timelapse` |
-| «можно начинать» | `lock-open-right` |
-| «ещё закрыт» | `lock` |
-| «отзыв по критериям» | `rate-review` |
-| «без оценки» | `remove-done` |
-| «владеет» | `verified` |
-| «не владеет» | `radio-button-unchecked` |
-| «неизвестно» | `question-mark` |
+| "time to review" | `update` |
+| "mastered" | `check-circle` |
+| "in progress" | `timelapse` |
+| "ready to start" | `lock-open-right` |
+| "locked" | `lock` |
+| "feedback by criteria" | `rate-review` |
+| "not assessed" | `remove-done` |
+| "held" | `verified` |
+| "not held" | `radio-button-unchecked` |
+| "unknown" | `question-mark` |
 
-Иконка стоит перед словом — на плитке и в подробностях, — скрыта от дерева доступности и цвета текста. Подпись видна всегда, а имя — её текст (R90 spec).
+The icon stands before the word — on the tile and in the details —, is hidden from the accessibility tree and has the color of the text. The label is always visible, and the name is its text (R90 spec).
 
-**Тема** — переменными CSS: они наследуются от родителя, и элемент читает их внутри своего дерева, как у `canvas` (sources 2.3):
-- `--novatrail-skill-map-paper` — фон карты, плиток и подробностей, по умолчанию `#fff`;
-- `--novatrail-skill-map-ink` — текст, рамки и иконки, `#111`;
-- `--novatrail-skill-map-accent` — раскрытая плитка, рамки связанных плиток и подробностей, «Заниматься», кольцо фокуса, а с T15 и линии; `#1d4ed8`, 6,7:1 к белому;
-- умолчание стоит при каждом `var()`, а не в `:host`. Недопустимое значение умолчания не даёт: свойство вычисляется как `unset`, текст берёт цвет хоста, фон — прозрачный;
-- своих цветов у состояний нет. Закрытая плитка — с рамкой пунктиром, связанные — с рамкой акцента в 2 px, раскрытая — залита акцентом;
-- в режиме принудительных цветов — системные: плитки и «Заниматься» — ButtonFace, ButtonText и ButtonBorder, раскрытая — Highlight и HighlightText, связанные — рамка Highlight, карта и подробности — Canvas и CanvasText.
+**The theme** is set by CSS custom properties: they are inherited from the parent, and the element reads them inside its own tree, as `canvas` does (sources 2.3):
+- `--novatrail-skill-map-paper` — the background of the map, the tiles and the details, by default `#fff`;
+- `--novatrail-skill-map-ink` — the text, the borders and the icons, `#111`;
+- `--novatrail-skill-map-accent` — the expanded tile, the borders of the linked tiles and of the details, "Practise", the focus ring, and from T15 the lines too; `#1d4ed8`, 6.7:1 against white;
+- the default stands at each `var()`, not in `:host`. An invalid value does not give the default: the property computes to `unset`, the text takes the host's color, and the background is transparent;
+- the states have no colors of their own. A locked tile has a dashed border, the linked ones an accent border of 2 px, and the expanded one is filled with the accent;
+- in the forced colors mode the colors are the system ones: the tiles and "Practise" — ButtonFace, ButtonText and ButtonBorder, the expanded tile — Highlight and HighlightText, the linked ones — a Highlight border, the map and the details — Canvas and CanvasText.
 
-Контраст умолчаний пакет проверяет сам, axe-core в тестах. Контраст темы, которую ставит потребитель, — его: `app` проверяет свои цвета.
+The package checks the contrast of the defaults itself, by axe-core in the tests. The contrast of a theme that the consumer sets is the consumer's: `app` checks its own colors.
 
-**Цели и перенос.** Плитка и «Заниматься» — не меньше 44 × 44 CSS px. Размеры — в `rem` и `em`, и текст растёт с масштабом страницы; длинное название переносится, и на 320 CSS px вбок ничего не прокручивается. Кольцо фокуса — 3 px акцента с отступом 2 px, `:focus-visible`.
+**Targets and wrapping.** A tile and "Practise" are no smaller than 44 × 44 CSS px. The sizes are in `rem` and `em`, and the text grows with the page zoom; a long title wraps, and at 320 CSS px nothing scrolls sideways. The focus ring is 3 px of the accent with an offset of 2 px, `:focus-visible`.
 
-**Движение.** Его нет: ни перехода, ни анимации, и у линий тоже (R11), так что выключать по `prefers-reduced-motion` нечего.
+**Motion.** There is none: no transition and no animation, for the lines too (R11), so there is nothing to turn off by `prefers-reduced-motion`.
 
-**Объявленные несоответствия** (R90 spec) — нет: axe-core с тегами WCAG 2.0, 2.1 и 2.2 A и AA не находит нарушений ни на одном виде и языке, а тесты держат то, чего axe не видит: цели, перенос, тему, принудительные цвета, движение и фокус. За что отвечает `app`, а не пакет: чтобы фокус не закрывала липкая шапка (2.4.11; раздел 3.4) и контраст своей темы. Что найдёт проба руками (T16), встанет сюда — критерий, что есть вместо и когда уйдёт.
+**Declared nonconformances** (R90 spec) — none: axe-core with the tags of WCAG 2.0, 2.1 and 2.2 A and AA finds no violations on any view and in any language, and the tests hold what axe does not see: the targets, the wrapping, the theme, the forced colors, motion and the focus. What `app` answers for, not the package: that a sticky header does not cover the focus (2.4.11; section 3.4), and the contrast of its own theme. What the trial by hand (T16) finds will go here — the criterion, what there is instead and when it goes away.
 
-## 4. Источники
+## 4. Sources
 
-С 2026-11-12 записи этого раздела — в [sources.md](sources.md): запись на источник, с адресом, датой прочтения и цитатой, а утверждения здесь ссылаются на запись, как на раздел, — `sources 2.1` (R18; RULES.md, The bar). Раздел остаётся указателем: на него ссылаются журнал и архивы `docs/plan/`, а их не переписывают. Где теперь прежние пункты:
-- карта тем и ярусы в MathTrail — sources 1.1; ранги в MathTrail — sources 1.2; раскладка карты тем в MathTrail — sources 1.3;
-- WCAG 2.2 для раскладки — sources 2.1, для вида карты — sources 2.2; принудительные цвета и переменные CSS — sources 2.3; наблюдение за размером — sources 2.4;
-- библиотеки раскладки — sources 3.1; инструменты кода — sources 3.2; демо — sources 3.3; пакеты слов, иконок и проверки — sources 3.4;
-- карта тем прототипа — sources 4.1.
+From 2026-11-12 the records of this section are in [sources.md](sources.md): a record per source, with its address, the date it was read and a quote, and the claims here cite a record as a section — `sources 2.1` (R18; RULES.md, The bar). The section stays as a pointer: the log and the archives of `docs/plan/` cite it, and they are not rewritten. Where the former items are now:
+- the topic map and the tiers in MathTrail — sources 1.1; ranks in MathTrail — sources 1.2; the layout of the topic map in MathTrail — sources 1.3;
+- WCAG 2.2 for the layout — sources 2.1, for the look of the map — sources 2.2; forced colors and CSS custom properties — sources 2.3; observing the size — sources 2.4;
+- the layout libraries — sources 3.1; the tools of the code — sources 3.2; the demo — sources 3.3; the packages of words, icons and the check — sources 3.4;
+- the topic map of the prototype — sources 4.1.

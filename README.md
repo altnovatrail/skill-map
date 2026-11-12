@@ -50,11 +50,12 @@ A pull request that changes the lock file has spec's recipe check it, as NovaTra
 
 ## Documents
 
-The documents are in English; the work plan, its technical debt and the archives of its epics are in Russian. Until a task of the plan translates them, the architecture and the decision log are still in Russian.
+The documents are in English; the work plan, its technical debt and the archives of its epics are in Russian.
 
 - [docs/architecture.md](docs/architecture.md) — the component: what it does and does not do, its data and links, what was left to decide and is now decided or deferred on purpose, and how the package is built.
 - [docs/decisions.md](docs/decisions.md) — the decision log: what was decided, why, and what was rejected.
 - [docs/sources.md](docs/sources.md) — the external facts the documents rest on, each with its source, the date it was read and a quote.
+- [docs/measurements.md](docs/measurements.md) — the results of measurements: what the Claude Code sessions of the repository spend.
 - [RUN.md](RUN.md) — the work plan, in epics.
 - [DEBT.md](DEBT.md) — the technical debt, in Russian: table 4 of the work plan.
 
