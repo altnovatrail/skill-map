@@ -1,0 +1,20 @@
+# DEBT.md — technical debt of `skill-map`
+
+Table 4 of [RUN.md](../RUN.md): what was put off on purpose, its risk, when to return (R153 spec, R154 spec).
+
+- Never read whole: take the rows the task and its sections name — `grep -n '^| Д3 ' run/DEBT.md` — and those `grep -n` finds by the paths and parts it changes (RUN.md rule 2).
+- A row comes from a task's «Открыто» (RUN.md rule 9) and holds only what is open: drop a closed part, delete the row once closed. What closed it is named by the «Сделано» of the task that closed it.
+- A row «Д…» of table 4 of RUN.md before 2026-11-12, or of the root `DEBT.md` before T24, is the same row here (R18, R21). The records of the closed Д1, Д2, Д5 and Д9 that `DEBT.md` held are in [docs/plan/E3.md](../docs/plan/E3.md), «Из RUN.md и DEBT.md, при переходе на `run/`».
+
+## Table 4. Technical debt
+
+Numbers are not reused: next — Д12.
+
+| ID | Debt | From | Risk while open | When to return |
+|---|---|---|---|---|
+| Д3 | The distant tiers do not fold on the map: the bands of all tiers are always shown (R06) | T08 | A module with many tiers makes a long page, and the chosen skill and its links leave the screen. The first slice has no more than four tiers | When a module — in `modules` or a third party's — has more than six tiers: decide the folding in a task of its own, as in the prototype (R49 spec) |
+| Д4 | The map has not been tried by hand on a tablet or with a screen reader: the trial of T16 was on a computer, in Chrome | T16 | Touch, VoiceOver and NVDA on the map are checked only by tests by roles and axe-core in Chromium. How a screen reader reads the tiles «title, state» and the details, and whether the targets are too small on a tablet, is not seen | With the device checks of `app`, when it puts in the skill map (epic E3 of the RUN.md of `app`), or sooner if the author tries `just demo-build` on a tablet |
+| Д6 | The release trial runs on every pull request, without a filter of paths, and does not start in a pull request from a fork (R13, "Revisit") | T17 | CI minutes on a change of documents alone; a change from a fork does not try the release before the merge and is checked only by the release on `main` | When `skill-map` has forks or CI minutes get expensive |
+| Д7 | `ci-lint` goes to the network for the format file of `spec` (`taxonomy --check`), and `just demo` for the index and packages of `modules` | T13, T16 | A failure of the network on the CI machine holds a required check — as on pull request #24. Retrying the download, `scripts/download.ts`, softens it but does not remove it | If the failures recur: a cache input of the shared `typescript.yml` of `.github` — a new row «В реестр spec» in [QUESTIONS.md](QUESTIONS.md), as the answer to В7 decided (R15) |
+| Д8 | A new version of the icon set from Dependabot keeps its pull request red until `just icons` is rerun (R10) | T14 | Such a pull request cannot be merged as it is: it needs a commit with new `src/element/icons.ts` and `NOTICE`, and a commit to Dependabot's branch breaks its DCO, as `canvas` saw | With the first such pull request: decide whether to write the icons in a pull request of its own on top, or to build them in CI. Dependabot did not propose 1.2.98: it ran 2026-11-09, still in the pause, and on 2026-11-11 the set was raised by hand, `just icons` (the amendment to R10), so the first such pull request is for a version after 1.2.98. Dependabot cannot be turned off for the set: R78 spec requires that it sees the set like any dependency; the same at `canvas` |
+| Д11 | Tests in a browser run only in Chromium: WebKit and Firefox are in the stage `toolchain` since T23 (R20; T141 spec), but Vitest has no projects on them (Д217 spec) | R18; R20; Д217 spec | A change of look or layout breaks WebKit and Firefox unseen, and T34 `app` found bugs seen only in WebKit | A task of its own after the release of `.github` of row 7.13 of COORDINATION.md spec, where `typescript.yml` has an input for WebKit and Firefox: decide whether the tests run on three engines, and the Vitest projects on them in `vitest.config.ts`, the coverage in Chromium, as row 7.22 `app` |
