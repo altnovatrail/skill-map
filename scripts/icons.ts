@@ -31,8 +31,9 @@ export type Value = MapState | "rubric" | "none" | Holding;
 /**
  * The base of each value's icon, as the author chose them (R10). Each is drawn in outline,
  * `<base>-outline-rounded`: a tile has nothing chosen to fill, and its expansion is aria-expanded.
- * None runs along the line, so none is mirrored right to left, and none is in the table of
- * architecture 6 of spec: each is a value of skill-map alone.
+ * None runs along the line, so none is mirrored right to left. The states and marks stand in the
+ * table of architecture 6 of spec, since app's module card shows them too, so a change of one is a
+ * change of spec's table; the holdings are values of skill-map alone (R10, its 2026-11-16 amendment).
  */
 export const TABLE = {
   review: "update",
