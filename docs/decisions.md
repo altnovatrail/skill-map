@@ -618,7 +618,7 @@
 
 — RUN.md; R18.
 
-— *Amendment 2026-11-16:* **the move to `spec` v0.18.3 (R20) brings the template's RUN.md by R153–R155 spec — rules in English and terse, the tables in `run/`, the open tasks outside an epic in `run/TASKS.md` — and its rule 9, which sends a done task outside an epic, when there is no current epic, to the archive of the last done epic instead of deleting it (the 2026-11-13 amendment to R19 spec; Д235 spec). T24 takes them and weighs each difference this entry holds against the template; until then rule 9 stands as this entry wrote it. Rule 7 of RUN.md now names the exceptions of R156 spec.** — R20; RUN.md, rule 7, T24.
+— *Amendment 2026-11-16:* **the move to `spec` v0.18.3 (R20) brings the template's RUN.md by R153–R155 spec — rules in English and terse, the tables in `run/`, the open tasks outside an epic in `run/TASKS.md` — and its rule 9, which sends a done task outside an epic, when there is no current epic, to the archive of the last done epic instead of deleting it (the 2026-11-13 amendment to R19 spec; Д235 spec). T24 takes them and weighs each difference this entry holds against the template; until then rule 9 stands as this entry wrote it: T23 leaves RUN.md by it, its body with «Сделано» in the commit d83d60d, and T24 puts it, with that of T22, into the archive of E3. Rule 7 of RUN.md now names the exceptions of R156 spec.** — R20; RUN.md, rule 7, T24.
 
 ## The tag of `spec` v0.18.3
 
@@ -646,6 +646,6 @@
 - the devcontainer without WebKit and Firefox until Д11: `.devcontainer/` would differ from the template for no reason, and the difference would have to be a decision;
 - leaving architecture 3.8 saying that no word or icon of the map is in the tables of architecture 6 spec until T26: at v0.18.3 it is false, and the status of the document says it is checked against the tag.
 
-— *Consequence:* T24, T25 and T26 in «Задачи вне эпика» of RUN.md; the 2026-11-16 amendments to R02, R10, R18 and R19. After the merge the author rebuilds the container (Д10), and the orchestrator waits for it before the next task. The merge changes `package.json` and so puts out a new version in the release and in npm (R13). The body of T23 stood in the commit ff04f76, which recorded it; by rule 9 it leaves RUN.md, and T24 puts it into the archive of E3.
+— *Consequence:* T24, T25 and T26 in «Задачи вне эпика» of RUN.md; the 2026-11-16 amendments to R02, R10, R18 and R19. After the merge the author rebuilds the container (Д10), and the orchestrator waits for it before the next task. The merge changes `package.json` and so puts out a new version in the release and in npm (R13). The body of T23, with its «Сделано» and «Открыто», is in the commit d83d60d of its pull request; by rule 9 it leaves RUN.md, and T24 puts it into the archive of E3.
 
 — RUN.md, rule 7, table 3, «Задачи вне эпика»; [DEBT.md](../DEBT.md); README.md; CLAUDE.md; [architecture.md](architecture.md), the status and sections 3.7 and 3.8; [sources.md](sources.md); `.devcontainer/`; `scripts/taxonomy.ts`, `scripts/icons.test.ts`; `package.json`.
