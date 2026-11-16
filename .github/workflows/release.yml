@@ -44,9 +44,9 @@ jobs:
     with:
       # The package's code without its tests, fixtures and type checks — a pathspec's * takes any
       # depth — the icons and the anchor skills' titles written into it among it, what builds it,
-      # what npm pack takes besides it, the Dockerfile, whose stage toolchain-core runs npm (R23), and
-      # this file, so that a change of the line gives a release. The lock file is no part of the archive, and the
-      # compiler is pinned in package.json.
+      # what npm pack takes besides it, the Dockerfile, whose stage toolchain-core runs npm (R23),
+      # and this file, so that a change of the line gives a release. The lock file is no part of the
+      # archive, and the compiler is pinned in package.json.
       paths: |
         src/*.ts
         :(exclude)src/*.test.ts

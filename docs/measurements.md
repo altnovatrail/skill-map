@@ -54,21 +54,23 @@ What the 2026-11-16 amendment to R22 changed, the move to `.github` `v0.1.30`, r
 
 ### 2.3. Before and after the stage `toolchain-core`
 
-What R23 changed, the move to `spec` v0.18.4 and `.github` v0.1.31: the release builds the stage `toolchain-core`, "TypeScript / lint", "vuln" and "licenses" and "Documents / docs-check-repo" run in it, and apt of `toolchain` reads the snapshot alone. Measured 2026-11-16 as 2.1 is. "Before" is the last runs on `main` and of pull request #53 on `.github` `v0.1.30`, which took the image from the cache; "after" is the first run of pull request #54, commit `07dd416`, which missed the cache, the Dockerfile being new, and built both stages.
+What R23 changed, the move to `spec` v0.18.4 and `.github` v0.1.31: the release builds the stage `toolchain-core`, "TypeScript / lint", "vuln" and "licenses" and "Documents / docs-check-repo" run in it, and apt of `toolchain` reads the snapshot alone. Measured 2026-11-16 as 2.1 is. "Before" is runs on `main` and of pull request #53, on `.github` `v0.1.24` and `v0.1.30`, whose release builds all of `toolchain` either way, and whose CI took the image from the cache; "after" is the two runs of pull request #54, which missed the cache, the Dockerfile being new and a pull request saving nothing, and built both stages.
 
-| Run | Commit | Cache | CI | `toolchain` | `lint` | `test` | `licenses` | `vuln` | `docs-check-repo` |
-|---|---|---|---|---|---|---|---|---|---|
-| 43888358632 | `e9f38bc`, `main` | hit | 134 s | 5 s | 59 s | 91 s | 80 s | 76 s | 85 s |
-| 43913863930 | `07dd416`, pull request #54 | miss | 405 s | 231 s | 46 s | 97 s | 47 s | 38 s | 51 s |
+| Run | Commit | `.github` | Cache | CI | `toolchain` | `lint` | `test` | `licenses` | `vuln` | `docs-check-repo` |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 43888358632 | `e9f38bc`, `main` | `v0.1.30` | hit | 134 s | 5 s | 59 s | 91 s | 80 s | 76 s | 85 s |
+| 43913863930 | `07dd416`, pull request #54 | `v0.1.31` | miss | 405 s | 231 s | 46 s | 97 s | 47 s | 38 s | 51 s, failed |
+| 43915573838 | `6ac9613`, pull request #54 | `v0.1.31` | miss | 467 s | 278 s | 98 s | 99 s | 48 s | 43 s | 43 s |
 
-| Release run | Commit | Event | The run | "Work out the version" | "Build the files" | "Publish to npm" |
-|---|---|---|---|---|---|---|
-| 43813588207 | `732ad79`, `main` | after CI | 372 s | 178 s | 4 s | 85 s |
-| 43880186760 | `0e5d06b`, `main` | after CI | 1,923 s | 1,557 s | 6 s | 323 s |
-| 43888758134 | `e9f38bc`, `main` | after CI | 1,165 s | 787 s | 7 s | 323 s |
-| 43885679717 | `d88764a`, pull request #53 | trial | 821 s | 797 s | 4 s | 0 s |
-| 43913864034 | `07dd416`, pull request #54 | trial | 101 s | 31 s | 4 s | 0 s |
+| Release run | Commit | `.github` | Event | The run | "Work out the version" | "Build the files" | "Publish to npm" |
+|---|---|---|---|---|---|---|---|
+| 43813588207 | `732ad79`, `main` | `v0.1.24` | after CI | 372 s | 178 s | 4 s | 85 s |
+| 43880186760 | `0e5d06b`, `main` | `v0.1.30` | after CI | 1,923 s | 1,557 s | 6 s | 323 s |
+| 43888758134 | `e9f38bc`, `main` | `v0.1.30` | after CI | 1,165 s | 787 s | 7 s | 323 s |
+| 43885679717 | `d88764a`, pull request #53 | `v0.1.30` | trial | 821 s | 797 s | 4 s | 0 s |
+| 43913864034 | `07dd416`, pull request #54 | `v0.1.31` | trial | 101 s | 31 s | 4 s | 0 s |
+| 43915573781 | `6ac9613`, pull request #54 | `v0.1.31` | trial | 46 s | 25 s | 6 s | 0 s |
 
-- **The release.** "Work out the version" builds the image the release's recipes run in: before, all of `toolchain` with the browsers and apt, 178–1,557 s; after, `toolchain-core` alone, 31 s, with no apt. "Build the files" builds the same stage again from the runner's build cache, and the trial publishes nothing, so a release on `main` after the merge will take about 31 s plus the npm step, which waits for the registry (sources 3.5). The release on `main` is not measured here.
-- **The image on a miss.** "TypeScript / toolchain" built `toolchain` from the new Dockerfile in 125 s: the core, its `RUN` 17 s, then the browsers' three `COPY`, 4 s, and apt, 84 s — «Fetched 33.6 MB in 14s (2485 kB/s)» of indexes, from the snapshot alone, against 67.6 MB with `--snapshot` (measurements 3.1 spec), and «Fetched 203 MB in 55s» of packages; the core again from the build cache, 0.4 s. Its uploads took 40 s for `toolchain`, 1,151,649,973 bytes, and 18 s for the core, 489,188,588 bytes. "Documents / docs-check-repo" built the core itself in 24 s, then failed on a citation of the documents of that commit, which the next one fixed.
-- **The checks in the core.** `lint`, `vuln` and `licenses` loaded the core's 489 MB, 21–27 s for "Toolchain image", against 57 s for `toolchain` in `test` of the same run and 30–58 s in the jobs of the run before: each of the three is 13–38 s shorter than before, though its image came by an artifact and not from the cache. The run as a whole was longer, 405 s, because of the miss: "TypeScript / toolchain" built and uploaded both stages before any check started. A run on a hit, with both entries saved after the merge on `main`, is not measured here.
+- **The release.** "Work out the version" builds the image the release's recipes run in: before, all of `toolchain` with the browsers and apt, 178–1,557 s on either release of `.github`; after, `toolchain-core` alone, 25–31 s, with no apt. "Build the files" builds the same stage again from the runner's build cache, and the trial publishes nothing. A release on `main` after the merge so takes about 30 s plus the npm step, which waits for the registry (sources 3.5); it is not measured here.
+- **The image on a miss.** In the first run "TypeScript / toolchain" built `toolchain` from the new Dockerfile in 125 s: the core, its `RUN` 17 s, then the browsers' three `COPY`, 4 s, and apt, 84 s — «Fetched 33.6 MB in 14s (2485 kB/s)» of indexes, from the snapshot alone, against 67.6 MB with `--snapshot` (measurements 3.1 spec), and «Fetched 203 MB in 55s» of packages; the core again from the build cache, 0.4 s. Its uploads took 40 s and 49 s for `toolchain`, 1,151,649,973 bytes, and 18 s and 22 s for the core, 489,188,588 bytes. "Documents / docs-check-repo" built the core itself, 21–24 s for its step "Toolchain image"; in the first run it then failed on a citation of the documents of that commit, which the next one fixed, so its 51 s is no time of a full check.
+- **The checks in the core.** `vuln` and `licenses` loaded the core's 489 MB, 21–30 s for "Toolchain image", against 36–57 s for `toolchain` in `test` of the same runs and 30–58 s in the jobs of the run before; they are 32–38 s shorter than before, though their image came by an artifact and not from the cache. `lint` took 46 s and 98 s: the download of the artifact took 9 s in the first run and 61 s in the second, the runners' spread. A run as a whole was longer, 405–467 s, because of the miss: "TypeScript / toolchain" built and uploaded both stages before any check started. A run on a hit, with both entries saved after the merge on `main`, is not measured here.

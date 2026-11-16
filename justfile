@@ -71,8 +71,8 @@ build: _install
 
 # Write the files of the release of a version, v0.1.0 say, into dist/, as .github's shared
 # release.yml runs it: in the toolchain-core stage, on the tree of the commit alone, with no git, no
-# spec submodule and no token (R13, R23). They are the package's archive, as npm pack makes it, with the
-# version without its v and NOTICE in it (R10); LICENSE; and SHA256SUMS of the two. The archive is
+# spec submodule and no token (R13, R23). They are the package's archive, as npm pack makes it,
+# with the version without its v and NOTICE in it (R10); LICENSE; and SHA256SUMS of the two. The archive is
 # packed from a copy of what npm pack takes of the tree, by npm's own list, with the version set there, so that the package.json
 # of the tree keeps 0.0.0. scripts/release.ts checks the archive itself and names it, and the
 # trial consumer takes it as a consumer's TypeScript does, under NodeNext and Bundler: a release a
