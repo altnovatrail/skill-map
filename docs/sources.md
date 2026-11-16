@@ -83,6 +83,12 @@ Section 3.7 of [architecture.md](architecture.md); R12.
 
 Section 3.8 of [architecture.md](architecture.md); R10. The npm registry, `npm view <package> version license time dependencies`, read 2026-11-07: `@iconify-json/material-symbols` 1.2.97 of 2026-10-28 — Apache-2.0, and 1.2.98 came out 2026-11-07, later than the pause of three days (R08); on 2026-11-11 the set was raised to 1.2.98 — Apache-2.0, the same dependency, `@iconify/types` (the amendment to R10); `@iconify/utils` 3.1.7 of 2026-09-06 — MIT, with the dependencies `@iconify/types`, `@antfu/install-pkg` and `import-meta-resolve`; `axe-core` 4.14.0 of 2026-10-05 — MPL-2.0, with no dependencies, and in it the tag `wcag22aa` has one rule, `target-size`, and `wcag22a` none.
 
+### 3.5. The shared workflows of `.github`
+
+Section 3.7 of [architecture.md](architecture.md); R22. Read 2026-11-16:
+- `gh release list -R altnovatrail/.github`: the latest release is [`v0.1.24`](https://github.com/altnovatrail/.github/releases/tag/v0.1.24) of 2026-11-13; `gh release verify v0.1.24 -R altnovatrail/.github` — «Resolved tag v0.1.24 to sha1:fab102d8bbb4659575e107ee488e072aaaa71821», «✓ Release v0.1.24 verified!».
+- `git diff v0.1.15 v0.1.24 -- .github/workflows` of a clone of `.github`: `secrets.yml` and `dco.yml` are the same; no input of `typescript.yml`, `documents.yml`, `release.yml` or `codeql.yml` is added, removed or changed. `typescript.yml` — the steps "Toolchain image from the cache" and "Toolchain image into the cache" around the build: «The image of the toolchain stage comes from the cache of GitHub Actions … by the key of the runner's OS and architecture and the hash of the Dockerfile», key `toolchain-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('.devcontainer/Dockerfile') }}`; «A file that does not load as the image toolchain, or an image that cannot be saved, costs the run its speed, not its verdict». `documents.yml` — the same cache, and the stage built and the recipe run by `spec/tools/toolchain/toolchain.sh`, which «spec ships … from v0.2.17»; its file is written «from v0.13.0 of spec». `release.yml` — `timeout-minutes: 45` instead of 30, and the step "Publish to npm" waits for the registry up to twenty minutes instead of five; it takes no cache (R36 .github). `codeql.yml` and `scorecard.yml` — `github/codeql-action` v4.39.3 instead of v4.39.0.
+
 ## 4. The prototype of `spec`
 
 ### 4.1. The topic map of the prototype
