@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { contractsProblems, manifestProblems, packProblems } from "./package.ts";
+import { contractsProblems, manifestProblems, packProblems, statesProblems } from "./package.ts";
 
 const build = [
   "package.json",
@@ -10,6 +10,8 @@ const build = [
   "lib/core/index.d.ts",
   "lib/element/index.js",
   "lib/element/index.d.ts",
+  "lib/core/skill-states.js",
+  "lib/core/skill-states.d.ts",
 ];
 
 test("the build, package.json, README.md, LICENSE and NOTICE are what the package takes", () => {
@@ -39,32 +41,40 @@ test("anything else in the package is a problem: sources, tests, checks, a build
   ]);
 });
 
-test("a package without its license, its notice or the element's build is a problem", () => {
+test("a package without its license, its notice or the build of an entry point is a problem", () => {
   expect(packProblems(["package.json", "lib/core/index.js"])).toEqual([
     "npm pack leaves out LICENSE",
     "npm pack leaves out NOTICE",
     "npm pack leaves out lib/element/index.js",
     "npm pack leaves out lib/element/index.d.ts",
+    "npm pack leaves out lib/core/skill-states.js",
+    "npm pack leaves out lib/core/skill-states.d.ts",
   ]);
 });
 
 const element = { types: "./lib/element/index.d.ts", default: "./lib/element/index.js" };
+const states = { types: "./lib/core/skill-states.d.ts", default: "./lib/core/skill-states.js" };
+const exports = { ".": element, "./states": states };
 const sideEffects = ["./lib/element/index.js", "./src/element/index.ts"];
 
-test("the element is the one entry point, and its registration is the one side effect", () => {
-  expect(manifestProblems({ exports: { ".": element }, sideEffects })).toEqual([]);
+test("the element and ./states are the entry points, and the registration is the one side effect", () => {
+  expect(manifestProblems({ exports, sideEffects })).toEqual([]);
 });
 
-test("the DOM-free part as an entry point, or the element's entry point elsewhere, is a problem", () => {
+test("the DOM-free part as an entry point, or an entry point elsewhere or missing, is a problem", () => {
   expect(
     manifestProblems({
       exports: { ".": { default: "./lib/element/index.js" }, "./core": element },
       sideEffects,
     }),
   ).toEqual([
-    "package.json exports ./core, besides the element's",
+    "package.json exports ./core, besides the element's and ./states",
     `package.json's entry point "." is not ${JSON.stringify(element)}`,
+    `package.json's entry point "./states" is not ${JSON.stringify(states)}`,
   ]);
+  expect(
+    manifestProblems({ exports: { ".": element, "./states": "./lib/core/index.js" }, sideEffects }),
+  ).toEqual([`package.json's entry point "./states" is not ${JSON.stringify(states)}`]);
 });
 
 test("exports that is no object of entry points is one problem, not one per character", () => {
@@ -79,13 +89,9 @@ test("exports that is no object of entry points is one problem, not one per char
 test("sideEffects that leaves out the entry, or says there are none, is a problem", () => {
   const problem =
     'package.json\'s sideEffects is not ["./lib/element/index.js","./src/element/index.ts"]';
-  expect(manifestProblems({ exports: { ".": element }, sideEffects: false })).toEqual([problem]);
-  expect(
-    manifestProblems({ exports: { ".": element }, sideEffects: ["./lib/element/main.js"] }),
-  ).toEqual([problem]);
-  expect(
-    manifestProblems({ exports: { ".": element }, sideEffects: ["./lib/element/index.js"] }),
-  ).toEqual([problem]);
+  expect(manifestProblems({ exports, sideEffects: false })).toEqual([problem]);
+  expect(manifestProblems({ exports, sideEffects: ["./lib/element/main.js"] })).toEqual([problem]);
+  expect(manifestProblems({ exports, sideEffects: ["./lib/element/index.js"] })).toEqual([problem]);
 });
 
 test("JavaScript of the build that imports @altnovatrail/contracts is a problem; a declaration or a comment is not", () => {
@@ -108,4 +114,37 @@ test("JavaScript of the build that imports @altnovatrail/contracts is a problem;
     "lib/core/b.js imports @altnovatrail/contracts, whose code app alone ships",
     "lib/core/c.js imports @altnovatrail/contracts, whose code app alone ships",
   ]);
+});
+
+test("./states that imports, at any depth, only the DOM-free part is no problem", () => {
+  const files = new Map([
+    ["lib/core/skill-states.js", 'import { mapStates } from "./states.js";\nexport {};'],
+    ["lib/core/states.js", 'export * from "./map/rule.js";\nexport * from "./states.js";'],
+    ["lib/core/map/rule.js", 'import "../states.js";'],
+    ["lib/element/index.js", 'import "../core/index.js";'],
+  ]);
+  expect(statesProblems(files)).toEqual([]);
+});
+
+test("./states that reaches the element, another package or a file not built is a problem", () => {
+  const files = new Map([
+    ["lib/core/skill-states.js", 'import { mapStates } from "./states.js";\nimport("./late.js");'],
+    ["lib/core/states.js", 'import { TAG } from "../element/index.js";\nimport "yaml";'],
+  ]);
+  expect(statesProblems(files)).toEqual([
+    "lib/core/states.js imports lib/element/index.js, outside the DOM-free part lib/core/",
+    "lib/core/states.js imports yaml, and ./states takes no other package",
+    "./states imports lib/core/late.js, which is not built",
+  ]);
+});
+
+test("./states: what a comment names does not count, and a module by a computed name is a problem", () => {
+  const files = new Map([
+    [
+      "lib/core/skill-states.js",
+      '/** The words come from "../element/words.js". */\n// taken from "@altnovatrail/spec"\nimport "./states.js";',
+    ],
+    ["lib/core/states.js", 'const name = "../element/index.js";\nawait import(name);'],
+  ]);
+  expect(statesProblems(files)).toEqual(["lib/core/states.js imports a module by a computed name"]);
 });

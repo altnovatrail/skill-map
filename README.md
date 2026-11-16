@@ -46,6 +46,8 @@ npm install --save-exact @altnovatrail/skill-map@<version>
 npm install --save-exact --save-dev @altnovatrail/spec@<its version>
 ```
 
+Importing `@altnovatrail/skill-map` registers the element `<novatrail-skill-map>`. Beside it, `@altnovatrail/skill-map/states` gives the rule the map draws its states by as one function, `skillStates(graph, skillMap, now)`, for a view that shows them without the map, as the app's module card does; importing it registers nothing. Section 3.3 of [docs/architecture.md](docs/architecture.md) describes both.
+
 A pull request that changes the lock file has spec's recipe check it, as NovaTrail's rules ask of every package of `@altnovatrail`: `just -f spec/justfile release-verify-npm package-lock.json`, from a checkout of spec at a tag. It takes the archive from the registry only if it is the same bytes as the file of skill-map's release, signed by .github's shared release at the call of skill-map's `release.yml` on `main`.
 
 ## Documents

@@ -1,0 +1,29 @@
+import type { SkillGraph } from "@altnovatrail/spec/formatv0/open";
+import { expect, test } from "vitest";
+import { GRAPH, NOW, SKILL_MAP, skillMap } from "./fair-shares.fixture.js";
+import { skillStates } from "./skill-states.js";
+
+test("example/fair-shares: each skill's state or mark, as in section 3.2 of docs/architecture.md", () => {
+  expect([...skillStates(GRAPH, SKILL_MAP, NOW)]).toEqual([
+    ["count-objects", "mastered"],
+    ["draw-shares", "not-assessed"],
+    ["halves", "in-progress"],
+    ["equal-groups", "time-to-review"],
+    ["explain-sharing", "feedback-by-criteria"],
+    ["share-with-remainder", "ready-to-start"],
+    ["quarters", "locked"],
+  ]);
+});
+
+test("an answer that names no skill still gives each skill its state, and the anchor skills none", () => {
+  const graph: SkillGraph = {
+    skills: {
+      base: { title: "Base", assessability: "verdict", prerequisites: ["core.counting"] },
+      next: { title: "Next", assessability: "verdict", prerequisites: ["base"] },
+    },
+  };
+  expect([...skillStates(graph, skillMap([]), NOW)]).toEqual([
+    ["base", "ready-to-start"],
+    ["next", "locked"],
+  ]);
+});

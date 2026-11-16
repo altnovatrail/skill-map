@@ -16,6 +16,10 @@
     ".": {
       "types": "./lib/element/index.d.ts",
       "default": "./lib/element/index.js"
+    },
+    "./states": {
+      "types": "./lib/core/skill-states.d.ts",
+      "default": "./lib/core/skill-states.js"
     }
   },
   "sideEffects": [

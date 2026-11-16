@@ -8,11 +8,11 @@
 // node_modules would hold it, beside the packages of spec it names, linked from this repository's.
 // Then tsc checks scripts/consumer/main.ts there twice, as NodeNext and as Bundler resolve modules,
 // strict and without skipLibCheck: the element's name gives its type, the properties take the
-// types of data, the event's type holds on the element and on the document, and what is wrong is
-// refused. With --release it takes the archive that goes out, at the release's version, rather
-// than packing one (R13): the one archive of the package in RELEASED, a folder the script names
-// itself, so that nothing of the command line goes into a path. Run from the repository's root,
-// after the build.
+// types of data, the event's type holds on the element and on the document, ./states takes the
+// same data and gives its seven values, and what is wrong is refused. With --release it takes the
+// archive that goes out, at the release's version, rather than packing one (R13): the one archive
+// of the package in RELEASED, a folder the script names itself, so that nothing of the command
+// line goes into a path. Run from the repository's root, after the build.
 
 import { execFileSync } from "node:child_process";
 import {

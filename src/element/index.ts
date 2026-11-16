@@ -1,4 +1,4 @@
-// The package's one entry point: importing it registers <novatrail-skill-map>, the element app
+// The package's entry point ".": importing it registers <novatrail-skill-map>, the element app
 // draws a module's skill map with (R04; R36 spec). Data comes in by properties, the view, the
 // language and the level of headings by attributes, and the choice of a skill goes out by the
 // event skillchoose; there are no methods. The map keeps nothing of a learner's beyond its memory

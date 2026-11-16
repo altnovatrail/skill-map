@@ -16,6 +16,8 @@ const archive: Packed = {
     { path: "lib/core/index.d.ts" },
     { path: "lib/element/index.js" },
     { path: "lib/element/index.d.ts" },
+    { path: "lib/core/skill-states.js" },
+    { path: "lib/core/skill-states.d.ts" },
   ],
 };
 

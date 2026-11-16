@@ -48,6 +48,18 @@ export interface SkillOnMap {
   readonly record?: SkillState;
 }
 
+/** What the map shows of a skill of the module: its state, or the mark of its assessability. */
+export type Shown = MapState | "rubric" | "none";
+
+/**
+ * A skill of the module's state or mark: the mark of one of `rubric` or `none` comes from the
+ * graph, and a skill of `verdict` has null on a map without state (R03). The element and ./states
+ * both show a skill by it.
+ */
+export function shownOf(skill: Pick<SkillOnMap, "assessability" | "state">): Shown | null {
+  return skill.assessability === "verdict" ? skill.state : skill.assessability;
+}
+
 /** A moment of the contract, google.protobuf.Timestamp, as the contracts give it. */
 type Timestamp = NonNullable<SkillState["reviewDate"]>;
 

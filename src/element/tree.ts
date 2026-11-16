@@ -13,7 +13,7 @@ import type { View } from "../core/attributes.js";
 import { fullSkillId } from "../core/index.js";
 import { type Band, focusAfter, type Layout, type Links, layout, linksOf } from "../core/layout.js";
 import { type Box, linesOf } from "../core/lines.js";
-import { type AnchorOnMap, type MapStates, mapStates, type SkillOnMap } from "../core/states.js";
+import { type AnchorOnMap, type MapStates, mapStates, shownOf } from "../core/states.js";
 import { ANCHOR_TITLES } from "./anchor-titles.js";
 import { ICONS, type IconValue } from "./icons.js";
 import { Lines, SVG } from "./lines.js";
@@ -493,11 +493,6 @@ export function fill(
     const filled = values[value] ?? piece;
     return typeof filled === "string" || filled instanceof Node ? [filled] : [...filled];
   });
-}
-
-/** A skill of the module's state or mark, or null on a map without state. */
-function shownOf(skill: SkillOnMap): IconValue | null {
-  return skill.assessability !== "verdict" ? skill.assessability : skill.state;
 }
 
 /** The word of a state, a mark or a holding. */
