@@ -4,9 +4,9 @@
 
 /** The format file the titles come from, and its digest. */
 export const SOURCE = {
-  release: "spec v0.18.3",
+  release: "spec v0.18.4",
   file: "format-0.4.tar.gz",
-  sha256: "748f6f253cad03912d6fe0f3b2e8e24ad51c270388e702f3e5e86cdc93acffd1",
+  sha256: "b224ffe8a452ef2599f3faa9ca0800355caf54bcea30de7e1a98bf43267b3dae",
 } as const;
 
 /** The English title of each anchor skill of the shared taxonomy, by ID (R50 spec). */
