@@ -20,7 +20,7 @@ jobs:
     permissions:
       contents: read
       security-events: write
-    uses: altnovatrail/.github/.github/workflows/codeql.yml@89d3ceee0b9977b3334488a4133d084d76474e0d # v0.1.15
+    uses: altnovatrail/.github/.github/workflows/codeql.yml@11e1b0f79f771aea8b0b57d0a706365a607a6929 # v0.1.23
     # The repository's language besides actions, which is always analysed (R08 in
     # docs/decisions.md).
     with:
