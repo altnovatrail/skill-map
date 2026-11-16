@@ -302,7 +302,7 @@
 
 — *Consequence:* T11 writes the constants of the enumerations of `progress.proto` and checks them against the types of `@altnovatrail/contracts`; T13 declares the element's properties by the types of both packages; T17 takes `lib/` through `npm pack`, and the release's build writes in `version`. The ruleset of the branch `main` gets "TypeScript / lint", "test", "vuln", "licenses" and `codecov/patch` as required — a step of the author's. — `package.json`, `package-lock.json`, `.npmrc`, `.gitignore`, `tsconfig*.json`, `biome.json`, `vitest.config.ts`, `justfile`, `licenses.json`, `src/`, `scripts/`, `.github/`; README.md; [architecture.md](architecture.md), sections 3.7 and 4; RUN.md, T10.
 
-— *Amendment 2026-11-16:* **the references to the shared workflows of `.github` are at v0.1.24, by SHA fab102d, and Dependabot raises them as one group, `shared-workflows` (R22).** What the item "CI" says of v0.1.15 is history; the jobs and their names are the same. The item "Dependabot" gains the group under `github-actions`.
+— *Amendment 2026-11-16:* **the references to the shared workflows of `.github` are seven — four in `ci.yml`, one each in `codeql.yml`, `scorecard.yml` and, from T17, `release.yml` (R13) —, all at v0.1.24, by SHA fab102d, and Dependabot raises them as one group, `shared-workflows`, under `github-actions` (R22).** What the item "CI" says of six references at v0.1.15 is history. The jobs, their names and the inputs of `ci.yml` and `codeql.yml` are the same; `typescript.yml` and `documents.yml` take the image of the `toolchain` stage from the cache of GitHub Actions, and `codeql.yml` runs `github/codeql-action` v4.39.3 (sources 3.5). The item "Dependabot" gains the group.
 
 ## The element
 
@@ -660,6 +660,8 @@
 
 — *Amendment 2026-11-16 (R21):* **T24 is done: the plan is in the layout and the language of R153–R155 spec, T25 and T26 are in `run/TASKS.md`, and the bodies of T22, T23 and T24 are in the archive of E3, section «Задачи вне эпика, сделанные после него». Д10 is closed: the container is rebuilt by the Dockerfile of v0.18.3.** "RUN.md — table 3, «Задачи вне эпика»" above reads `run/QUESTIONS.md` and `run/TASKS.md`, and "DEBT.md" `run/DEBT.md`. — R21.
 
+— *Amendment 2026-11-16 (R22):* **T25 is done: every reference to a shared workflow of `.github` is at v0.1.24, with the cached image of the `toolchain` stage and the group `shared-workflows` of Dependabot (Д146 spec, Д88 spec), and its body is in the archive of E3, section «Задачи вне эпика, сделанные после него».** T26 stays in `run/TASKS.md`. — R22.
+
 ## The plan in `run/`
 
 **R21. The work plan of `skill-map` is in the layout and the language of the template of `spec` v0.18.3: tables 2, 3 and 4 are `run/EPICS.md`, `run/QUESTIONS.md` and `run/DEBT.md`, which replaces `DEBT.md` at the root, and the open tasks outside an epic are `run/TASKS.md`; RUN.md keeps its rules, in English and terse, for the session, and the current epic; a done task's gist sentence goes to the archive with its body; the bodies of tasks and the archives stay in Russian. A done task outside an epic, with no current epic, goes to the archive of the last done epic instead of being deleted. What else R19 held against the template — rules that do not repeat RULES.md and CLAUDE.md — stays.** Rows Д250 spec and Д235 spec, by T24 (R20); the weighing of each difference of R19 against the template, which the task asked for, is the executor's.
@@ -690,7 +692,7 @@
 
 ## The CI on `.github` v0.1.24
 
-**R22. Every reference to a shared workflow of `.github` — six in `ci.yml`, `codeql.yml`, `scorecard.yml` and `release.yml` — is at v0.1.24, by SHA `fab102d8bbb4659575e107ee488e072aaaa71821`, with the version beside it, and `.github/dependabot.yml` raises them as one group, `shared-workflows`, `patterns: ["altnovatrail/.github/*"]`, under `github-actions`. The jobs of "TypeScript" and "Documents" take the image of the `toolchain` stage from the cache of GitHub Actions by the hash of `.devcontainer/Dockerfile` and build it only on a miss (R36 .github). No input of the callers changes.** Rows Д146 spec and Д88 spec, by T25, the third part of the move of T23 (R20), as T68 of `sim`.
+**R22. Every reference to a shared workflow of `.github` — seven: four in `ci.yml` and one each in `codeql.yml`, `scorecard.yml` and `release.yml` — is at v0.1.24, by SHA `fab102d8bbb4659575e107ee488e072aaaa71821`, with the version beside it, and `.github/dependabot.yml` raises them as one group, `shared-workflows`, `patterns: ["altnovatrail/.github/*"]`, under `github-actions`. The jobs of "TypeScript" and "Documents" take the image of the `toolchain` stage from the cache of GitHub Actions by the hash of `.devcontainer/Dockerfile` and build it only on a miss (R36 .github). No input of the callers changes.** Rows Д146 spec and Д88 spec, by T25, the third part of the move of T23 (R20), as T68 of `sim`.
 - **What the release brings** (sources 3.5): `secrets.yml` and `dco.yml` are the same as at v0.1.15; `typescript.yml` and `documents.yml` take the image from the cache, `documents.yml` by `spec/tools/toolchain/toolchain.sh`, which `spec/` at v0.18.3 has; the shared `release.yml` takes no cache, gives a run 45 minutes instead of 30 and waits for npm's registry twenty minutes instead of five; `codeql.yml` and `scorecard.yml` take `github/codeql-action` v4.39.3. The names of the jobs, and so the required checks of the ruleset of `main`, are the same.
 - **The release.** `.github/workflows/release.yml` is one of the paths the release is built from (R13), so the merge of this change gives a release of the package, its archive built from the same code.
 
@@ -698,4 +700,4 @@
 
 — *Rejected:* v0.1.22, the first release with the cache — for the workflows `skill-map` calls it differs from v0.1.24 only in comments (`git diff v0.1.22 v0.1.24`, 2026-11-16), and Dependabot would raise it to v0.1.24 at once.
 
-— *Consequence:* the 2026-11-16 amendments to R08 and R13. — `.github/workflows/`, `.github/dependabot.yml`; [architecture.md](architecture.md), section 3.7; [sources.md](sources.md), record 3.5.
+— *Consequence:* the 2026-11-16 amendments to R08, R13 and R20. Dependabot's pull requests #43–#47, which raise five of the references to v0.1.23 one by one, are left behind by this raise. — `.github/workflows/`, `.github/dependabot.yml`; [architecture.md](architecture.md), section 3.7; [sources.md](sources.md), record 3.5.
