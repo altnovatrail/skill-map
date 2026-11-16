@@ -8,6 +8,7 @@ import type {
   SkillChooseEvent,
   SkillMapView,
 } from "@altnovatrail/skill-map";
+import { type SkillStatus, skillStates } from "@altnovatrail/skill-map/states";
 import type { Manifest, SkillGraph } from "@altnovatrail/spec/formatv0/open";
 
 declare const graph: SkillGraph;
@@ -41,3 +42,13 @@ map.skillMap = { skills: [] };
 map.tiers = { "count-objects": "1" };
 // @ts-expect-error The detail is read only.
 document.addEventListener("skillchoose", (event) => (event.detail.skill = ""));
+
+// The rule of the states, for the module card: the same data in, a state or a mark per skill out.
+const statuses: ReadonlyMap<string, SkillStatus> = skillStates(graph, skillMap, new Date());
+const shown: SkillStatus | undefined = statuses.get("count-objects");
+console.log(shown);
+// @ts-expect-error The card has the answer: a map without state is the element's alone.
+skillStates(graph, null, new Date());
+// @ts-expect-error A state is one of the seven values, not any word.
+const word: SkillStatus = "open";
+console.log(word);
