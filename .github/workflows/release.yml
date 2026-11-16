@@ -40,12 +40,12 @@ jobs:
       contents: write
       id-token: write
       actions: read
-    uses: altnovatrail/.github/.github/workflows/release.yml@8311cbfc01082e9b196c0af8d7b49192115cc84c # v0.1.30
+    uses: altnovatrail/.github/.github/workflows/release.yml@93c848fb51a10a245968cf730b99cc709a7748bf # v0.1.31
     with:
       # The package's code without its tests, fixtures and type checks — a pathspec's * takes any
       # depth — the icons and the anchor skills' titles written into it among it, what builds it,
-      # what npm pack takes besides it, the toolchain stage that runs npm, and this file, so that a
-      # change of the line gives a release. The lock file is no part of the archive, and the
+      # what npm pack takes besides it, the Dockerfile, whose stage toolchain-core runs npm (R23), and
+      # this file, so that a change of the line gives a release. The lock file is no part of the archive, and the
       # compiler is pinned in package.json.
       paths: |
         src/*.ts

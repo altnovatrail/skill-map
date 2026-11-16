@@ -1,6 +1,8 @@
 # skill-map's own recipes: the package's build, and the four checks .github's typescript.yml runs in
-# CI, one job each, in a new container of the toolchain stage of .devcontainer/Dockerfile — as the
-# runner's user, with HOME=/tmp and with CI from the step's environment (R08 in docs/decisions.md).
+# CI, one job each, in a new container of a stage of .devcontainer/Dockerfile — ci-test in
+# toolchain, with the browsers, and ci-lint, ci-vuln and ci-licenses in toolchain-core, without
+# them — as the runner's user, with HOME=/tmp and with CI from the step's environment (R08, R23 in
+# docs/decisions.md).
 # Only ci-licenses reads spec/: it runs spec's recipes licenses-check-repo and release-verify-npm,
 # and the licenses job alone gets the submodule. The code and its tests read nothing of spec/, and
 # the documents are checked by spec's own recipe, just -f spec/justfile docs-check-repo. One more
@@ -68,8 +70,8 @@ build: _install
     {{ bin }}/tsc -p tsconfig.build.json
 
 # Write the files of the release of a version, v0.1.0 say, into dist/, as .github's shared
-# release.yml runs it: in the toolchain stage, on the tree of the commit alone, with no git, no spec
-# submodule and no token (R13). They are the package's archive, as npm pack makes it, with the
+# release.yml runs it: in the toolchain-core stage, on the tree of the commit alone, with no git, no
+# spec submodule and no token (R13, R23). They are the package's archive, as npm pack makes it, with the
 # version without its v and NOTICE in it (R10); LICENSE; and SHA256SUMS of the two. The archive is
 # packed from a copy of what npm pack takes of the tree, by npm's own list, with the version set there, so that the package.json
 # of the tree keeps 0.0.0. scripts/release.ts checks the archive itself and names it, and the

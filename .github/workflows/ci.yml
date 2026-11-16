@@ -18,19 +18,20 @@ concurrency:
 jobs:
   secrets:
     name: Secrets
-    uses: altnovatrail/.github/.github/workflows/secrets.yml@8311cbfc01082e9b196c0af8d7b49192115cc84c # v0.1.30
+    uses: altnovatrail/.github/.github/workflows/secrets.yml@93c848fb51a10a245968cf730b99cc709a7748bf # v0.1.31
 
   # A pull request's commits are what it checks; a push to main has been checked as one.
   dco:
     name: DCO
     if: github.event_name == 'pull_request'
-    uses: altnovatrail/.github/.github/workflows/dco.yml@8311cbfc01082e9b196c0af8d7b49192115cc84c # v0.1.30
+    uses: altnovatrail/.github/.github/workflows/dco.yml@93c848fb51a10a245968cf730b99cc709a7748bf # v0.1.31
 
   documents:
     name: Documents
-    uses: altnovatrail/.github/.github/workflows/documents.yml@8311cbfc01082e9b196c0af8d7b49192115cc84c # v0.1.30
+    uses: altnovatrail/.github/.github/workflows/documents.yml@93c848fb51a10a245968cf730b99cc709a7748bf # v0.1.31
 
-  # The repository's TypeScript code, by its own ci- recipes in its toolchain stage (R08 in
+  # The repository's TypeScript code, by its own ci- recipes: the tests in its toolchain stage, with
+  # the browsers, and lint, vuln and licenses in toolchain-core, without them (R08, R23 in
   # docs/decisions.md). Its licenses job checks the spec submodule out, for ci-licenses to run
   # spec's recipes from it, and there ci-licenses also checks the signature of each package of
   # @altnovatrail in the lock file, which needs the network the job has (R39 spec, R77 spec). Its
@@ -41,4 +42,4 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    uses: altnovatrail/.github/.github/workflows/typescript.yml@8311cbfc01082e9b196c0af8d7b49192115cc84c # v0.1.30
+    uses: altnovatrail/.github/.github/workflows/typescript.yml@93c848fb51a10a245968cf730b99cc709a7748bf # v0.1.31
