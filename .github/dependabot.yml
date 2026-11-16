@@ -25,9 +25,10 @@ updates:
   # tests run in is no package: it comes with the toolchain stage of .devcontainer/Dockerfile, from
   # spec's template, and a pull request that raises playwright stays red until the image there is
   # raised with it, by hand (R79 spec). A pull request that raises @iconify-json/material-symbols
-  # stays red until just icons writes src/element/icons.ts and NOTICE anew: the raise comes to main
-  # in a branch of its own, from main, with just icons, and Dependabot then closes its pull request
-  # itself (R10 in docs/decisions.md).
+  # stays red, since icons --check wants src/element/icons.ts and NOTICE written anew, and is left
+  # as it is: a commit onto its branch breaks its DCO. The raise comes to main in a branch of its
+  # own, from main, with just icons, and Dependabot then closes its pull request itself (R10 in
+  # docs/decisions.md).
   - package-ecosystem: npm
     directory: /
     schedule:
