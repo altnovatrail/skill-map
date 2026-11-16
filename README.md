@@ -50,14 +50,14 @@ A pull request that changes the lock file has spec's recipe check it, as NovaTra
 
 ## Documents
 
-The documents are in English; the work plan, its technical debt and the archives of its epics are in Russian.
+The documents and the work plan are in English; the plan's epics, the bodies of its tasks and the archives of its epics are in Russian.
 
 - [docs/architecture.md](docs/architecture.md) — the component: what it does and does not do, its data and links, what was left to decide and is now decided or deferred on purpose, and how the package is built.
 - [docs/decisions.md](docs/decisions.md) — the decision log: what was decided, why, and what was rejected.
 - [docs/sources.md](docs/sources.md) — the external facts the documents rest on, each with its source, the date it was read and a quote.
 - [docs/measurements.md](docs/measurements.md) — the results of measurements: what the Claude Code sessions of the repository spend.
 - [RUN.md](RUN.md) — the work plan, in epics.
-- [DEBT.md](DEBT.md) — the technical debt, in Russian: table 4 of the work plan.
+- `run/` — the plan's other tables: [the epics for later](run/EPICS.md), [the open questions](run/QUESTIONS.md), [the technical debt](run/DEBT.md) and [the tasks outside an epic](run/TASKS.md).
 
 The working rules, for people and coding agents alike, are in [CLAUDE.md](CLAUDE.md) and [AGENTS.md](AGENTS.md). The platform's shared vocabulary, formats, contracts and decisions are in [spec](https://github.com/altnovatrail/spec/tree/v0.18.3), checked out here as a git submodule at `v0.18.3`: clone this repository with `git clone --recurse-submodules`.
 
