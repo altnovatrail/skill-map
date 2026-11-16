@@ -7,20 +7,6 @@ Open tasks outside the current epic, each as its body, in Russian (R154 spec, R1
 
 ## Tasks outside an epic
 
-#### T27. Новые версии набора иконок от Dependabot: Д8
-
-Записана ночным прогоном «Сделай эпик» spec 2026-11-16 (T171 spec) по строке Д8 [DEBT.md](DEBT.md): открытых задач Claude нет, а срок Д8 настал — pull request Dependabot #50 поднимает `@iconify-json/material-symbols` с 1.2.98 до 1.2.99 и красный на `TypeScript / lint`: `icons --check` — «src/element/icons.ts is not what scripts/icons.ts writes», и то же для `NOTICE`. Что делать с новыми версиями набора, R10 (поправка 2026-11-11) оставляет автору — В13 в [QUESTIONS.md](QUESTIONS.md).
-
-- **Цель:** новая версия набора иконок от Dependabot доходит до `main` без ручной правки его ветки, а Д8 закрыт.
-- **Почему:** R10, «Consequence», и его поправка 2026-11-11; R78 spec — Dependabot видит набор как любую зависимость, выключить его нельзя; `canvas` взял 1.2.98 своей веткой, pull request #124, по слову автора.
-- **Решить при планировании:** В13 — как брать новую версию: (а) своей веткой поверх Dependabot или (б) иконки и `NOTICE` пишет сборка, а не коммит.
-- **Сделать** (по ответу на В13):
-  - (а) ветка от `main`: `package.json` и `package-lock.json` — набор 1.2.99, как в #50, и `just icons`; поправка к R10 — порядок для каждой новой версии; комментарий у `npm` в `.github/dependabot.yml`; #50 Dependabot закроет сам, когда версия будет на `main`;
-  - (б) `src/element/icons.ts` и `NOTICE` — в `.gitignore`, `just icons` — шаг `_install` и `release-files`, `icons --check` уходит из `ci-lint`; поправка к R10 — его «Consequence» больше не держится; [docs/architecture.md](../docs/architecture.md), разделы 3.7 и 3.8; #50 зеленеет сам после мержа;
-  - в обоих — Д8 удалён из [DEBT.md](DEBT.md), В13 — из [QUESTIONS.md](QUESTIONS.md).
-- **Как проверить:** правило [.claude/rules/package.md](../.claude/rules/package.md) — `just ci`; пути иконок карты — те же байт в байт, или разница названа; `just -f spec/justfile docs-check-repo`; `/code-review high`, один круг.
-- **Разделы:** R08, R10, R13; R78 spec; Д8.
-
 #### T29. Скорость CI: строка 7.24, тег `spec` строки 7.14 и стадия `toolchain-core`
 
 Записана тем же прогоном, вместе с T28. Это последняя задача строки 7.24: она меняет `.devcontainer/`, а пересобрать контейнер ночью некому.

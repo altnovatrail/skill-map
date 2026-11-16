@@ -24,7 +24,10 @@ updates:
   # The npm packages the code is built and checked with (R08 in docs/decisions.md). The browser the
   # tests run in is no package: it comes with the toolchain stage of .devcontainer/Dockerfile, from
   # spec's template, and a pull request that raises playwright stays red until the image there is
-  # raised with it, by hand (R79 spec).
+  # raised with it, by hand (R79 spec). A pull request that raises @iconify-json/material-symbols
+  # stays red until just icons writes src/element/icons.ts and NOTICE anew: the raise comes to main
+  # in a branch of its own, from main, with just icons, and Dependabot then closes its pull request
+  # itself (R10 in docs/decisions.md).
   - package-ecosystem: npm
     directory: /
     schedule:

@@ -81,7 +81,7 @@ Section 3.7 of [architecture.md](architecture.md); R12.
 
 ### 3.4. The packages of words, icons and the check
 
-Section 3.8 of [architecture.md](architecture.md); R10. The npm registry, `npm view <package> version license time dependencies`, read 2026-11-07: `@iconify-json/material-symbols` 1.2.97 of 2026-10-28 — Apache-2.0, and 1.2.98 came out 2026-11-07, later than the pause of three days (R08); on 2026-11-11 the set was raised to 1.2.98 — Apache-2.0, the same dependency, `@iconify/types` (the amendment to R10); `@iconify/utils` 3.1.7 of 2026-09-06 — MIT, with the dependencies `@iconify/types`, `@antfu/install-pkg` and `import-meta-resolve`; `axe-core` 4.14.0 of 2026-10-05 — MPL-2.0, with no dependencies, and in it the tag `wcag22aa` has one rule, `target-size`, and `wcag22a` none.
+Section 3.8 of [architecture.md](architecture.md); R10. The npm registry, `npm view <package> version license time dependencies`, read 2026-11-07: `@iconify-json/material-symbols` 1.2.97 of 2026-10-28 — Apache-2.0, and 1.2.98 came out 2026-11-07, later than the pause of three days (R08); on 2026-11-11 the set was raised to 1.2.98 — Apache-2.0, the same dependency, `@iconify/types` (the amendment to R10); read 2026-11-16: 1.2.99 of 2026-11-12 — Apache-2.0, the same dependency, and 1.2.100 of 2026-11-14, still within the pause, so the set was raised to 1.2.99 (the second 2026-11-16 amendment to R10); `@iconify/utils` 3.1.7 of 2026-09-06 — MIT, with the dependencies `@iconify/types`, `@antfu/install-pkg` and `import-meta-resolve`; `axe-core` 4.14.0 of 2026-10-05 — MPL-2.0, with no dependencies, and in it the tag `wcag22aa` has one rule, `target-size`, and `wcag22a` none.
 
 ### 3.5. The shared workflows of `.github`
 
