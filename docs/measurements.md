@@ -34,5 +34,19 @@ What R22 changed, the move to `.github` `v0.1.24`, whose jobs take the image of 
 | 43799443476 | `a28a9da`, T24 | `v0.1.15` | 273 s | 208 s | 200 s | 207 s | 200 s | 206 s | built |
 | 43813288938 | `732ad79`, T26 | `v0.1.24` | 169 s | 67 s | 68 s | 63 s | 53 s | 75 s | from the cache: the restore 10–18 s, `docker load` 30–38 s |
 
-- In the run on `v0.1.24`, the step `ci-lint` took 10 s, `ci-test` 13 s and `ci-vuln` 1 s: the rest of each job is the image, and the image is what the next release of `.github`, row 7.13 of COORDINATION.md spec, and the stage `toolchain-core` of row 7.14 still change (`run/TASKS.md`, T28 and T29).
+- In the run on `v0.1.24`, the step `ci-lint` took 10 s, `ci-test` 13 s and `ci-vuln` 1 s: the rest of each job is the image, and the image is what the next release of `.github`, row 7.13 of COORDINATION.md spec, and the stage `toolchain-core` of row 7.14 still change (T28, done, in [plan/E3.md](plan/E3.md), and T29 in `run/TASKS.md`; 2.2).
 - The release after that CI, run 43813588207, took 6 min 12 s from its creation, its job 5 min 25 s: the release still builds the whole stage `toolchain`, with the browsers.
+
+### 2.2. Before and after `.github` v0.1.30
+
+What the 2026-11-16 amendment to R22 changed, the move to `.github` `v0.1.30`, row 7.13 of COORDINATION.md spec without its last part, the stage `toolchain-core` (T29). Measured 2026-11-16 as 2.1 is, on runs of CI of a pull request, before and after, and on the run of `main` of 2.1; all three took the image from the cache, by the same hash of `.devcontainer/Dockerfile`. The run of a pull request also waits for runners, so its time from creation is less comparable than its jobs'.
+
+| Run | Commit | `.github` | CI | `toolchain` | `lint` | `test` | `licenses` | `vuln` | `docs-check-repo` | The image in a job: restore + `docker load` |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 43812285944 | `d8b5a5a`, pull request #51 | `v0.1.24` | 476 s | — | 60 s | 74 s | 70 s | 65 s | 73 s | 14–18 s + 30–36 s |
+| 43813288938 | `732ad79`, `main` | `v0.1.24` | 169 s | — | 67 s | 68 s | 63 s | 53 s | 75 s | 10–19 s + 30–38 s |
+| 43856964964 | `122db35`, pull request #52 | `v0.1.30` | 114 s | 14 s | 78 s | 67 s | 76 s | 82 s | 89 s | 10–20 s + 30–57 s |
+
+- On a hit of the cache `v0.1.30` shortens no job: the restore and `docker load` are the same steps, and their spread, 30–57 s for `docker load` of one file, is the runners'. It lengthens the path of the checks of TypeScript instead: the job `toolchain`, 14 s, only looks the entry up, and the four checks start after it, 19–20 s after the run, where at `v0.1.24` nothing held them. On a hit, the usual case, the checks of TypeScript so end some 20 s later, not sooner; 114 s against 476 s is the queue of runners that pull request #51 waited in, not the release of `.github`.
+- What `v0.1.30` gives is on a miss, which no run here had: two jobs build the image, "TypeScript / toolchain" for the four checks and "Documents / docs-check-repo" its own (R42 .github), not five, and the repository keeps one entry of the cache instead of two, which only a push to `main` saves (sources 3.6). The release signs its files eight at once, which saves little at the six files of a release of `skill-map`.
+- The trial release of pull request #52, run 43856965051, did not finish: its step "Work out the version", which builds the whole stage `toolchain` from the network, spent 34 minutes in apt, and was cancelled. `snapshot.ubuntu.com` answered 503 — the index of the snapshot `20261021T000000Z` came at 275 kB/s, «Fetched 67.6 MB in 4min 6s», and of the packages 240 lines are «Ign:», about 5.6 s each. The shared `release.yml` takes no cache of the image (R36 .github), so an outage of the snapshot holds the release and nothing else; T29, the stage `toolchain-core`, is the release's part of row 7.24.
