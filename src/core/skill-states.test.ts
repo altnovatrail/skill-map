@@ -1,3 +1,4 @@
+import type { GetSkillMapResponse } from "@altnovatrail/contracts/novatrail/api/v1/progress_pb.js";
 import type { SkillGraph } from "@altnovatrail/spec/formatv0/open";
 import { expect, test } from "vitest";
 import { GRAPH, NOW, SKILL_MAP, skillMap } from "./fair-shares.fixture.js";
@@ -12,6 +13,14 @@ test("example/fair-shares: each skill's state or mark, as in section 3.2 of docs
     ["explain-sharing", "feedback-by-criteria"],
     ["share-with-remainder", "ready-to-start"],
     ["quarters", "locked"],
+  ]);
+});
+
+test("null past the types gives the marks alone: no skill of verdict, and no undefined", () => {
+  const statuses = skillStates(GRAPH, null as unknown as GetSkillMapResponse, NOW);
+  expect([...statuses]).toEqual([
+    ["draw-shares", "not-assessed"],
+    ["explain-sharing", "feedback-by-criteria"],
   ]);
 });
 

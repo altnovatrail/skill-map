@@ -101,12 +101,27 @@ export function contractsProblems(files: readonly { path: string; text: string }
  */
 const SPECIFIER = /\b(?:from|import)\s*(?:\(\s*)?["']([^"']+)["']/g;
 /** An `import(…)` whose module is no string literal, which no check can follow. */
-const COMPUTED = /\bimport\s*\(\s*(?!["'])/;
+const COMPUTED = /\bimport\s*\((?!\s*["'])/;
+
 /**
- * A comment of JavaScript, which tsc keeps in the build: a block, or a line after `//` with nothing
- * but space before it. What it names imports nothing.
+ * JavaScript without its comments, which tsc keeps in the build: each block `/* … *\/`, and each
+ * line that holds nothing but space before `//`. What a comment names imports nothing. It reads
+ * by indexOf, not by a regular expression, so that its time stays linear in the text.
  */
-const COMMENT = /\/\*[\s\S]*?\*\/|^\s*\/\/.*$/gm;
+export function withoutComments(text: string): string {
+  let code = "";
+  let at = 0;
+  for (let open = text.indexOf("/*"); open !== -1; open = text.indexOf("/*", at)) {
+    code += text.slice(at, open);
+    const close = text.indexOf("*/", open + 2);
+    at = close === -1 ? text.length : close + 2;
+  }
+  code += text.slice(at);
+  return code
+    .split("\n")
+    .filter((line) => !line.trimStart().startsWith("//"))
+    .join("\n");
+}
 
 /**
  * Every problem with what ./states imports, at any depth, of the build's JavaScript given by path:
@@ -126,7 +141,7 @@ export function statesProblems(files: ReadonlyMap<string, string>): string[] {
       problems.push(`./states imports ${path}, which is not built`);
       continue;
     }
-    const code = text.replace(COMMENT, "");
+    const code = withoutComments(text);
     if (COMPUTED.test(code)) problems.push(`${path} imports a module by a computed name`);
     for (const [, specifier = ""] of code.matchAll(SPECIFIER)) {
       if (!specifier.startsWith(".")) {

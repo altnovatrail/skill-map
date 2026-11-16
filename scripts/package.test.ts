@@ -1,5 +1,11 @@
 import { expect, test } from "vitest";
-import { contractsProblems, manifestProblems, packProblems, statesProblems } from "./package.ts";
+import {
+  contractsProblems,
+  manifestProblems,
+  packProblems,
+  statesProblems,
+  withoutComments,
+} from "./package.ts";
 
 const build = [
   "package.json",
@@ -147,4 +153,17 @@ test("./states: what a comment names does not count, and a module by a computed 
     ["lib/core/states.js", 'const name = "../element/index.js";\nawait import(name);'],
   ]);
   expect(statesProblems(files)).toEqual(["lib/core/states.js imports a module by a computed name"]);
+});
+
+test("./states: import( with a literal after space is no computed name", () => {
+  const files = new Map([
+    ["lib/core/skill-states.js", 'await import( "./states.js");'],
+    ["lib/core/states.js", ""],
+  ]);
+  expect(statesProblems(files)).toEqual([]);
+});
+
+test("comments go, blocks and whole lines, an unclosed block to the end; code stays", () => {
+  expect(withoutComments('a /* x\n y */ b\n  // c "d"\ne // f')).toBe("a  b\ne // f");
+  expect(withoutComments("a /* never closed\nimport 'x';")).toBe("a ");
 });

@@ -44,7 +44,8 @@ export function skillStates(
 ): ReadonlyMap<string, SkillStatus> {
   const statuses = new Map<string, SkillStatus>();
   for (const [id, skill] of mapStates(graph, skillMap, now).skills) {
-    // With an answer, a skill of verdict always has its state (R03): null does not come.
+    // With an answer, a skill of verdict always has its state (R03). Only JavaScript that passes
+    // null past the types gets a skill of verdict without one: it is left out, never undefined.
     const shown = shownOf(skill);
     if (shown !== null) statuses.set(id, STATUSES[shown]);
   }
