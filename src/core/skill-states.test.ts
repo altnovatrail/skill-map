@@ -16,7 +16,7 @@ test("example/fair-shares: each skill's state or mark, as in section 3.2 of docs
   ]);
 });
 
-test("the module's level and when an adult set it change no state: the element reads neither", () => {
+test("the module's level and when an adult set it change no state or mark of the rule", () => {
   const set: GetSkillMapResponse = {
     ...SKILL_MAP,
     levelBand: "b2",
