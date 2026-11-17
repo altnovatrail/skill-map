@@ -504,6 +504,8 @@
 
 — *Third amendment 2026-11-16 (R23):* **the shared `release.yml` is at `.github` v0.1.31, by SHA `93c848fb51a10a245968cf730b99cc709a7748bf` (the second 2026-11-16 amendment to R22), and it builds the stage `toolchain-core` of `.devcontainer/Dockerfile` — Node, just, Go and buf —, without the browsers: `release-files` needs no more (R23).** What the amendment above says of v0.1.30 and of the whole stage `toolchain` is history; the inputs are the same, and `.devcontainer/Dockerfile` stays among the paths, since the core that builds the archive is in it.
 
+— *Amendment 2026-11-17:* **README has no section on installing and no command: it describes the component and its place in NovaTrail alone; the install by exact version, spec's package of types and the check `release-verify-npm` are in [architecture.md](architecture.md), section 3.7 (T33).** The author's word 2026-11-17 for every repository's README: no commands, only what the component is and where it stands in the architecture. What the first 2026-11-08 amendment says of README's section on installing is history; the badges stay (R48 spec). README.md is still among the release paths, so its merge gives a new version of the package with the same code. — README.md; [architecture.md](architecture.md), section 3.7.
+
 ## The tag of `spec` v0.9.8
 
 **R14. `skill-map` stands on `spec` v0.9.8: the submodule `spec/` and the packages `@altnovatrail/spec` and `@altnovatrail/contracts` are at this tag, and the titles of the anchor skills are written anew from its format file. The tag answers all three rows «В реестр spec» — В4, В5 and В6 — and changes neither the template, nor the devcontainer, nor anything the decisions of `skill-map` stand on.**
