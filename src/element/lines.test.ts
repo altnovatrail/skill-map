@@ -143,15 +143,16 @@ test("each line is a path with a point at both ends, by SVG's attributes alone, 
     expect(node.hasAttribute("style")).toBe(false);
   expect(svg.querySelector("path")?.getAttribute("d")).toMatch(/^M[\d.]+ [\d.]+C/);
   // The lines lie under the bands: a tile is drawn over them. The probe is a line's end, 2 px under
-  // the tile's top edge: a corner of the tile is rounded, and Firefox does not hit it there.
+  // the tile's top edge, where its point and the tile overlap, clear of the tile's rounded corner,
+  // which Firefox does not hit. The SVG takes no pointer, so for the probe alone it is made to: were
+  // it over the tile, the point would be hit.
   const quarters = tileOf("Quarters, Locked");
   const origin = (shadow().querySelector(".map") as Element).getBoundingClientRect();
   const { end } = lines()[0] as Drawn;
-  expect(
-    shadow()
-      .elementFromPoint(origin.left + end.x, origin.top + end.y + 2)
-      ?.closest("button"),
-  ).toBe(quarters);
+  svg.style.pointerEvents = "auto";
+  const hit = shadow().elementFromPoint(origin.left + end.x, origin.top + end.y + 2);
+  svg.removeAttribute("style");
+  expect(hit?.closest("button")).toBe(quarters);
 });
 
 test("a narrower map draws the lines anew to where the tiles now stand", async () => {

@@ -633,6 +633,8 @@
 
 — *Second amendment 2026-11-16 (R21):* **table 4 is no longer in `DEBT.md` but in `run/DEBT.md`, tables 2 and 3 are `run/EPICS.md` and `run/QUESTIONS.md`, and the rules of RUN.md are those of the template of v0.18.3, in English (R21). "Table 4 in `DEBT.md`" and "table 3 of RUN.md" above name the same tables, and the links of this entry to `DEBT.md` lead to `run/DEBT.md`.** — R21.
 
+— *Amendment 2026-11-17 (R25):* **the Vitest projects on WebKit and Firefox, which Д11 held, are R25, and Д11 is closed.**
+
 ## The plan
 
 **R19. RUN.md keeps only what a task acts on: the section «Задачи вне эпика» stands only while it holds a task, a done task outside an epic is deleted when there is no current epic, and the plan no longer repeats RULES.md or retells done epics and closed questions. This is a difference from the template's RUN.md.** The author's instruction of 2026-11-13: «удали Задачи вне эпика — он больше не нужен и тратит токены» and «почисти RUN.md от ненужной тебе информации».
@@ -769,6 +771,8 @@
 
 — *Amendment 2026-11-17 (R24):* **since 2026-11-17 `skill-map` stands on `spec` v0.18.14, R24: `.devcontainer/` is what its template builds, whose two comments now hold in a copy (T176 spec), so В14 has left table 3, and `devcontainer.json` sets `shutdownAction`.** What this entry says of v0.18.4 is history; the stages and `.github` v0.1.31 are as it says. — R24.
 
+— *Amendment 2026-11-17 (R25):* **the input `engines` of `typescript.yml`, rejected above as Д11, is taken by R25: `ci.yml` sets it, and `ci-engines` runs in the stage `toolchain`.**
+
 ## The tag of `spec` v0.18.14
 
 **R24. `skill-map` stands on `spec` v0.18.14: the submodule `spec/` and the packages `@altnovatrail/spec` and `@altnovatrail/contracts` are at this tag, the titles of the anchor skills are written anew from its format file, and `.devcontainer/` again matches the template's output byte for byte — the heading of `toolchain` and the citation `measurements 3.2 spec` that В14 asked for, and `shutdownAction` `none` in `devcontainer.json`. The element reads neither of the two new fields of `GetSkillMapResponse`, `level_band` and `level_set_at`: `app` shows them (R157 spec). The references to `.github` stay at v0.1.31.** T31 outside an epic, in the orchestrator's run of «Порядок» of COORDINATION.md spec (the author's word of 2026-11-17; R156 spec); the author agreed to the change of `.devcontainer/` in advance.
@@ -792,11 +796,13 @@
 
 — *Consequence:* the 2026-11-17 amendments (R24) to R08, R20 and R23; Д12 in [run/DEBT.md](../run/DEBT.md), the rebuild of the container; В12 and В14 leave [run/QUESTIONS.md](../run/QUESTIONS.md). After the merge the author rebuilds the container, and the orchestrator waits for it before the next task. The merge changes `package.json` and `.devcontainer/Dockerfile`, paths of the release, and so puts out a new version in the release and in npm (R13). — `spec/`, `package.json`, `package-lock.json`, `scripts/`, `src/element/anchor-titles.ts`, `src/core/`; `.devcontainer/`; CLAUDE.md; RUN.md; [architecture.md](architecture.md), the status and sections 3.1 and 3.7; [sources.md](sources.md), record 3.2; `run/`.
 
+— *Amendment 2026-11-17 (R25):* **the tests on three engines, which this entry left to Д11, are R25, and Д11 is closed.**
+
 ## The engines of the tests
 
 **R25. The element's tests run in Chromium, WebKit and Firefox: each project of the element in `vitest.config.ts` has an instance per engine, named "<project> (<engine>)"; `ci-test` runs Node and Chromium with the coverage, and the new recipe `ci-engines` runs WebKit and Firefox without it, as the check "TypeScript / engines" of the shared `typescript.yml`, which `ci.yml` asks for by its input `engines: true`. `just ci` runs all five.** Decided 2026-11-17 in T32, which closes Д11.
 - **Why the coverage stays in Chromium:** v8 counts it through the protocol of Chromium alone, and Vitest fails a run with `--coverage` that keeps an instance of WebKit or Firefox (sources 3.8). The report is the one it was, Node and Chromium, and `codecov/patch` reads it as before.
-- **What the engines found:** WebKit passes every test, forced colours too; Firefox failed three, each by the test and not by the map (measurements 3.1). `lines.test.ts` probed a rounded corner of a tile, which Firefox does not hit, and now probes a line's end under the tile's top edge; `csp.test.ts` wrote `'self'` into the policy of a frame of `srcdoc`, under which Firefox does not run the fixture from the page's origin, and now writes the origin out, the same policy for a consumer's page served from it.
+- **What the engines found:** WebKit passes every test, forced colours too; Firefox failed three, each by the test and not by the map (measurements 3.1). `lines.test.ts` probed a rounded corner of a tile, which Firefox does not hit, and now probes a line's end under the tile's top edge, with the SVG made to take the pointer for the probe, so that a line over the tile would be hit; `csp.test.ts` wrote `'self'` into the policy of a frame of `srcdoc`, under which Firefox does not run the fixture from the page's origin, and in Firefox alone now writes the origin out, the same policy for a consumer's page served from it; Chromium and WebKit keep `'self'`.
 - **The release.** The `justfile` is a path of the release (R13), so the merge gives a release of the package, its archive built from the same code.
 
 — *Why:* T34 `app` found bugs seen only in WebKit, and a change of look or layout here would break WebKit and Firefox unseen; the browsers are in the stage `toolchain` since R20, and `.github` v0.1.31, which the CI is on (R22), has the input (sources 3.6). Two jobs side by side keep the run of the tests about as long as before (measurements 3.1).
@@ -805,6 +811,7 @@
 - all three engines in `ci-test`, without the input: the coverage would need `istanbul` in place of v8, a new dependency and another count of lines, and the job would run the engines one after the other;
 - the coverage of WebKit and Firefox by `istanbul` in `ci-engines`: Codecov would get a second report of the same lines;
 - `forced colors` without WebKit, as `app` has it: here WebKit emulates the mode, and its test passes (measurements 3.1);
-- keeping `'self'` in the frame's policy and leaving Firefox out of `csp.test.ts`: the test would check one engine less, for a difference of the frame of the test, not of a consumer's page.
+- leaving Firefox out of `csp.test.ts`: the test would check one engine less, for a difference of the frame of the test, not of a consumer's page; and writing the origin out in every engine: none would check `'self'`, the policy a strict consumer most often writes;
+- the selection of `ci-test` by the names it keeps, `node` and `*(chromium)`: a new project of another name would run in neither recipe, so `ci-test` leaves out `*(webkit)` and `*(firefox)` instead.
 
-— *Consequence:* the 2026-11-17 amendments (R25) to R08, R20 and R22; Д11 leaves [run/DEBT.md](../run/DEBT.md). — `vitest.config.ts`, `justfile`, `.github/workflows/ci.yml`, `src/element/lines.test.ts`, `src/element/csp.test.ts`; [architecture.md](architecture.md), section 3.7; [sources.md](sources.md), record 3.8; [measurements](measurements.md) 3.1; `.claude/rules/package.md`.
+— *Consequence:* the 2026-11-17 amendments (R25) to R08, R18, R20, R22, R23 and R24; Д11 leaves [run/DEBT.md](../run/DEBT.md). — `vitest.config.ts`, `justfile`, `.github/workflows/ci.yml`, `src/element/lines.test.ts`, `src/element/csp.test.ts`; [architecture.md](architecture.md), section 3.7; [sources.md](sources.md), record 3.8; [measurements](measurements.md) 3.1; `.claude/rules/package.md`.

@@ -7,6 +7,7 @@
 // coverage works in Chromium alone (sources 3.8; R25). Each project names its own files: the spec
 // submodule beside them has tests of its own, which are not skill-map's.
 import { playwright } from "@vitest/browser-playwright";
+import type { BrowserContextOptions } from "playwright";
 import { defaultExclude, defineConfig } from "vitest/config";
 
 const FORCED_COLOURS = "src/element/forced-colors.test.ts";
@@ -15,7 +16,12 @@ const FORCED_COLOURS = "src/element/forced-colors.test.ts";
 const ENGINES = ["chromium", "webkit", "firefox"] as const;
 
 /** A project of the element: its files, those it leaves out, and its browser's context. */
-function element(name: string, include: string[], exclude: string[], contextOptions = {}) {
+function element(
+  name: string,
+  include: string[],
+  exclude: string[],
+  contextOptions: BrowserContextOptions = {},
+) {
   return {
     test: {
       name,

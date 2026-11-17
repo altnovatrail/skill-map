@@ -34,9 +34,9 @@ ci-lint: _install
 # Build the package, run the tests in Node and in Chromium with their coverage, which .github's
 # TypeScript wrapper sends to Codecov from coverage/lcov.info, and check the package the way a
 # consumer takes it: its files, and its declarations under a consumer's TypeScript (R09). WebKit and
-# Firefox are ci-engines' (R25).
+# Firefox are ci-engines' (R25): left out by name, so that a new project runs here by default.
 ci-test: build
-    {{ bin }}/vitest run --coverage --project node --project '*(chromium)'
+    {{ bin }}/vitest run --coverage --project '!*(webkit)' --project '!*(firefox)'
     node scripts/package.ts
     node scripts/consumer.ts
 
