@@ -1,8 +1,8 @@
-# skill-map's own recipes: the package's build, and the four checks .github's typescript.yml runs in
-# CI, one job each, in a new container of a stage of .devcontainer/Dockerfile — ci-test in
-# toolchain, with the browsers, and ci-lint, ci-vuln and ci-licenses in toolchain-core, without
-# them — as the runner's user, with HOME=/tmp and with CI from the step's environment (R08, R23 in
-# docs/decisions.md).
+# skill-map's own recipes: the package's build, and the five checks .github's typescript.yml runs in
+# CI, one job each, in a new container of a stage of .devcontainer/Dockerfile — ci-test and
+# ci-engines in toolchain, with the browsers, and ci-lint, ci-vuln and ci-licenses in
+# toolchain-core, without them — as the runner's user, with HOME=/tmp and with CI from the step's
+# environment (R08, R23, R25 in docs/decisions.md).
 # Only ci-licenses reads spec/: it runs spec's recipes licenses-check-repo and release-verify-npm,
 # and the licenses job alone gets the submodule. The code and its tests read nothing of spec/, and
 # the documents are checked by spec's own recipe, just -f spec/justfile docs-check-repo. One more
@@ -14,8 +14,8 @@ set shell := ["bash", "-euo", "pipefail", "-c"]
 # fetched on the fly.
 bin := "node_modules/.bin"
 
-# Run the four checks CI runs, before a pull request.
-ci: ci-lint ci-test ci-vuln ci-licenses
+# Run the five checks CI runs, before a pull request.
+ci: ci-lint ci-test ci-engines ci-vuln ci-licenses
 
 # Fail on code Biome would format or flag, on a type error in any of the three programs — the
 # DOM-free part sees neither the DOM nor Node, the element sees the DOM, and the scripts, the
@@ -33,11 +33,19 @@ ci-lint: _install
 
 # Build the package, run the tests in Node and in Chromium with their coverage, which .github's
 # TypeScript wrapper sends to Codecov from coverage/lcov.info, and check the package the way a
-# consumer takes it: its files, and its declarations under a consumer's TypeScript (R09).
+# consumer takes it: its files, and its declarations under a consumer's TypeScript (R09). WebKit and
+# Firefox are ci-engines' (R25): left out by name, so that a new project runs here by default.
 ci-test: build
-    {{ bin }}/vitest run --coverage
+    {{ bin }}/vitest run --coverage --project '!*(webkit)' --project '!*(firefox)'
     node scripts/package.ts
     node scripts/consumer.ts
+
+# The tests of the element in WebKit and Firefox, without the coverage: Vitest's v8 coverage works
+# in Chromium alone (sources 3.8). typescript.yml runs this as the check "TypeScript / engines",
+# beside ci-test, so that the two take their time side by side (R25). No build: no test in a
+# browser reads lib/.
+ci-engines: _install
+    {{ bin }}/vitest run --project '*(webkit)' --project '*(firefox)'
 
 # Fail on a published advisory, high or above, for a package the package ships with. Of the tools
 # of development, Dependabot's alerts tell (R08). npm audit reads the lock file and asks the
