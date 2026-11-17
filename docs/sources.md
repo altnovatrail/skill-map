@@ -111,6 +111,13 @@ Section 3.7 of [architecture.md](architecture.md); R23 and the second 2026-11-16
   - `release.yml`: «The script builds the stage toolchain-core, Node, just, Go and buf, which every recipe of a release needs and no more», `TOOLCHAIN_STAGE: toolchain-core` in "Work out the version", and "Build the files" builds `--target "$stage"`, `toolchain-core` where the tree's Dockerfile has the line, «and toolchain otherwise: what the recipe needs is in the core, and a release builds no browser».
 - `run/QUESTIONS.md` of `.github` at v0.1.31, row В40, and `docs/sources.md`, record 13.8: a caller's move to a tag with T166 «has to keep in the core what its release and those checks need … and put in `toolchain` only what its tests need, as nss_wrapper of `api` and the browsers of the kind `typescript`»; of `skill-map`, under «what `release-files` runs», «`node scripts/package.ts`, `npm pack` and `node scripts/consumer.ts --release`», and its stage `toolchain` installs beyond the four «Playwright's three browsers … and their system packages by apt from the snapshot».
 
+### 3.8. Vitest 5.1.0: v8 coverage and the engines
+
+R25. Read 2026-11-17 — the code of `vitest` 5.1.0 in `node_modules`, `dist/chunks/index.Di8au7q4.js`, an inference from code, not a page of its documentation; the same as sources 2.5 `app` read 2026-11-14:
+- the instances of a browser project are first filtered by `--project`: «browser project … is dropped: no instances match the --project filter», and only the instances left are checked;
+- each instance left whose provider or browser is not Chromium — under the comment «Browser-mode CDP only features» — fails the run when the coverage is on with v8: «@vitest/coverage-v8 does not work with», then the instance's configuration, «Use either:» with Chromium's, and «...or change your coverage provider to:» with `provider: 'istanbul'`;
+- so a run with `--coverage` takes WebKit and Firefox only where `--project` leaves them out, and a run without it takes all three.
+
 ## 4. The prototype of `spec`
 
 ### 4.1. The topic map of the prototype

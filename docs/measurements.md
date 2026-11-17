@@ -74,3 +74,22 @@ What R23 changed, the move to `spec` v0.18.4 and `.github` v0.1.31: the release 
 - **The release.** "Work out the version" builds the image the release's recipes run in: before, all of `toolchain` with the browsers and apt, 178–1,557 s on either release of `.github`; after, `toolchain-core` alone, 25–31 s, with no apt. "Build the files" builds the same stage again from the runner's build cache, and the trial publishes nothing. A release on `main` after the merge so takes about 30 s plus the npm step, which waits for the registry (sources 3.5); it is not measured here.
 - **The image on a miss.** In the first run "TypeScript / toolchain" built `toolchain` from the new Dockerfile in 125 s: the core, its `RUN` 17 s, then the browsers' three `COPY`, 4 s, and apt, 84 s — «Fetched 33.6 MB in 14s (2485 kB/s)» of indexes, from the snapshot alone, against 67.6 MB with `--snapshot` (measurements 3.1 spec), and «Fetched 203 MB in 55s» of packages; the core again from the build cache, 0.4 s. Its uploads took 40 s and 49 s for `toolchain`, 1,151,649,973 bytes, and 18 s and 22 s for the core, 489,188,588 bytes. "Documents / docs-check-repo" built the core itself, 21–24 s for its step "Toolchain image"; in the first run it then failed on a citation of the documents of that commit, which the next one fixed, so its 51 s is no time of a full check.
 - **The checks in the core.** `vuln` and `licenses` loaded the core's 489 MB, 21–30 s for "Toolchain image", against 36–57 s for `toolchain` in `test` of the same runs and 30–58 s in the jobs of the run before; they are 32–38 s shorter than before, though their image came by an artifact and not from the cache. `lint` took 46 s and 98 s: the download of the artifact took 9 s in the first run and 61 s in the second, the runners' spread. A run as a whole was longer, 405–467 s, because of the miss: "TypeScript / toolchain" built and uploaded both stages before any check started. A run on a hit, with both entries saved after the merge on `main`, is not measured here.
+
+## 3. The tests in three engines
+
+What the element's tests do in WebKit and Firefox beside Chromium, the engines of the stage `toolchain`: Chrome Headless Shell of revision 1254, WebKit 2388 and Firefox 1572 under `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` (R20). Measured 2026-11-17 in the devcontainer of this repository, 20 processors, by `vitest run --project '*(<engine>)'` of Vitest 5.1.0 after R25; a duration is Vitest's own, "Duration".
+
+### 3.1. What failed in WebKit and Firefox, and the time
+
+The tests of the element, ten files, 77 tests in each engine, the projects `browser` and `forced colors`: the failures as the tests were before R25, the durations after its two fixes below.
+
+| Engine | Failed before | Duration after |
+|---|---|---|
+| Chromium | 0 | 2.31 s |
+| WebKit | 0 | 2.72 s |
+| Firefox | 3 | 6.61 s |
+
+- **WebKit** passes all of them, `forced colors` too: `matchMedia("(forced-colors: active)")` is true in a context with `forcedColors: "active"`.
+- **Firefox, `lines.test.ts`.** `shadowRoot.elementFromPoint(left + 2, top + 2)` of the tile "Quarters" gave its `li`, not the button: the point is in the tile's corner, rounded by `border-radius: 0.5rem`, and Firefox does not hit the button there; `elementsFromPoint` there gave `LI`, `UL`, `SECTION.band`, `DIV.map`. The test now probes a line's end, 2 px under the tile's top edge.
+- **Firefox, `csp.test.ts`, both tests.** In a frame of `srcdoc` whose `<meta>` policy is `default-src 'self'; script-src 'self'; style-src 'self'`, the module of the fixture, from the page's own origin, did not run, and the test waited 10 s for its result; with `script-src 'self'` alone too. With the page's origin written out in place of `'self'`, or with no policy, it ran, and drew the map with no violation. Chromium and WebKit run it under `'self'`. The test now writes the origin out: the policy is the same for a consumer's page served from that origin.
+- `ci-test`, Node and Chromium with the coverage, ran 185 tests in 3.23 s and `ci-engines`, WebKit and Firefox, 154 tests in 7.27 s; in CI they are two jobs side by side (R25).

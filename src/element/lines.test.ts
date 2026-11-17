@@ -142,12 +142,14 @@ test("each line is a path with a point at both ends, by SVG's attributes alone, 
   for (const node of [svg, ...svg.querySelectorAll("*")])
     expect(node.hasAttribute("style")).toBe(false);
   expect(svg.querySelector("path")?.getAttribute("d")).toMatch(/^M[\d.]+ [\d.]+C/);
-  // The lines lie under the bands: a tile is drawn over them.
+  // The lines lie under the bands: a tile is drawn over them. The probe is a line's end, 2 px under
+  // the tile's top edge: a corner of the tile is rounded, and Firefox does not hit it there.
   const quarters = tileOf("Quarters, Locked");
-  const { left, top } = quarters.getBoundingClientRect();
+  const origin = (shadow().querySelector(".map") as Element).getBoundingClientRect();
+  const { end } = lines()[0] as Drawn;
   expect(
     shadow()
-      .elementFromPoint(left + 2, top + 2)
+      .elementFromPoint(origin.left + end.x, origin.top + end.y + 2)
       ?.closest("button"),
   ).toBe(quarters);
 });

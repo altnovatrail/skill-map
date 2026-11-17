@@ -4,7 +4,7 @@
 >
 > **Rule:** do not re-propose what was rejected without new facts. If a decision has to change, ask the author and update this file. An entry is never rewritten: an amendment with its date at the end of the entry corrects it, or a new entry replaces it, and the old one stays where it is, marked "Superseded".
 >
-> The repository was set up 2026-10-19 from the template of `spec` v0.1.0 (R21 spec), moved to `spec` v0.2.9 2026-10-20 (R01), and 2026-11-07 to v0.9.4 (R02) and the same day to v0.9.5 (R05), 2026-11-08 to v0.9.8 (R14) and the same day to v0.9.9 (R15), 2026-11-11 to v0.15.0 (R16), 2026-11-12 to v0.16.3 (R18), 2026-11-16 to v0.18.3 (R20) and the same day to v0.18.4 (R23), and 2026-11-17 to v0.18.14 (R24). How it comes to differ from the template over time — by tools in the devcontainer, by rules in RUN.md — is recorded here as a decision, as R46 canvas-api recorded the differences from its own model. Next number — R25.
+> The repository was set up 2026-10-19 from the template of `spec` v0.1.0 (R21 spec), moved to `spec` v0.2.9 2026-10-20 (R01), and 2026-11-07 to v0.9.4 (R02) and the same day to v0.9.5 (R05), 2026-11-08 to v0.9.8 (R14) and the same day to v0.9.9 (R15), 2026-11-11 to v0.15.0 (R16), 2026-11-12 to v0.16.3 (R18), 2026-11-16 to v0.18.3 (R20) and the same day to v0.18.4 (R23), and 2026-11-17 to v0.18.14 (R24). How it comes to differ from the template over time — by tools in the devcontainer, by rules in RUN.md — is recorded here as a decision, as R46 canvas-api recorded the differences from its own model. Next number — R26.
 >
 > Here entries are cited as `R03`, in other repositories as `R03 skill-map`. The decisions of `spec` are cited as "R18 spec", MathTrail's as "R37 canvas-api", and in a list as "canvas-api: R37, R38". Each log has its own numbers.
 >
@@ -316,6 +316,8 @@
 — *Fourth amendment 2026-11-16 (R23):* **the seven references are at `.github` v0.1.31, by SHA 93c848f (the second 2026-11-16 amendment to R22), and `ci-lint`, `ci-vuln` and `ci-licenses` run in the stage `toolchain-core` of `.devcontainer/Dockerfile`, which has no browser, while `ci-test` keeps `toolchain`.** What the third amendment above says of v0.1.30 is history, and "The container" above holds: `.devcontainer/` is the template's of v0.18.4 (R23). The checks and the inputs keep their names.
 
 — *Fifth amendment 2026-11-17 (R24):* **`.devcontainer/` is the template's of v0.18.14 and the packages of `spec` are at 0.18.14 (R24); the stages and the checks in them are as the fourth amendment says.**
+
+— *Amendment 2026-11-17 (R25):* **the element's projects, `browser` and `forced colors`, run in Chromium, WebKit and Firefox, an instance per engine: `ci-test` runs Node and Chromium with the coverage, as before, and the recipe `ci-engines` WebKit and Firefox without it, as the check "TypeScript / engines"; `ci` runs five recipes.** What "Tests" and "Recipes" above say of Chromium alone and of four recipes is history.
 
 ## The element
 
@@ -689,6 +691,8 @@
 
 — *Amendment 2026-11-17 (R24):* **since 2026-11-17 `skill-map` stands on `spec` v0.18.14, R24, and the card architecture 3.3 spec names `./states` (T172 spec), so В12 has left table 3.** — R24.
 
+— *Amendment 2026-11-17 (R25):* **the Vitest projects on WebKit and Firefox, which this entry left to Д11, are R25, and Д11 is closed.**
+
 ## The plan in `run/`
 
 **R21. The work plan of `skill-map` is in the layout and the language of the template of `spec` v0.18.3: tables 2, 3 and 4 are `run/EPICS.md`, `run/QUESTIONS.md` and `run/DEBT.md`, which replaces `DEBT.md` at the root, and the open tasks outside an epic are `run/TASKS.md`; RUN.md keeps its rules, in English and terse, for the session, and the current epic; a done task's gist sentence goes to the archive with its body; the bodies of tasks and the archives stay in Russian. A done task outside an epic, with no current epic, goes to the archive of the last done epic instead of being deleted. What else R19 held against the template — rules that do not repeat RULES.md and CLAUDE.md — stays.** Rows Д250 spec and Д235 spec, by T24 (R20); the weighing of each difference of R19 against the template, which the task asked for, is the executor's.
@@ -742,6 +746,8 @@
 
 — *Second amendment 2026-11-16 (R23):* **the seven references are at `.github` v0.1.31, by SHA `93c848fb51a10a245968cf730b99cc709a7748bf`, with the version beside it, and the group `shared-workflows` is the same; no input of the callers changes. The release builds the stage `toolchain-core` of `.devcontainer/Dockerfile`, and "TypeScript / lint", "vuln" and "licenses" and "Documents / docs-check-repo" run in it, each by its own file and entry of the cache (R47 .github); "TypeScript / test" and "coverage" keep `toolchain`.** T66 `.github`, the last part of row 7.13 of COORDINATION.md spec, which the amendment above left to T29: the move to `spec` v0.18.4 gives `.devcontainer/` the core, without which the workflows of v0.1.31 keep `toolchain` (sources 3.7). What the amendment above says of v0.1.30 is history. — R23.
 
+— *Amendment 2026-11-17 (R25):* **`ci.yml` sets the input `engines: true` of `typescript.yml`, which the 2026-11-16 amendment above left to Д11: the check "TypeScript / engines" runs `ci-engines`.** The SHA and the version are the same.
+
 ## The tag of `spec` v0.18.4 and the stage `toolchain-core`
 
 **R23. `skill-map` stands on `spec` v0.18.4: the submodule `spec/` and the packages `@altnovatrail/spec` and `@altnovatrail/contracts` are at this tag, the titles of the anchor skills are written anew from its format file, and `.devcontainer/` again matches the template's output byte for byte: the stage `toolchain-core` — Node, just, Go and buf — under `toolchain`, which adds the three browsers and their system packages, and apt reads the snapshot of the Ubuntu archive alone. Every reference to a shared workflow of `.github` is at v0.1.31, whose release builds `toolchain-core` and whose checks without a browser run in it. No input of the callers changes, and `.devcontainer/Dockerfile` stays among the paths of the release.** Row 7.24 of COORDINATION.md spec, with rows 7.13 and 7.14 — T166 spec and T66 `.github` (R47 .github) —, by T29 outside an epic, in the orchestrator's run T171 spec; the author agreed to the change of `.devcontainer/` on 2026-11-16 (T171 spec).
@@ -785,3 +791,20 @@
 - the level on the map: the card 3.3 spec does not give it to the element, and it would change the element's agreement, R04, by a row «В реестр spec».
 
 — *Consequence:* the 2026-11-17 amendments (R24) to R08, R20 and R23; Д12 in [run/DEBT.md](../run/DEBT.md), the rebuild of the container; В12 and В14 leave [run/QUESTIONS.md](../run/QUESTIONS.md). After the merge the author rebuilds the container, and the orchestrator waits for it before the next task. The merge changes `package.json` and `.devcontainer/Dockerfile`, paths of the release, and so puts out a new version in the release and in npm (R13). — `spec/`, `package.json`, `package-lock.json`, `scripts/`, `src/element/anchor-titles.ts`, `src/core/`; `.devcontainer/`; CLAUDE.md; RUN.md; [architecture.md](architecture.md), the status and sections 3.1 and 3.7; [sources.md](sources.md), record 3.2; `run/`.
+
+## The engines of the tests
+
+**R25. The element's tests run in Chromium, WebKit and Firefox: each project of the element in `vitest.config.ts` has an instance per engine, named "<project> (<engine>)"; `ci-test` runs Node and Chromium with the coverage, and the new recipe `ci-engines` runs WebKit and Firefox without it, as the check "TypeScript / engines" of the shared `typescript.yml`, which `ci.yml` asks for by its input `engines: true`. `just ci` runs all five.** Decided 2026-11-17 in T32, which closes Д11.
+- **Why the coverage stays in Chromium:** v8 counts it through the protocol of Chromium alone, and Vitest fails a run with `--coverage` that keeps an instance of WebKit or Firefox (sources 3.8). The report is the one it was, Node and Chromium, and `codecov/patch` reads it as before.
+- **What the engines found:** WebKit passes every test, forced colours too; Firefox failed three, each by the test and not by the map (measurements 3.1). `lines.test.ts` probed a rounded corner of a tile, which Firefox does not hit, and now probes a line's end under the tile's top edge; `csp.test.ts` wrote `'self'` into the policy of a frame of `srcdoc`, under which Firefox does not run the fixture from the page's origin, and now writes the origin out, the same policy for a consumer's page served from it.
+- **The release.** The `justfile` is a path of the release (R13), so the merge gives a release of the package, its archive built from the same code.
+
+— *Why:* T34 `app` found bugs seen only in WebKit, and a change of look or layout here would break WebKit and Firefox unseen; the browsers are in the stage `toolchain` since R20, and `.github` v0.1.31, which the CI is on (R22), has the input (sources 3.6). Two jobs side by side keep the run of the tests about as long as before (measurements 3.1).
+
+— *Rejected:*
+- all three engines in `ci-test`, without the input: the coverage would need `istanbul` in place of v8, a new dependency and another count of lines, and the job would run the engines one after the other;
+- the coverage of WebKit and Firefox by `istanbul` in `ci-engines`: Codecov would get a second report of the same lines;
+- `forced colors` without WebKit, as `app` has it: here WebKit emulates the mode, and its test passes (measurements 3.1);
+- keeping `'self'` in the frame's policy and leaving Firefox out of `csp.test.ts`: the test would check one engine less, for a difference of the frame of the test, not of a consumer's page.
+
+— *Consequence:* the 2026-11-17 amendments (R25) to R08, R20 and R22; Д11 leaves [run/DEBT.md](../run/DEBT.md). — `vitest.config.ts`, `justfile`, `.github/workflows/ci.yml`, `src/element/lines.test.ts`, `src/element/csp.test.ts`; [architecture.md](architecture.md), section 3.7; [sources.md](sources.md), record 3.8; [measurements](measurements.md) 3.1; `.claude/rules/package.md`.
