@@ -53,18 +53,14 @@ test("no two values share an icon, and none takes an icon of another package's v
   const bases = Object.values(TABLE);
   expect(new Set(bases).size).toBe(bases.length);
   // The bases the table of architecture 6 of spec names for the values of other packages, at
-  // v0.18.4 (R78 spec): the tests read nothing of spec/, which CI checks out for the licenses alone.
+  // v0.18.14 (R78 spec): the tests read nothing of spec/, which CI checks out for the licenses alone.
   const shared = [
     "ink-pen",
     "ink-eraser",
     "undo",
     "delete-sweep",
-    "arrow-upward",
-    "arrow-downward",
     "zoom-in",
     "zoom-out",
-    "arrow-left-alt",
-    "arrow-right-alt",
     "arrow-forward",
     "keyboard-arrow-down",
     "keyboard-arrow-right",
@@ -74,7 +70,7 @@ test("no two values share an icon, and none takes an icon of another package's v
 });
 
 test("the states and marks have the icons the table of architecture 6 of spec gives them", () => {
-  // The rows of skill-map and app in that table, at v0.18.4: the module card of app shows the
+  // The rows of skill-map and app in that table, at v0.18.14: the module card of app shows the
   // same icons as the map (the 2026-11-14 amendment to R78 spec).
   const { review, mastered, practising, ready, locked, rubric, none } = TABLE;
   expect({ review, mastered, practising, ready, locked, rubric, none }).toEqual({
