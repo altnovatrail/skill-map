@@ -16,6 +16,15 @@ test("example/fair-shares: each skill's state or mark, as in section 3.2 of docs
   ]);
 });
 
+test("the module's level and when an adult set it change no state: the element reads neither", () => {
+  const set: GetSkillMapResponse = {
+    ...SKILL_MAP,
+    levelBand: "b2",
+    levelSetAt: { $typeName: "google.protobuf.Timestamp", seconds: 1_800_000_000n, nanos: 0 },
+  };
+  expect([...skillStates(GRAPH, set, NOW)]).toEqual([...skillStates(GRAPH, SKILL_MAP, NOW)]);
+});
+
 test("null past the types gives the marks alone: no skill of verdict, and no undefined", () => {
   const statuses = skillStates(GRAPH, null as unknown as GetSkillMapResponse, NOW);
   expect([...statuses]).toEqual([

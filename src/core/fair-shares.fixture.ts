@@ -113,6 +113,7 @@ export function skillMap(
     packageDigest: "sha256:0000000000000000000000000000000000000000000000000000000000000000",
     skills: [...skills],
     anchorSkills: [...anchorSkills],
+    levelBand: "",
   };
 }
 
