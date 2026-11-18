@@ -8,7 +8,7 @@ Table 4 of [RUN.md](../RUN.md): what was put off on purpose, its risk, when to r
 
 ## Table 4. Technical debt
 
-Numbers are not reused: next — Д13.
+Numbers are not reused: next — Д14.
 
 | ID | Debt | From | Risk while open | When to return |
 |---|---|---|---|---|
@@ -17,3 +17,4 @@ Numbers are not reused: next — Д13.
 | Д6 | The release trial runs on every pull request, without a filter of paths, and does not start in a pull request from a fork (R13, "Revisit") | T17 | CI minutes on a change of documents alone; a change from a fork does not try the release before the merge and is checked only by the release on `main` | When `skill-map` has forks or CI minutes get expensive |
 | Д7 | `ci-lint` goes to the network for the format file of `spec` (`taxonomy --check`), and `just demo` for the index and packages of `modules` | T13, T16 | A failure of the network on the CI machine holds a required check — as on pull request #24. Retrying the download, `scripts/download.ts`, softens it but does not remove it | If the failures recur: a cache input of the shared `typescript.yml` of `.github` — a new row «В реестр spec» in [QUESTIONS.md](QUESTIONS.md), as the answer to В7 decided (R15) |
 | Д12 | The container here may be built by an older Dockerfile than `.devcontainer/` at `spec` v0.18.14 (R24): that of v0.18.3 until the rebuild after T29 (R23), that of v0.18.4 until the one after T31 — the heading of `toolchain`, the citation `measurements 3.2 spec` and `shutdownAction` | R23; R24 | None for the checks: CI builds both stages from the file in the tree, and the tools and packages are the same at the same versions (measurements 3.2 spec); without `shutdownAction: none` closing the window stops the container under the orchestrator's executor; a session cannot tell from inside which file built it | The author rebuilds the container after the merge of T31 (Rebuild Container), and the orchestrator waits for it before the next task; the next task deletes the row on the author's word |
+| Д13 | `.devcontainer/Dockerfile` is the template's of `spec` v0.18.14, not of v0.18.27: the three lines of its opening comment that name the Dev Containers CLI of the stage `orchestrator` (R158 spec) are not taken (R26) | T35 | None for a build or a check: the lines are a comment, and the stage is not in a copy; the file is not what `new-repo-draft` of the tag builds, as R20, R23 and R24 had it | The next task that changes `.devcontainer/`, or the next move to a tag of `spec`: take the file from what the recipe builds, and delete the row |
