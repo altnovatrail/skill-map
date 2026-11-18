@@ -15,10 +15,10 @@ What the rules of R143 spec and R145 spec changed in the sessions of `skill-map`
 | Project | Window, UTC | Sessions | Calls, main / subagents | Context of a call, k, main / subagents | Compactions | Cost at API prices |
 |---|---|---|---|---|---|---|
 | `-workspaces-skill-map` — before, measurements 1.9 spec | 2026-10-13T00:00 … 2026-11-12T14:27 | 6 | 1,313 / 402 | 329.5 / 81.4 | 1 | $162.58 |
-| `-workspaces-skill-map` — after: R18 and T22 | 2026-11-12T20:30 … 2026-11-12T22:12 | 2 | 198 / 237 | 177.0 / 88.1 | 0 | $25.21 |
+| `-workspaces-skill-map` — after: the move to v0.16.3 and T22 | 2026-11-12T20:30 … 2026-11-12T22:12 | 2 | 198 / 237 | 177.0 / 88.1 | 0 | $25.21 |
 
 - The context of a main call fell from 329.5 to 177.0 thousand, −46%; that of a subagent's call rose from 81.4 to 88.1.
-- The windows differ in work: "before" holds the detailing, the first code and the moves to tags of epics E1–E3 and of R15–R17; "after" holds the move to v0.16.3 with the restructuring, R18, and the translation of 265 KB of Russian text by seven subagents of T22 — five translators and two blind readers —, which make most of its calls of subagents.
+- The windows differ in work: "before" holds the detailing, the first code and the moves to tags of epics E1–E3, to v0.9.9 and v0.15.0, and the raise of `playwright`, R17; "after" holds the move to v0.16.3 with the restructuring, pull request #37, and the translation of 265 KB of Russian text by seven subagents of T22 — five translators and two blind readers —, which make most of its calls of subagents.
 - With 198 main calls the row is below the 300 that the threshold of R145 spec counts over, so it is not a reference: the reference of `skill-map` is its measurement after by T124 spec (measurements 1.9 spec).
 
 ## 2. The speed of CI
@@ -39,7 +39,7 @@ What R22 changed, the move to `.github` `v0.1.24`, whose jobs take the image of 
 
 ### 2.2. Before and after `.github` v0.1.30
 
-What the 2026-11-16 amendment to R22 changed, the move to `.github` `v0.1.30`, row 7.13 of COORDINATION.md spec without its last part, the stage `toolchain-core` (T29). Measured 2026-11-16 as 2.1 is, on runs of CI of a pull request, before and after, and on the run of `main` of 2.1; all four took the image from the cache, by the same hash of `.devcontainer/Dockerfile`. The run of a pull request also waits for runners, so its time from creation is less comparable than its jobs'.
+What T28 changed, the move to `.github` `v0.1.30`, row 7.13 of COORDINATION.md spec without its last part, the stage `toolchain-core` (T29). Measured 2026-11-16 as 2.1 is, on runs of CI of a pull request, before and after, and on the run of `main` of 2.1; all four took the image from the cache, by the same hash of `.devcontainer/Dockerfile`. The run of a pull request also waits for runners, so its time from creation is less comparable than its jobs'.
 
 | Run | Commit | `.github` | CI | `toolchain` | `lint` | `test` | `licenses` | `vuln` | `docs-check-repo` | The image in a job: restore + `docker load` |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -54,7 +54,7 @@ What the 2026-11-16 amendment to R22 changed, the move to `.github` `v0.1.30`, r
 
 ### 2.3. Before and after the stage `toolchain-core`
 
-What R23 changed, the move to `spec` v0.18.4 and `.github` v0.1.31: the release builds the stage `toolchain-core`, "TypeScript / lint", "vuln" and "licenses" and "Documents / docs-check-repo" run in it, and apt of `toolchain` reads the snapshot alone. Measured 2026-11-16 as 2.1 is. "Before" is runs on `main` and of pull request #53, on `.github` `v0.1.24` and `v0.1.30`, whose release builds all of `toolchain` either way, and whose CI took the image from the cache; "after" is the two runs of pull request #54, which missed the cache, the Dockerfile being new and a pull request saving nothing, and built both stages.
+What T29 changed, the move to `spec` v0.18.4 and `.github` v0.1.31: the release builds the stage `toolchain-core`, "TypeScript / lint", "vuln" and "licenses" and "Documents / docs-check-repo" run in it, and apt of `toolchain` reads the snapshot alone. Measured 2026-11-16 as 2.1 is. "Before" is runs on `main` and of pull request #53, on `.github` `v0.1.24` and `v0.1.30`, whose release builds all of `toolchain` either way, and whose CI took the image from the cache; "after" is the two runs of pull request #54, which missed the cache, the Dockerfile being new and a pull request saving nothing, and built both stages.
 
 | Run | Commit | `.github` | Cache | CI | `toolchain` | `lint` | `test` | `licenses` | `vuln` | `docs-check-repo` |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -77,7 +77,7 @@ What R23 changed, the move to `spec` v0.18.4 and `.github` v0.1.31: the release 
 
 ## 3. The tests in three engines
 
-What the element's tests do in WebKit and Firefox beside Chromium, the engines of the stage `toolchain`: Chrome Headless Shell of revision 1254, WebKit 2388 and Firefox 1572 under `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` (R20). Measured 2026-11-17 in the devcontainer of this repository, 20 processors, by `vitest run --project '*(<engine>)'` of Vitest 5.1.0 after R25; a duration is Vitest's own, "Duration".
+What the element's tests do in WebKit and Firefox beside Chromium, the engines of the stage `toolchain`: Chrome Headless Shell of revision 1254, WebKit 2388 and Firefox 1572 under `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` (R02). Measured 2026-11-17 in the devcontainer of this repository, 20 processors, by `vitest run --project '*(<engine>)'` of Vitest 5.1.0 after R25; a duration is Vitest's own, "Duration".
 
 ### 3.1. What failed in WebKit and Firefox, and the time
 
