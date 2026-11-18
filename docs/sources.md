@@ -75,6 +75,7 @@ Section 3.7 of [architecture.md](architecture.md); R08.
 - The npm registry, `npm view <package>@<version> license dependencies` and `npm view <package> time`, read 2026-11-16 (R23): `@altnovatrail/spec` 0.18.4, published 2026-11-16T07:13:42Z, and `@altnovatrail/contracts` 0.18.4, published 2026-11-16T07:10:59Z — Apache-2.0; `@altnovatrail/contracts` 0.18.4 still depends on `@bufbuild/protobuf` 2.17.0.
 - The npm registry, `npm view <package>@<version> license dependencies` and `npm view <package> time`, read 2026-11-17 (R24): `@altnovatrail/spec` 0.18.14, published 2026-11-17T06:04:59Z, and `@altnovatrail/contracts` 0.18.14, published 2026-11-17T06:04:54Z — Apache-2.0; `@altnovatrail/contracts` 0.18.14 still depends on `@bufbuild/protobuf` 2.17.0.
 - The npm registry, `npm view <package>@<version> license dependencies` and `npm view <package> time`, read 2026-11-18 (R26): `@altnovatrail/spec` 0.18.27, published 2026-11-18T01:20:26Z, and `@altnovatrail/contracts` 0.18.27, published 2026-11-18T01:20:21Z — Apache-2.0; `@altnovatrail/contracts` 0.18.27 still depends on `@bufbuild/protobuf` 2.17.0.
+- The npm registry, `npm view <package>@<version> license dependencies` and `npm view <package> time`, read 2026-11-18 (R26): `@altnovatrail/spec` 0.18.34, published 2026-11-18T10:03:05Z, and `@altnovatrail/contracts` 0.18.34, published 2026-11-18T10:02:57Z — Apache-2.0; `@altnovatrail/contracts` 0.18.34 still depends on `@bufbuild/protobuf` 2.17.0.
 
 ### 3.3. The demo
 
@@ -121,7 +122,7 @@ R25. Read 2026-11-17 — the code of `vitest` 5.1.0 in `node_modules`, `dist/chu
 
 ### 3.9. The shared workflows of `.github` v0.1.33
 
-Section 3.7 of [architecture.md](architecture.md); R26. Read 2026-11-18:
+Section 3.7 of [architecture.md](architecture.md); R22. Read 2026-11-18:
 - `gh release view v0.1.33 -R altnovatrail/.github`: published 2026-11-18T01:35:02Z, immutable, after v0.1.32 of 2026-11-17T00:10:50Z; `gh release verify v0.1.33 -R altnovatrail/.github` — «Resolved tag v0.1.33 to sha1:f1c7e9e6f8245fdbdbc23c4091f3c26350e3a44e», «✓ Release v0.1.33 verified!». Its notes name T70–T75 of `.github`, among them «Restore the Go caches by the prefix without go.sum (T75)».
 - `git diff --stat v0.1.31 v0.1.33 -- .github/workflows` of a clone of `.github`: `go.yml`, `self-ci.yml` and `self-release.yml` change; `secrets.yml`, `dco.yml`, `documents.yml`, `typescript.yml`, `release.yml`, `codeql.yml` and `scorecard.yml`, the seven this repository calls, are the same, so no input, permission or step of theirs changes.
 - The composite action `.github/actions/toolchain` is new: «for a job of the caller's own that runs Go in that stage, as the job arm64 of the shared go.yml takes them» (`action.yml`, its opening comment); a caller pins it «by the SHA of a release of .github with its version beside it», and Dependabot moves it in the group `shared-workflows`.

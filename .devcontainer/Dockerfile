@@ -10,9 +10,9 @@
 # adds at the end of the stage, such as the browsers of the kind typescript —, and is the stage
 # the automated checks run inside. `devcontainer` adds what a person needs on top of that, and
 # devcontainer.json names it as its target. spec's own file ends with a fourth, `orchestrator`,
-# the devcontainer with the Docker CLI (R156 spec), which `just new-repo` leaves out of a copy: in a
-# copy `devcontainer` is the last stage, the one a build with no target gives, and in spec every
-# build names its stage. A builder that builds every stage before its target builds `orchestrator`
+# the devcontainer with the Docker CLI and the Dev Containers CLI (R156 spec, R158 spec), which
+# `just new-repo` leaves out of a copy: in a copy `devcontainer` is the last stage, the one a
+# build with no target gives, and in spec every build names its stage. A builder that builds every stage before its target builds `orchestrator`
 # for the ordinary configuration too, and the stage builds there as well, without the file only
 # its own configuration writes.
 
