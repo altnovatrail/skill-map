@@ -4,7 +4,7 @@
 >
 > A record is a subsection "N.M" of a topic: one source, or one reading of several sources for one decision. A record's number never changes: a new one goes at the end of its topic, a new topic at the end of the file. A source read again is an item with its date in the same record, and the earlier text is not edited. The model is sources spec. The results of measurements are not here but in `docs/measurements.md`, which the first measurement starts.
 >
-> Until 2026-11-12 the records stood in architecture 4, which stays as a pointer to them: the decision log and the archives of `docs/plan/` cite it, and they are not rewritten (the move to `spec` v0.16.3, pull request #37).
+> Architecture 4 is a pointer to these records, which the decision log and the archives of `docs/plan/` cite.
 
 ## 1. MathTrail
 
