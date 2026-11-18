@@ -4,7 +4,7 @@ import { GRAPH } from "../core/fair-shares.fixture.js";
 import { ICONS, type IconValue } from "./icons.js";
 import { button, mount, mounted, settled, shadow, tile, useMap } from "./map.fixture.js";
 
-// How the map looks (R90 spec, R78 spec; R10 in docs/decisions.md): an icon beside each state's
+// How the map looks (R10; R90 spec, R78 spec): an icon beside each state's
 // word, targets of 44 by 44 CSS pixels, a map that wraps at 320 CSS pixels, the consumer's theme
 // by custom properties, and nothing that moves.
 

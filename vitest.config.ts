@@ -1,10 +1,10 @@
-// The tests, in three projects (R08 in docs/decisions.md). The DOM-free part and the scripts run in
+// The tests, in three projects (R08). The DOM-free part and the scripts run in
 // Node; the element runs in Chromium, WebKit and Firefox — the three of the toolchain stage of
 // .devcontainer/Dockerfile, through Playwright (R79 spec) — and once more with forced colours, a
 // mode of the browser's context that only its own file runs in, as canvas does (R10). Each project
 // of the element has an instance per engine, named "<project> (<engine>)": ci-test runs Node and
 // Chromium with the coverage, and ci-engines WebKit and Firefox without it, since Vitest's v8
-// coverage works in Chromium alone (sources 3.8; R25). Each project names its own files: the spec
+// coverage works in Chromium alone (R25). Each project names its own files: the spec
 // submodule beside them has tests of its own, which are not skill-map's.
 import { playwright } from "@vitest/browser-playwright";
 import type { BrowserContextOptions } from "playwright";

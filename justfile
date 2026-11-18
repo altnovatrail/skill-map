@@ -2,7 +2,7 @@
 # CI, one job each, in a new container of a stage of .devcontainer/Dockerfile — ci-test and
 # ci-engines in toolchain, with the browsers, and ci-lint, ci-vuln and ci-licenses in
 # toolchain-core, without them — as the runner's user, with HOME=/tmp and with CI from the step's
-# environment (R08, R23, R25 in docs/decisions.md).
+# environment (R08, R23, R25).
 # Only ci-licenses reads spec/: it runs spec's recipes licenses-check-repo and release-verify-npm,
 # and the licenses job alone gets the submodule. The code and its tests read nothing of spec/, and
 # the documents are checked by spec's own recipe, just -f spec/justfile docs-check-repo. One more
@@ -41,9 +41,8 @@ ci-test: build
     node scripts/consumer.ts
 
 # The tests of the element in WebKit and Firefox, without the coverage: Vitest's v8 coverage works
-# in Chromium alone (sources 3.8). typescript.yml runs this as the check "TypeScript / engines",
-# beside ci-test, so that the two take their time side by side (R25). No build: no test in a
-# browser reads lib/.
+# in Chromium alone. typescript.yml runs this as the check "TypeScript / engines", beside ci-test,
+# so that the two take their time side by side (R25). No build: no test in a browser reads lib/.
 ci-engines: _install
     {{ bin }}/vitest run --project '*(webkit)' --project '*(firefox)'
 
@@ -62,8 +61,8 @@ ci-vuln:
 # tag, and installs nothing. Then, fail unless each package of @altnovatrail in the lock file is the
 # signed file of its release: spec's release-verify-npm checks the archive at the lock file's
 # resolved address against the release's bundle, by Sigstore's trust root, and the lock file's
-# integrity against the verified bytes (R77 spec). RULES.md asks it of each pull request that
-# changes the lock file; here it runs on every one, inside a check main requires. It installs
+# integrity against the verified bytes. Each pull request that changes the lock file needs it; here
+# it runs on every one, inside a check main requires (R77 spec). It installs
 # spec/tools from spec's lock file and reads Sigstore, the registry and GitHub: when one of them
 # cannot be read, the package is refused. So spec/ has to be checked out, and the network
 # reachable. spec's recipes run under this same just.
@@ -80,9 +79,9 @@ build: _install
 # Write the files of the release of a version, v0.1.0 say, into dist/, as .github's shared
 # release.yml runs it: in the toolchain-core stage, on the tree of the commit alone, with no git, no
 # spec submodule and no token (R13, R23). They are the package's archive, as npm pack makes it,
-# with the version without its v and NOTICE in it (R10); LICENSE; and SHA256SUMS of the two. The archive is
-# packed from a copy of what npm pack takes of the tree, by npm's own list, with the version set there, so that the package.json
-# of the tree keeps 0.0.0. scripts/release.ts checks the archive itself and names it, and the
+# with the version without its v and NOTICE in it (R10); LICENSE; and SHA256SUMS of the two. The
+# archive is packed from a copy of what npm pack takes of the tree, by npm's own list, with the
+# version set there, so that the package.json of the tree keeps 0.0.0. scripts/release.ts checks the archive itself and names it, and the
 # trial consumer takes it as a consumer's TypeScript does, under NodeNext and Bundler: a release a
 # consumer could not build with is no release. npm pack fixes every file's time and order, so a
 # build of the same commit gives the same sums, and the sums are printed for whoever builds it again
@@ -118,8 +117,8 @@ release-files version: build
 # Write the English titles of the anchor skills, src/element/anchor-titles.ts, anew from the format
 # file of the release of spec that scripts/taxonomy.ts names: after a move to a new tag of spec
 # (R09). The recipe downloads the file and its bundle into node_modules/.taxonomy, the folder the
-# script names, and removes it after; the script verifies them by spec's release-verify, so spec/ has to be checked out, and
-# pins the file's sha256, which ci-lint holds it to from then on.
+# script names, and removes it after; the script verifies them by spec's release-verify, so spec/
+# has to be checked out, and pins the file's sha256, which ci-lint holds it to from then on.
 taxonomy:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -141,7 +140,7 @@ icons: _install
 
 # Serve the page to try the map on by hand — with a mouse, the keyboard or a screen reader — on
 # Vite's dev server at 127.0.0.1:5173, which VS Code forwards to a browser outside the container
-# (R12; RUN.md, T16). It serves the page, the element's sources and the packages they import, and
+# (R12). It serves the page, the element's sources and the packages they import, and
 # nothing else of the repository, and builds nothing. At its start it downloads the graphs of the
 # modules of the pinned index and the vectors of tiers of spec's format file, held to their pinned
 # digests in memory, so the network has to be reachable.

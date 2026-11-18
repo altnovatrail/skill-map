@@ -3,7 +3,7 @@ import { page, userEvent } from "vitest/browser";
 import type { SkillChooseEvent } from "./index.js";
 import { button, mount, mounted, settled, shadow, tile, useMap } from "./map.fixture.js";
 
-// The map in Russian, by its own attribute lang (R91 spec, R92 spec; R10 in docs/decisions.md):
+// The map in Russian, by its own attribute lang (R10; R91 spec, R92 spec):
 // the package's words are Russian, the titles stay in the explanation language, and an anchor
 // skill's title in English.
 

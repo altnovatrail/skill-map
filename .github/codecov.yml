@@ -1,5 +1,5 @@
 # What Codecov does with the coverage of the tests, which the coverage job of .github's shared
-# typescript.yml uploads (R48 spec; R08 in docs/decisions.md): the lcov report ci-test writes,
+# typescript.yml uploads (R08; R48 spec): the lcov report ci-test writes,
 # coverage/lcov.info.
 
 coverage:

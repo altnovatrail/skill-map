@@ -1,4 +1,4 @@
-// The icons of the map's states, marks and holdings (R10 in docs/decisions.md; R78 spec): Material
+// The icons of the map's states, marks and holdings (R10; R78 spec): Material
 // Symbols, in the style Rounded and in outline, from the npm package of the set at the version
 // package-lock.json pins, and of it only the icons the map shows. It writes the module the tree
 // draws them from and NOTICE, which names the set the package embeds:
@@ -31,9 +31,9 @@ export type Value = MapState | "rubric" | "none" | Holding;
 /**
  * The base of each value's icon, as the author chose them (R10). Each is drawn in outline,
  * `<base>-outline-rounded`: a tile has nothing chosen to fill, and its expansion is aria-expanded.
- * None runs along the line, so none is mirrored right to left. The states and marks stand in the
- * table of architecture 6 of spec, since app's module card shows them too, so a change of one is a
- * change of spec's table; the holdings are values of skill-map alone (R10, its 2026-11-16 amendment).
+ * None runs along the line, so none is mirrored right to left. The states and marks stand in
+ * spec's table of icons, since app's module card shows them too, so a change of one is a change of
+ * spec's table; the holdings are values of skill-map alone (R10; R78 spec).
  */
 export const TABLE = {
   review: "update",
@@ -89,7 +89,7 @@ export function module(
     return `${JSON.stringify(value)}: ${JSON.stringify({ name, ...drawn(set, name) })},`;
   });
   return `// Written by scripts/icons.ts — \`just icons\` — from ${SET} ${version}:
-// Material Symbols by Google, under the Apache License 2.0 (R10 in docs/decisions.md; R78 spec).
+// Material Symbols by Google, under the Apache License 2.0 (R10; R78 spec).
 // ci-lint fails unless it is what the script writes, so it is never edited by hand.
 
 /**

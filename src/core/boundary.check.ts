@@ -1,5 +1,5 @@
 // Type-checked by ci-lint and never built: the DOM-free part sees neither the DOM nor Node, so that
-// it runs the same in both (R08 in docs/decisions.md). Each type below must be an error. Were the
+// it runs the same in both (R08). Each type below must be an error. Were the
 // program of this part to see the DOM or Node, the directive over it would go unused, and that
 // would be the error instead.
 

@@ -1,7 +1,6 @@
-// The graphs of the page to try the map on by hand (R12 in docs/decisions.md; RUN.md, T16): those
-// of the modules of the first slice, from a release of modules, and the vectors of tiers of the
-// format file of spec's release. Both enter through spec's release-verify once, and their digests
-// hold them from then on (RULES.md, Hard rules; R77 spec):
+// The graphs of the page to try the map on by hand (R12): those of the modules of the first slice,
+// from a release of modules, and the vectors of tiers of the format file of spec's release. Both
+// enter through spec's release-verify once, and their digests hold them from then on (R77 spec):
 //
 //   just demo-pin                      verify the module index and pin its sha256 in demo/release.ts
 //   the demo's Vite configuration      load the graphs, held to the pinned digests, into memory
@@ -9,7 +8,7 @@
 // The module index is the signed file. Its entry names a package by the sha256 of the package's
 // inventory.json, which names its server part, server.json, by that file's sha256: a chain of
 // digests from the pinned index to the manifest, the skill graph and the tiers the map is drawn
-// from (format/README.md of spec, section 25). The format file is held to the sha256 that
+// from. The format file is held to the sha256 that
 // src/element/anchor-titles.ts already pins (R09). Nothing of the network is written to a file:
 // archives are read in memory and tar reads them from its standard input (CodeQL
 // js/http-to-file-access). Pinning reads the index and its bundle from PIN_FOLDER, where the recipe
@@ -62,8 +61,7 @@ export interface DemoGraph {
 
 /**
  * An entry of the index the demo takes: a module at its latest version, and the release whose
- * files hold its package — an index keeps the entries of packages that earlier releases built
- * (format/README.md of spec, section 26).
+ * files hold its package — an index keeps the entries of packages that earlier releases built.
  */
 export interface Entry {
   readonly id: string;
@@ -84,7 +82,8 @@ function newer(a: string, b: string): number {
 
 /**
  * The modules of the index, each at its latest version of the format the demo reads that is not
- * withdrawn and names its package and its release, by ID. The index must be the one pinned: its bytes are held to the sha256.
+ * withdrawn and names its package and its release, by ID. The index must be the one pinned: its
+ * bytes are held to the sha256.
  */
 export function indexEntries(bytes: Uint8Array, pinned: string): Entry[] {
   const sha256 = sha256Of(bytes);
@@ -204,8 +203,8 @@ export async function loadGraphs(): Promise<DemoGraph[]> {
 export function render(sha256: string): string {
   return [
     "// Written by scripts/demo-data.ts from the module index of a release of modules, verified by",
-    "// spec's release-verify and held by its sha256 since: `just demo-pin` writes it anew (R12 in",
-    "// docs/decisions.md). Do not edit it by hand.",
+    "// spec's release-verify and held by its sha256 since: `just demo-pin` writes it anew (R12).",
+    "// Do not edit it by hand.",
     "",
     "/** The module index the demo's graphs come from, and its digest. */",
     "export const RELEASE = {",

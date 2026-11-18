@@ -1,6 +1,6 @@
-// The states on the map (R03; docs/architecture.md, section 3.2): what each skill of a module shows,
-// worked out from the open view of its graph, the answer of GetSkillMap and the time of the device.
-// The map counts no mastery: it matches the marks learner-model has made against the graph.
+// The states on the map: what each skill of a module shows, worked out from the open view of its
+// graph, the answer of GetSkillMap and the time of the device. The map counts no mastery: it
+// matches the marks learner-model has made against the graph (R03).
 
 import type {
   AnchorSkillHolding,
@@ -17,7 +17,7 @@ import type { SkillGraph } from "@altnovatrail/spec/formatv0/open";
  */
 export type MapState = "review" | "mastered" | "practising" | "ready" | "locked";
 
-/** A skill's assessability, as the graph gives it (concepts 4 spec). */
+/** A skill's assessability, as the graph gives it. */
 export type Assessability = SkillGraph["skills"][string]["assessability"];
 
 /** What the map shows of a skill of the module. */
@@ -100,7 +100,7 @@ type Named<Value extends number, Name> = { readonly [Key in Value]: Name };
 
 /**
  * The values of the contract's enums this build knows. The package takes the contracts' types
- * alone, so the values are its own (R08 in docs/decisions.md); `satisfies` holds each to its
+ * alone, so the values are its own (R08); `satisfies` holds each to its
  * member of the contract's: a value renumbered, two swapped, one added or one gone is a type error
  * here.
  */

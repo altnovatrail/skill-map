@@ -1,5 +1,5 @@
 // The module the demo's Vite configuration gives: the graphs of the modules of the pinned index
-// and of spec's vectors of tiers (R12 in docs/decisions.md).
+// and of spec's vectors of tiers (R12).
 declare module "virtual:demo-graphs" {
   import type { Manifest, SkillGraph } from "@altnovatrail/spec/formatv0/open";
 

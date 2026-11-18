@@ -1,5 +1,4 @@
-// After just build: the package the way a consumer takes it (R08 in docs/decisions.md and its
-// 2026-11-16 amendment).
+// After just build: the package the way a consumer takes it (R08).
 //
 //   node scripts/package.ts
 //
@@ -26,7 +25,7 @@ const ENTRIES: Readonly<Record<string, typeof ELEMENT>> = { ".": ELEMENT, "./sta
 const SIDE_EFFECTS = [ELEMENT.default, "./src/element/index.ts"];
 /**
  * The paths npm pack takes, besides the build: package.json, the files npm always adds, and NOTICE,
- * which names the icons the package embeds (R78 spec; R10 in docs/decisions.md).
+ * which names the icons the package embeds (R10; R78 spec).
  */
 const ALWAYS = new Set(["package.json", "README.md", "LICENSE", "NOTICE"]);
 /** A file of the build: JavaScript or a declaration, at any depth under lib/core or lib/element. */
@@ -61,7 +60,7 @@ export function packProblems(paths: readonly string[]): string[] {
  * Every problem with what package.json says of the entry points: there are two, the element's and
  * ./states, each where ENTRIES says, and sideEffects names the element's JavaScript, or a
  * consumer's bundler would drop the registration, and the sources' entry beside it, which the demo
- * builds from (R12 in docs/decisions.md): npm pack takes nothing of src/, so for a consumer it
+ * builds from (R12): npm pack takes nothing of src/, so for a consumer it
  * names no file. ./states has no side effect, and sideEffects does not name it.
  */
 export function manifestProblems(manifest: { exports?: unknown; sideEffects?: unknown }): string[] {
@@ -126,7 +125,7 @@ export function withoutComments(text: string): string {
 /**
  * Every problem with what ./states imports, at any depth, of the build's JavaScript given by path:
  * only modules of the DOM-free part, lib/core/, so that it pulls in neither the element's
- * registration nor the DOM (R08 in docs/decisions.md), nothing of another package, and no module
+ * registration nor the DOM (R08), nothing of another package, and no module
  * by a name worked out at run time. What a comment names does not count.
  */
 export function statesProblems(files: ReadonlyMap<string, string>): string[] {

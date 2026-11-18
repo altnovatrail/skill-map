@@ -1,4 +1,4 @@
-// The page's own graph of eight tiers (R12 in docs/decisions.md): no vector of the format has more
+// The page's own graph of eight tiers (R12): no vector of the format has more
 // than four. Its tiers are computed as the format computes them (R49 spec): a skill without
 // prerequisites among the module's is in tier 1, any other one tier above the highest of them,
 // and an anchor skill counts for no tier.

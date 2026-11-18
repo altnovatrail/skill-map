@@ -1,6 +1,6 @@
 // The element's styles: one constructed sheet, which the shadow root adopts. No <style> and no
 // attribute style in the tree, so that a consumer's CSP lets them through without 'unsafe-inline'
-// (the second amendment of 2026-11-02 to R36 spec; R09 in docs/decisions.md).
+// (R09; R36 spec).
 //
 // The look holds the standard of the packages of the interface, WCAG 2.2 AA with 2.5.5 and 2.3.3
 // (R90 spec; R10). The theme is the consumer's, by three custom properties the shadow tree
@@ -13,8 +13,8 @@
 // no colour of its own: its word and its icon name it (1.4.1). With forced colours the system's
 // colours stand in for the theme. The expanded skill's lines lie under the bands, in the accent,
 // and their places are attributes of SVG (R11). Nothing moves: no transition and no animation, the
-// lines' too, so there is nothing for prefers-reduced-motion to stop. The size of text is the consumer's, in em and rem,
-// and a target is 44 by 44 CSS pixels at least.
+// lines' too, so there is nothing for prefers-reduced-motion to stop. The size of text is the
+// consumer's, in em and rem, and a target is 44 by 44 CSS pixels at least.
 
 /** The defaults of the theme: light, as canvas's. The accent is 6.7:1 against the paper. */
 const PAPER = "#fff";
@@ -62,7 +62,7 @@ const CSS = `
   position: relative;
 }
 /* A band's heading covers the lines that pass under it, as a tile does, but no wider than its text:
-   a line across a tier stays in sight beside it (RUN.md, Д5). */
+   a line across a tier stays in sight beside it (R11). */
 .band > :is(h2, h3, h4, h5, h6) {
   width: fit-content;
   margin: 1rem 0 0.5rem;
