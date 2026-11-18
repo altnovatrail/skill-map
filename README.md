@@ -17,12 +17,10 @@
 
 The NovaTrail skill map: a UI package that draws a module's skill graph — its skills in tiers, linked by their prerequisites — and the learner model's state over it: what is mastered, what opens next and what each skill builds on. It fetches nothing, computes no mastery and chooses no task: when the learner picks a skill on the map, the engine chooses what comes next.
 
-## Its place in NovaTrail
-
-A component of [NovaTrail](https://github.com/altnovatrail/spec), a universal open platform for adaptive learning, interactive lessons and AI tutoring. Its card is section 3.3 of spec's [architecture](https://github.com/altnovatrail/spec/blob/main/docs/architecture.md); its links:
+A component of [NovaTrail](https://github.com/altnovatrail/spec), a universal open platform for adaptive learning, interactive lessons and AI tutoring. Its card is section 3.3 of spec's [architecture](https://github.com/altnovatrail/spec/blob/main/docs/architecture.md), and its links are these:
 
 - **api** prepares the data it draws: the skill graph and its tiers, and the learner model's state of each skill, which learner-model computes inside api;
 - **app** takes that data from api, hands it to the map and builds the package in as the web component `<novatrail-skill-map>`, from npm under `@altnovatrail`; site later gets a build of its own;
 - **spec** holds the module format and the contracts whose types the map reads.
 
-The detail — what the component does and does not do, its data and how it is built — is in [docs/architecture.md](docs/architecture.md), and why in [docs/decisions.md](docs/decisions.md); the working rules are in [CLAUDE.md](CLAUDE.md) and [AGENTS.md](AGENTS.md).
+Its own documents, its decisions and its plan are in [docs/](docs/README.md).
