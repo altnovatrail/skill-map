@@ -1,6 +1,6 @@
-// The synthetic module example/fair-shares: its graph as the open view gives it, its tiers as
-// GetSkillGraph gives them, and a synthetic answer of GetSkillMap at the device's time
-// 2026-11-07T12:00Z. No learner's data: every value is made up.
+// The synthetic module example/fair-shares that docs/architecture.md tabulates: its graph as the
+// open view gives it, its tiers as GetSkillGraph gives them, and a synthetic answer of GetSkillMap
+// at the device's time 2026-11-07T12:00Z. No learner's data: every value is made up.
 
 import type {
   AnchorSkillHolding,

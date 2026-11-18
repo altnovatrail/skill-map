@@ -8,8 +8,9 @@ import type { SkillGraph } from "@altnovatrail/spec/formatv0/open";
 import { mapStates, type Shown, shownOf } from "./states.js";
 
 /**
- * What the map shows of a skill of the module, named as spec's values of a skill's status: one of the five states of a skill whose assessability is `verdict`, or the mark of one of
- * `rubric`, "feedback-by-criteria", or of `none`, "not-assessed".
+ * What the map shows of a skill of the module, named as spec's values of a skill's status: one of
+ * the five states of a skill whose assessability is `verdict`, or the mark of one of `rubric`,
+ * "feedback-by-criteria", or of `none`, "not-assessed".
  */
 export type SkillStatus =
   | "time-to-review"

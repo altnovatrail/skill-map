@@ -11,9 +11,9 @@
 // `just -f spec/justfile release-verify spec <tag> <file> <bundle>` on them, and writes
 // src/element/anchor-titles.ts with the file's sha256. From then on the digest holds the file:
 // --check, which ci-lint runs, downloads it again, into memory, holds it to the digest the source
-// names, and fails unless what it gives is what the source says. The script writes no bytes of the network to a file (CodeQL js/http-to-file-access):
-// tar reads the archive from its standard input. Neither needs anything installed: the network,
-// tar and, to write, curl, just and spec/.
+// names, and fails unless what it gives is what the source says. The script writes no bytes of the
+// network to a file (CodeQL js/http-to-file-access): tar reads the archive from its standard
+// input. Neither needs anything installed: the network, tar and, to write, curl, just and spec/.
 
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";

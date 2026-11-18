@@ -140,9 +140,10 @@ export function linksOf(graph: SkillGraph, map: Layout, id: string): Links {
 
 /**
  * The tile the focus goes to when the node it was on is gone with new data — the tile, or the
- * button «Заниматься» that «ждёт» replaced (R04): the tile of the same skill; without it, the first tile of the band the skill stood in; without that, the
- * first tile of the map. Null when the map has no tile. A band is the same when it is the band of
- * the anchor skills, or the band of the same tier.
+ * button «Заниматься» that «ждёт» replaced (R04): the tile of the same skill; without it, the
+ * first tile of the band the skill stood in; without that, the first tile of the map. Null when
+ * the map has no tile. A band is the same when it is the band of the anchor skills, or the band of
+ * the same tier.
  */
 export function focusAfter(before: Layout, after: Layout, skill: string): string | null {
   if (after.places.has(skill)) return skill;

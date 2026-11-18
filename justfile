@@ -81,10 +81,11 @@ build: _install
 # spec submodule and no token (R13, R23). They are the package's archive, as npm pack makes it,
 # with the version without its v and NOTICE in it (R10); LICENSE; and SHA256SUMS of the two. The
 # archive is packed from a copy of what npm pack takes of the tree, by npm's own list, with the
-# version set there, so that the package.json of the tree keeps 0.0.0. scripts/release.ts checks the archive itself and names it, and the
-# trial consumer takes it as a consumer's TypeScript does, under NodeNext and Bundler: a release a
-# consumer could not build with is no release. npm pack fixes every file's time and order, so a
-# build of the same commit gives the same sums, and the sums are printed for whoever builds it again
+# version set there, so that the package.json of the tree keeps 0.0.0. scripts/release.ts checks
+# the archive itself and names it, and the trial consumer takes it as a consumer's TypeScript does,
+# under NodeNext and Bundler: a release a consumer could not build with is no release. npm pack
+# fixes every file's time and order, so a build of the same commit gives the same sums, and the
+# sums are printed for whoever builds it again
 # to compare. As canvas's release-files does (R08 canvas).
 release-files version: build
     #!/usr/bin/env bash

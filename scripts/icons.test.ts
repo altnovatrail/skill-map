@@ -69,7 +69,7 @@ test("no two values share an icon, and none takes an icon of another package's v
   for (const base of bases) expect(shared).not.toContain(base);
 });
 
-test("the states and marks have the icons the table of architecture 6 of spec gives them", () => {
+test("the states and marks have the icons spec's table of icons gives them", () => {
   // The rows of skill-map and app in that table: the module card of app shows the same icons as
   // the map (R78 spec).
   const { review, mastered, practising, ready, locked, rubric, none } = TABLE;
