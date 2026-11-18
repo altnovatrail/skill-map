@@ -1,7 +1,5 @@
 # skill-map — architecture
 
-> Status: a skeleton from the template of `spec`, 2026-10-19; checked against `spec` v0.2.9 on 2026-10-20 (R01), against v0.9.4 on 2026-11-07 (R02), against v0.9.5 the same day (R05), against v0.9.8 on 2026-11-08 (R14), against v0.9.9 the same day (R15), against v0.15.0 on 2026-11-11 (R16), against v0.16.3 on 2026-11-12 (R18), against v0.18.3 on 2026-11-16 (R20), against v0.18.4 the same day (R23), against v0.18.14 on 2026-11-17 (R24) and against v0.18.27 on 2026-11-18 (R26); the detailing ended 2026-11-07 (T05; the epic's archive — [plan/E1.md](plan/E1.md)).
->
 > What the component does, what it does not do and what is still to be decided about it. This is the detail of its card — architecture 3.3 spec. The card stays the summary: if the detail changes what the card says, the card is edited in `spec` by the same route as the questions into its registers (RULES.md, Across repositories).
 >
 > Why it was decided so and not otherwise is in [decisions.md](decisions.md); the work plan is in [RUN.md](../RUN.md). The concepts are concepts spec. The documents and decisions of `spec` lie in `spec/docs/` and are cited with the suffix "spec".
