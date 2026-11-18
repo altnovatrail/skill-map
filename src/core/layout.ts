@@ -1,7 +1,7 @@
-// The layout of the map (R06; docs/architecture.md, section 3.4): which band each skill stands in,
-// its place in the band, the links of an expanded skill, and where the focus goes when its node is
-// gone. The tiers come ready from module-kit through api (R49 spec, R62 spec): the map orders the
-// skills within them and never works a tier out.
+// The layout of the map: which band each skill stands in, its place in the band, the links of an
+// expanded skill, and where the focus goes when its node is gone (R06). The tiers come ready from
+// module-kit through api: the map orders the skills within them and never works a tier out (R49
+// spec, R62 spec).
 
 import type { SkillGraph } from "@altnovatrail/spec/formatv0/open";
 
@@ -140,10 +140,10 @@ export function linksOf(graph: SkillGraph, map: Layout, id: string): Links {
 
 /**
  * The tile the focus goes to when the node it was on is gone with new data — the tile, or the
- * button «Заниматься» that «ждёт» replaced (the second amendment of 2026-11-07 to R04): the tile of
- * the same skill; without it, the first tile of the band the skill stood in; without that, the
- * first tile of the map. Null when the map has no tile. A band is the same when it is the band of
- * the anchor skills, or the band of the same tier.
+ * button «Заниматься» that «ждёт» replaced (R04): the tile of the same skill; without it, the
+ * first tile of the band the skill stood in; without that, the first tile of the map. Null when
+ * the map has no tile. A band is the same when it is the band of the anchor skills, or the band of
+ * the same tier.
  */
 export function focusAfter(before: Layout, after: Layout, skill: string): string | null {
   if (after.places.has(skill)) return skill;

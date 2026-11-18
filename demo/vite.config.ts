@@ -1,5 +1,5 @@
 // The server of the page to try the map on by hand, just demo, and its build for a tablet, just
-// demo-build (RUN.md, T16; R12 in docs/decisions.md): Vite, on the loopback of this machine alone,
+// demo-build (R12): Vite, on the loopback of this machine alone,
 // as canvas's demo. It serves the page, the element's sources and the packages they import, and
 // nothing else of the repository: without a list of its own Vite serves the whole workspace. The
 // graphs of the modules and of spec's vectors come in as the module virtual:demo-graphs, loaded at

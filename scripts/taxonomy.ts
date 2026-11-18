@@ -1,6 +1,6 @@
-// The English titles of the anchor skills, embedded at build time (R04; R09 in docs/decisions.md):
-// from shared-taxonomy.schema.json in the format file of a release of spec, which enters the
-// package only through spec's release-verify (R77 spec; RULES.md, Hard rules).
+// The English titles of the anchor skills, embedded at build time (R04, R09): from
+// shared-taxonomy.schema.json in the format file of a release of spec, which enters the package
+// only through spec's release-verify (R77 spec).
 //
 //   just taxonomy                      verify the file, pin its digest and write the titles
 //   node scripts/taxonomy.ts --check   fail unless the pinned file gives the titles as written
@@ -9,11 +9,11 @@
 // the recipe has downloaded them — `--urls` names their addresses. The folder is the script's own,
 // not an argument: nothing of the command line goes into a path or a command. It runs
 // `just -f spec/justfile release-verify spec <tag> <file> <bundle>` on them, and writes
-// src/element/anchor-titles.ts with the file's sha256. From then on the digest holds the file: --check, which ci-lint runs, downloads it again,
-// into memory, holds it to the digest the source names, and fails unless what it gives is what the
-// source says. The script writes no bytes of the network to a file (CodeQL js/http-to-file-access):
-// tar reads the archive from its standard input. Neither needs anything installed: the network,
-// tar and, to write, curl, just and spec/.
+// src/element/anchor-titles.ts with the file's sha256. From then on the digest holds the file:
+// --check, which ci-lint runs, downloads it again, into memory, holds it to the digest the source
+// names, and fails unless what it gives is what the source says. The script writes no bytes of the
+// network to a file (CodeQL js/http-to-file-access): tar reads the archive from its standard
+// input. Neither needs anything installed: the network, tar and, to write, curl, just and spec/.
 
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -58,8 +58,8 @@ export function render(sha256: string, titles: readonly [string, string][]): str
   const rows = titles.map(([id, title]) => `  ${JSON.stringify(id)}: ${JSON.stringify(title)},`);
   return [
     "// Written by scripts/taxonomy.ts from the format file of a release of spec, verified by spec's",
-    "// release-verify and held by its sha256 since: `just taxonomy` writes it anew (R09 in",
-    "// docs/decisions.md). Do not edit it by hand: ci-lint checks it against the file.",
+    "// release-verify and held by its sha256 since: `just taxonomy` writes it anew (R09). Do not",
+    "// edit it by hand: ci-lint checks it against the file.",
     "",
     "/** The format file the titles come from, and its digest. */",
     "export const SOURCE = {",

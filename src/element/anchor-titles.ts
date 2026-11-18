@@ -1,6 +1,6 @@
 // Written by scripts/taxonomy.ts from the format file of a release of spec, verified by spec's
-// release-verify and held by its sha256 since: `just taxonomy` writes it anew (R09 in
-// docs/decisions.md). Do not edit it by hand: ci-lint checks it against the file.
+// release-verify and held by its sha256 since: `just taxonomy` writes it anew (R09). Do not
+// edit it by hand: ci-lint checks it against the file.
 
 /** The format file the titles come from, and its digest. */
 export const SOURCE = {

@@ -1,5 +1,4 @@
-// After just build: the package's declarations the way a consumer's TypeScript takes them (R09 in
-// docs/decisions.md).
+// After just build: the package's declarations the way a consumer's TypeScript takes them (R09).
 //
 //   node scripts/consumer.ts             the archive npm pack makes of the tree, in ci-test
 //   node scripts/consumer.ts --release   the archive just release-files wrote into dist/

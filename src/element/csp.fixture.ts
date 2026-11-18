@@ -1,5 +1,5 @@
 // Runs inside a frame whose Content-Security-Policy allows styles and scripts from its own origin
-// alone, as a strict consumer's would (the second amendment of 2026-11-02 to R36 spec): it draws the
+// alone, as a strict consumer's would (R36 spec): it draws the
 // map of example/fair-shares, expands a skill so that its lines are drawn (R11), and tells the
 // test what the policy refused, on window.cspResult.
 

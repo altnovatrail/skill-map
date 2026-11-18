@@ -1,16 +1,16 @@
 // The package's second entry point, ./states: the state or mark of each skill of a module, by the
-// rule the map draws by (R03), for app's module card, so that the card and the map never part (R08
-// in docs/decisions.md and its 2026-11-16 amendment; R148 spec). It is one function, not the core:
-// it sees neither the DOM nor the element, and importing it registers nothing.
+// rule the map draws by, for app's module card, so that the card and the map never part (R03, R08;
+// R148 spec). It is one function, not the core: it sees neither the DOM nor the element, and
+// importing it registers nothing.
 
 import type { GetSkillMapResponse } from "@altnovatrail/contracts/novatrail/api/v1/progress_pb.js";
 import type { SkillGraph } from "@altnovatrail/spec/formatv0/open";
 import { mapStates, type Shown, shownOf } from "./states.js";
 
 /**
- * What the map shows of a skill of the module, named as the values of the tables of architecture 6
- * spec: one of the five states of a skill whose assessability is `verdict`, or the mark of one of
- * `rubric`, "feedback-by-criteria", or of `none`, "not-assessed".
+ * What the map shows of a skill of the module, named as spec's values of a skill's status: one of
+ * the five states of a skill whose assessability is `verdict`, or the mark of one of `rubric`,
+ * "feedback-by-criteria", or of `none`, "not-assessed".
  */
 export type SkillStatus =
   | "time-to-review"

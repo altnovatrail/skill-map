@@ -1,5 +1,5 @@
-// The element's attributes, read as R04 says (docs/architecture.md, section 3.3). A value the
-// contract does not name falls back to what keeps the map safe: no view, the level of headings 3.
+// The element's attributes. A value the contract does not name falls back to what keeps the map
+// safe: no view, the level of headings 3 (R04).
 
 /** The view of the map: the learner's or the adult's (R03). */
 export type View = "learner" | "adult";
@@ -33,7 +33,7 @@ export function headingLevel(attribute: string | null): 2 | 3 | 4 | 5 | 6 {
  * has: the tag is cut from its end, a subtag at a time, until a language matches, as the lookup of
  * RFC 4647, section 3.4, does; a single letter, `x` or an extension's, goes with what follows it.
  * Case does not count. Without the attribute, or with no language of the package in it, null: the
- * map then speaks English (R91 spec; architecture 6 spec). The element reads no ancestor's
+ * map then speaks English (R91 spec). The element reads no ancestor's
  * language (R36 spec).
  */
 export function languageOf(attribute: string | null, known: ReadonlySet<string>): string | null {

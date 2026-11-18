@@ -31,8 +31,8 @@ jobs:
     uses: altnovatrail/.github/.github/workflows/documents.yml@f1c7e9e6f8245fdbdbc23c4091f3c26350e3a44e # v0.1.33
 
   # The repository's TypeScript code, by its own ci- recipes: the tests in its toolchain stage, with
-  # the browsers, and lint, vuln and licenses in toolchain-core, without them (R08, R23 in
-  # docs/decisions.md). With engines, the tests in WebKit and Firefox are the check
+  # the browsers, and lint, vuln and licenses in toolchain-core, without them (R08, R23). With
+  # engines, the tests in WebKit and Firefox are the check
   # "TypeScript / engines", by the recipe ci-engines, beside "TypeScript / test" in Node and
   # Chromium (R25). Its licenses job checks the spec submodule out, for ci-licenses to run
   # spec's recipes from it, and there ci-licenses also checks the signature of each package of

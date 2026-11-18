@@ -4,9 +4,9 @@ import { userEvent } from "vitest/browser";
 import { mount, mounted, tile, useMap } from "./map.fixture.js";
 
 // The map checked by axe-core against WCAG 2.2 A and AA, the standard of the packages of the
-// interface (R90 spec; R10 in docs/decisions.md), on each view and in each language, with the
-// default theme. axe goes into the open shadow tree. What the package does not meet yet it would
-// declare in docs/architecture.md, section 3.8, and name here by the rule's ID: there is none.
+// interface, on each view and in each language, with the default theme (R10; R90 spec). axe goes
+// into the open shadow tree. What the package does not meet it would declare in the architecture's
+// statement of accessibility, and name here by the rule's ID: there is none.
 
 useMap();
 

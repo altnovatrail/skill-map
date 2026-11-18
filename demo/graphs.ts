@@ -1,4 +1,4 @@
-// The graphs the page draws (R12 in docs/decisions.md): example/fair-shares of the tests, the
+// The graphs the page draws (R12): example/fair-shares of the tests, the
 // page's own graph of eight tiers, which no vector of the format has, then the modules of the first
 // slice and spec's vectors of tiers, from virtual:demo-graphs. A vector has no manifest: the page
 // gives it one of a module of its own name, in English, with one band.

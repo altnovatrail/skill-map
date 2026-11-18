@@ -1,8 +1,8 @@
-// The tree of the map in the element's shadow root (R06; docs/architecture.md, section 3.4): a band
-// is a heading and a list of tiles, a tile is a button that expands the skill, and the details are
-// an item of the list right after it. The tree is the map's text alternative too: the order of the
-// DOM is the order on the screen. On new data it is updated in place, by the skill's ID, so that
-// the focus and the expanded skill stay (the second amendment of 2026-11-07 to R04).
+// The tree of the map in the element's shadow root: a band is a heading and a list of tiles, a
+// tile is a button that expands the skill, and the details are an item of the list right after it
+// (R06). The tree is the map's text alternative too: the order of the DOM is the order on the
+// screen. On new data it is updated in place, by the skill's ID, so that the focus and the
+// expanded skill stay (R04).
 
 import type {
   GetSkillMapResponse,
@@ -125,7 +125,7 @@ export class MapTree {
       return;
     }
 
-    // The package's words are of their own language, which the titles' lang overrides (3.1.2).
+    // The package's words are of their own language, which the titles' lang overrides (WCAG 3.1.2).
     this.#container.lang = data.words.lang;
     const map = layout(data.graph, data.tiers);
     const states = mapStates(data.graph, data.skillMap, data.now);

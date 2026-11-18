@@ -1,8 +1,9 @@
-// The drawing of the expanded skill's lines (R06; R11 in docs/decisions.md): one SVG under the
-// bands of the map, with a path and a point at each end for each line that linesOf of the core
-// gives. One unit of the drawing is a CSS pixel of the map: the SVG has no view box. Places come
-// from attributes of SVG alone — d, cx and cy — and no attribute style, so that a consumer's CSP lets them through (R09). The SVG is hidden from the tree of
-// accessibility: what is linked to what the details and the tiles' labels say in words.
+// The drawing of the expanded skill's lines: one SVG under the bands of the map, with a path and a
+// point at each end for each line that linesOf of the core gives (R06, R11). One unit of the
+// drawing is a CSS pixel of the map: the SVG has no view box. Places come from attributes of SVG
+// alone, and no attribute style, so that a consumer's CSP lets them through (R09). The SVG is
+// hidden from the tree of accessibility: the details and the tiles' labels say in words what is
+// linked to what.
 
 import type { Line, Point } from "../core/lines.js";
 
