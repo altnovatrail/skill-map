@@ -1,9 +1,7 @@
 {
   "entry": 12,
   "entries": {
-    "R02": 16,
-    "R08": 21,
-    "R10": 14
+    "R08": 15
   },
   "comments": true
 }
