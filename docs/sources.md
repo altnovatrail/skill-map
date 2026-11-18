@@ -122,7 +122,7 @@ R25. Read 2026-11-17 — the code of `vitest` 5.1.0 in `node_modules`, `dist/chu
 
 ### 3.9. The shared workflows of `.github` v0.1.33
 
-Section 3.7 of [architecture.md](architecture.md); R26. Read 2026-11-18:
+Section 3.7 of [architecture.md](architecture.md); R22. Read 2026-11-18:
 - `gh release view v0.1.33 -R altnovatrail/.github`: published 2026-11-18T01:35:02Z, immutable, after v0.1.32 of 2026-11-17T00:10:50Z; `gh release verify v0.1.33 -R altnovatrail/.github` — «Resolved tag v0.1.33 to sha1:f1c7e9e6f8245fdbdbc23c4091f3c26350e3a44e», «✓ Release v0.1.33 verified!». Its notes name T70–T75 of `.github`, among them «Restore the Go caches by the prefix without go.sum (T75)».
 - `git diff --stat v0.1.31 v0.1.33 -- .github/workflows` of a clone of `.github`: `go.yml`, `self-ci.yml` and `self-release.yml` change; `secrets.yml`, `dco.yml`, `documents.yml`, `typescript.yml`, `release.yml`, `codeql.yml` and `scorecard.yml`, the seven this repository calls, are the same, so no input, permission or step of theirs changes.
 - The composite action `.github/actions/toolchain` is new: «for a job of the caller's own that runs Go in that stage, as the job arm64 of the shared go.yml takes them» (`action.yml`, its opening comment); a caller pins it «by the SHA of a release of .github with its version beside it», and Dependabot moves it in the group `shared-workflows`.
