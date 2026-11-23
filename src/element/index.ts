@@ -2,7 +2,7 @@
 // draws a module's skill map with. Data comes in by properties, the view, the
 // language and the level of headings by attributes, and the choice of a skill goes out by the
 // event skillchoose; there are no methods. The map keeps nothing of a learner's beyond its memory
-// while it is on the page (R03).
+// while it is on the page.
 
 import type { GetSkillMapResponse } from "@altnovatrail/contracts/novatrail/api/v1/progress_pb.js";
 import type { Manifest, SkillGraph } from "@altnovatrail/spec/formatv0/open";

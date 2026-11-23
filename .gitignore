@@ -1,15 +1,15 @@
 # What npm ci installs from package-lock.json.
 /node_modules/
-# The package's build: just build writes it, npm pack takes it (R08).
+# The package's build: just build writes it, npm pack takes it.
 /lib/
 # What tsc -b leaves beside the programs of the root tsconfig.json, should anyone run it.
 *.tsbuildinfo
-# The release's files: just release-files writes them (R13).
+# The release's files: just release-files writes them.
 /dist/
 # The coverage of the tests: ci-test writes it, and Vitest clears it before each run.
 /coverage/
 # The screenshots Vitest takes of a failed test in the browser: Vitest 5 puts them under .vitest/.
 __screenshots__/
 /.vitest/
-# The demo built for a tablet: just demo-build writes it, and it never ships (R12).
+# The demo built for a tablet: just demo-build writes it, and it never ships.
 /demo/dist/

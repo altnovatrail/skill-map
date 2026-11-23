@@ -21,7 +21,7 @@ const WORD: Readonly<Record<SkillStatus, string>> = {
 
 describe("on the same data, the map and ./states give each skill one state", () => {
   const answers = {
-    "the answer of section 3.2": SKILL_MAP,
+    "the answer of the example": SKILL_MAP,
     "an answer that names no skill": skillMap([]),
     "every skill of verdict mastered": skillMap(
       ["count-objects", "halves", "equal-groups", "share-with-remainder", "quarters"].map((skill) =>

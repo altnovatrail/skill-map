@@ -4,7 +4,7 @@ import { expect, test } from "vitest";
 import { GRAPH, NOW, SKILL_MAP, skillMap } from "./fair-shares.fixture.js";
 import { skillStates } from "./skill-states.js";
 
-test("example/fair-shares: each skill's state or mark, as in section 3.2 of docs/architecture.md", () => {
+test("example/fair-shares: each skill's state or mark, as in docs/architecture.md", () => {
   expect([...skillStates(GRAPH, SKILL_MAP, NOW)]).toEqual([
     ["count-objects", "mastered"],
     ["draw-shares", "not-assessed"],

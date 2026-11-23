@@ -1,6 +1,6 @@
 // The element's styles: one constructed sheet, which the shadow root adopts. No <style> and no
 // attribute style in the tree, so that a consumer's CSP lets them through without
-// 'unsafe-inline' (R09).
+// 'unsafe-inline'.
 //
 // The look holds the standard of the packages of the interface, WCAG 2.2 AA with 2.5.5 and 2.3.3.
 // The theme is the consumer's, by three custom properties the shadow tree inherits:

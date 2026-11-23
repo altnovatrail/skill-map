@@ -34,7 +34,7 @@ function manifestOf(id: string, title: string): Manifest {
 export const CHOICES: readonly Choice[] = [
   {
     name: MODULE,
-    source: "the tests' example, docs/architecture.md, section 3.2",
+    source: "the tests' example, from docs/architecture.md",
     graph: GRAPH,
     tiers: TIERS,
     manifest: manifestOf(MODULE, "Fair shares"),

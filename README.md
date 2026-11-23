@@ -17,7 +17,7 @@
 
 The NovaTrail skill map: a UI package that draws a module's skill graph — its skills in tiers, linked by their prerequisites — and the learner model's state over it: what is mastered, what opens next and what each skill builds on. It fetches nothing, computes no mastery and chooses no task: when the learner picks a skill on the map, the engine chooses what comes next.
 
-A component of [NovaTrail](https://github.com/altnovatrail/spec), a universal open platform for adaptive learning, interactive lessons and AI tutoring. Its card is section 3.3 of spec's [architecture](https://github.com/altnovatrail/spec/blob/main/docs/architecture.md), and its links are these:
+A component of [NovaTrail](https://github.com/altnovatrail/spec), a universal open platform for adaptive learning, interactive lessons and AI tutoring. Its card is in the [architecture](https://github.com/altnovatrail/spec/blob/main/docs/architecture.md) of spec, and its links are these:
 
 - **api** prepares the data it draws: the skill graph and its tiers, and the learner model's state of each skill, which learner-model computes inside api;
 - **app** takes that data from api, hands it to the map and builds the package in as the web component `<novatrail-skill-map>`, from npm under `@altnovatrail`; site later gets a build of its own;
