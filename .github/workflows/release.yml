@@ -1,6 +1,6 @@
-# NovaTrail's shared release (R18 .github), pinned to a release of .github by SHA with its version
+# NovaTrail's shared release, pinned to a release of .github by SHA with its version
 # beside it, as canvas's release is. RELEASE_LINE is the line the releases are numbered in; paths,
-# what they are built from: all a consumer gets of the package (R13). A run after CI on main, and
+# what they are built from: all a consumer gets of the package. A run after CI on main, and
 # the button, publish the release and the same archive to npm, through trusted publishing, with no
 # token kept anywhere; a pull request tries it, publishing nothing: it builds the files, signs them
 # and checks them, and npm's step checks the package's archive and tries its publishing without
@@ -43,7 +43,7 @@ jobs:
     with:
       # The package's code without its tests, fixtures and type checks — a pathspec's * takes any
       # depth — the icons and the anchor skills' titles written into it among it, what builds it,
-      # what npm pack takes besides it, the Dockerfile, whose stage toolchain-core runs npm (R23),
+      # what npm pack takes besides it, the Dockerfile, whose stage toolchain-core runs npm,
       # and this file, so that a change of the line gives a release. The lock file is no part of the
       # archive, and the compiler is pinned in package.json.
       paths: |

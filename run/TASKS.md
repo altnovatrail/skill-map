@@ -3,6 +3,54 @@
 Open tasks outside the current epic, each as its body, in Russian (R154 spec, R155 spec).
 
 - Never read whole: a session reads only its own task — `grep -n '^#### T' run/TASKS.md` lists them, `awk '/^#### T25\./{p=1;print;next} /^#### /{p=0} p' run/TASKS.md` gives one body.
-- A new task outside an epic goes here as a body, its number the one free when it is written down (RUN.md, Epics). When done, the body leaves for the archive (RUN.md rule 9).
+- A new task outside an epic goes here as a body, its number the one free when it is written down (RUN.md, Citations). When done, the body leaves for the archive (RUN.md rule 9).
 
 ## Tasks outside an epic
+
+#### T43. Ссылки по правилу R171 spec, часть 2: журнал — от начала до «Ranks»
+
+- **Цель:** разделы `docs/decisions.md` от начала до `## Ranks` включительно — R01–R07 — по правилу ссылок R171 spec, без датированных поправок.
+- **Почему:** вторая часть T42 по её шагу 9 (архив `docs/plan/E3.md`); R171 spec, R160 spec.
+- **Сделать:** шаги 4, 6 и 7 T42 — в этих разделах: каждую поправку свернуть в действующий текст записи на месте, с «Почему», отвергнутым и цитатами; хвост «— *Consequence:*» — файлы и разделы, которые правит изменение решения, без номеров задач; ссылки — по правилу. Строка Д15 `run/DEBT.md` — R06 ссылается на свёрнутую поправку к R04 — закрывается здесь. В описании PR — таблица «поправка → место в новом тексте». Ключ `"citations": true` не включать: его включает T47.
+- **Как проверить:** `just -f spec/justfile docs-check-repo` — зелёный; с ключом `"citations": true`, включённым на время проверки, — ни одной ошибки в строках этих разделов; `/code-review high`, один круг; в отчёте — ссылок было и стало, по видам (`measurements 1.18 spec`).
+- **Разделы:** R171 spec, R160 spec; тело T42 — архив `docs/plan/E3.md`.
+- **Зависит от:** T42.
+
+#### T44. Ссылки по правилу R171 spec, часть 3: журнал — «The tools of the code», «The element», «Words, icons and look»
+
+- **Цель:** разделы `## The tools of the code`, `## The element` и `## Words, icons and look` `docs/decisions.md` — R08–R10 — по правилу ссылок R171 spec, без датированных поправок.
+- **Почему:** третья часть T42 по её шагу 9 (архив `docs/plan/E3.md`); R171 spec, R160 spec.
+- **Сделать:** шаги 4, 6 и 7 T42 — в этих разделах, как в T43. В описании PR — таблица «поправка → место в новом тексте». Ключ не включать.
+- **Как проверить:** как в T43, по строкам этих разделов.
+- **Разделы:** R171 spec, R160 spec; тело T42 — архив `docs/plan/E3.md`.
+- **Зависит от:** T42.
+
+#### T45. Ссылки по правилу R171 spec, часть 4: журнал — от «Lines» до конца
+
+- **Цель:** разделы `docs/decisions.md` от `## Lines` до конца — R11–R26 — по правилу ссылок R171 spec, без датированных поправок.
+- **Почему:** четвёртая часть T42 по её шагу 9 (архив `docs/plan/E3.md`); R171 spec, R160 spec.
+- **Сделать:** шаги 4, 6 и 7 T42 — в этих разделах, как в T43. В описании PR — таблица «поправка → место в новом тексте». Ключ не включать.
+- **Как проверить:** как в T43, по строкам этих разделов.
+- **Разделы:** R171 spec, R160 spec; тело T42 — архив `docs/plan/E3.md`.
+- **Зависит от:** T42.
+
+#### T46. Ссылки по правилу R171 spec, часть 5: архитектура
+
+- **Цель:** `docs/architecture.md` и `docs/README.md` — по правилу ссылок R171 spec: без номеров задач, без ссылок на поправки, не больше двух ссылок в скобке, без цепочек и ссылок, которые только описывают.
+- **Почему:** пятая часть T42 по её шагу 9 (архив `docs/plan/E3.md`); R171 spec.
+- **Сделать:** шаги 4 и 7 T42 — в этих файлах; ссылку на поправку записи — на запись. Ключ не включать.
+- **Как проверить:** как в T43, по строкам этих файлов.
+- **Разделы:** R171 spec; тело T42 — архив `docs/plan/E3.md`.
+- **Зависит от:** T42.
+
+#### T47. Ссылки по правилу R171 spec, часть 6: источники, замеры и ключ проверки
+
+- **Цель:** `docs/sources.md` и `docs/measurements.md` — по правилу ссылок R171 spec; `docs-budgets.json` — `"citations": true`; `just -f spec/justfile docs-check-repo` с ключом — зелёный.
+- **Почему:** последняя часть T42 по её шагу 9 (архив `docs/plan/E3.md`): ключ включает она; R171 spec.
+- **Сделать:**
+  1. Шаги 4 и 7 T42 — в этих файлах: запись хранит свою дату и теряет номер задачи, в заголовке тоже; ссылку на поправку записи — на запись.
+  2. `docs-budgets.json` — `"citations": true`, как в `spec/repo-template/files/docs-budgets.json`; то, что ключ найдёт вне этих файлов, — исправить здесь же.
+  3. Замер «после» — командами `measurements 1.18 spec`, по видам, против «до» T42.
+- **Как проверить:** `docs-check-repo` с ключом — зелёный; `/code-review high`, один круг; в отчёте — ссылок было до T42 и стало, по видам.
+- **Разделы:** R171 spec, R32 spec; тело T42 — архив `docs/plan/E3.md`; `spec/repo-template/files/docs-budgets.json`.
+- **Зависит от:** T43, T44, T45, T46.

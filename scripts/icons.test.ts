@@ -52,7 +52,7 @@ test("the set package-lock.json pins has every icon of the table, as filled path
 test("no two values share an icon, and none takes an icon of another package's value", () => {
   const bases = Object.values(TABLE);
   expect(new Set(bases).size).toBe(bases.length);
-  // The bases spec's table of icons names for the values of other packages (R78 spec): the tests
+  // The bases spec's table of icons names for the values of other packages: the tests
   // read nothing of spec/, which CI checks out for the licenses alone.
   const shared = [
     "ink-pen",
@@ -71,7 +71,7 @@ test("no two values share an icon, and none takes an icon of another package's v
 
 test("the states and marks have the icons spec's table of icons gives them", () => {
   // The rows of skill-map and app in that table: the module card of app shows the same icons as
-  // the map (R78 spec).
+  // the map.
   const { review, mastered, practising, ready, locked, rubric, none } = TABLE;
   expect({ review, mastered, practising, ready, locked, rubric, none }).toEqual({
     review: "update",

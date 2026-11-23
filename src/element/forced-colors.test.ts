@@ -2,8 +2,8 @@ import { expect, test } from "vitest";
 import { userEvent } from "vitest/browser";
 import { button, mount, mounted, tile, useMap } from "./map.fixture.js";
 
-// The map with forced colours, in a browser context that is in the mode from the start (R10; R90
-// spec): the system's colours stand in for the consumer's theme, and the
+// The map with forced colours, in a browser context that is in the mode from the start:
+// the system's colours stand in for the consumer's theme, and the
 // expanded tile stays apart from the others by the system's highlight. vitest.config.ts runs this
 // file alone, in a project of its own, as canvas does.
 

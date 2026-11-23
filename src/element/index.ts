@@ -1,5 +1,5 @@
 // The package's entry point ".": importing it registers <novatrail-skill-map>, the element app
-// draws a module's skill map with (R04; R36 spec). Data comes in by properties, the view, the
+// draws a module's skill map with. Data comes in by properties, the view, the
 // language and the level of headings by attributes, and the choice of a skill goes out by the
 // event skillchoose; there are no methods. The map keeps nothing of a learner's beyond its memory
 // while it is on the page (R03).
@@ -14,12 +14,12 @@ import { wordsFor } from "./words.js";
 /** The element's name. */
 export const TAG = "novatrail-skill-map";
 
-/** The view of the map, by the attribute `view`: the learner's or the adult's (R03). */
+/** The view of the map, by the attribute `view`: the learner's or the adult's. */
 export type SkillMapView = View;
 
 /** What skillchoose carries: the full ID of the skill the learner chose, for ChooseNext. */
 export interface SkillChoose {
-  /** The module's ID, `skill` and the skill's ID in the module, joined by `/` (R04). */
+  /** The module's ID, `skill` and the skill's ID in the module, joined by `/`. */
   readonly skill: string;
 }
 
@@ -63,7 +63,7 @@ export class NovatrailSkillMap extends HTMLElement {
     for (const [name, value] of early) Reflect.set(this, name, value);
   }
 
-  /** The open view of the module's skill graph, as GetSkillGraph gives it (R04). */
+  /** The open view of the module's skill graph, as GetSkillGraph gives it. */
   get graph(): SkillGraph | null {
     return this.#graph;
   }
@@ -90,7 +90,7 @@ export class NovatrailSkillMap extends HTMLElement {
     this.#schedule();
   }
 
-  /** The answer of GetSkillMap, or null for a map without state (R03). */
+  /** The answer of GetSkillMap, or null for a map without state. */
   get skillMap(): GetSkillMapResponse | null {
     return this.#skillMap;
   }

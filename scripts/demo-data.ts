@@ -1,6 +1,6 @@
-// The graphs of the page to try the map on by hand (R12): those of the modules of the first slice,
+// The graphs of the page to try the map on by hand: those of the modules of the first slice,
 // from a release of modules, and the vectors of tiers of the format file of spec's release. Both
-// enter through spec's release-verify once, and their digests hold them from then on (R77 spec):
+// enter through spec's release-verify once, and their digests hold them from then on:
 //
 //   just demo-pin                      verify the module index and pin its sha256 in demo/release.ts
 //   the demo's Vite configuration      load the graphs, held to the pinned digests, into memory
@@ -9,7 +9,7 @@
 // inventory.json, which names its server part, server.json, by that file's sha256: a chain of
 // digests from the pinned index to the manifest, the skill graph and the tiers the map is drawn
 // from. The format file is held to the sha256 that
-// src/element/anchor-titles.ts already pins (R09). Nothing of the network is written to a file:
+// src/element/anchor-titles.ts already pins. Nothing of the network is written to a file:
 // archives are read in memory and tar reads them from its standard input (CodeQL
 // js/http-to-file-access). Pinning reads the index and its bundle from PIN_FOLDER, where the recipe
 // downloaded them: nothing of the command line goes into a path or a command.
@@ -203,7 +203,7 @@ export async function loadGraphs(): Promise<DemoGraph[]> {
 export function render(sha256: string): string {
   return [
     "// Written by scripts/demo-data.ts from the module index of a release of modules, verified by",
-    "// spec's release-verify and held by its sha256 since: `just demo-pin` writes it anew (R12).",
+    "// spec's release-verify and held by its sha256 since: `just demo-pin` writes it anew.",
     "// Do not edit it by hand.",
     "",
     "/** The module index the demo's graphs come from, and its digest. */",

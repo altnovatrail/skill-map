@@ -1,4 +1,4 @@
-// The icons of the map's states, marks and holdings (R10; R78 spec): Material
+// The icons of the map's states, marks and holdings: Material
 // Symbols, in the style Rounded and in outline, from the npm package of the set at the version
 // package-lock.json pins, and of it only the icons the map shows. It writes the module the tree
 // draws them from and NOTICE, which names the set the package embeds:
@@ -10,7 +10,7 @@
 // written again, fails it. Nothing goes to the network, now or when the element runs: the paths are
 // in the build. The module comes out as Biome formats it, by the Biome package-lock.json pins, so
 // ci-lint's format check passes it as it is. Run from the repository's root, as the recipes run it:
-// the paths it writes are the root's. As canvas's scripts/icons.ts does it (R46 canvas).
+// the paths it writes are the root's.
 
 import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
@@ -25,15 +25,15 @@ const SET = "@iconify-json/material-symbols";
 export const MODULE = "src/element/icons.ts";
 export const NOTICE = "NOTICE";
 
-/** A value the map shows by an icon: a state, a mark or an anchor skill's holding (R03). */
+/** A value the map shows by an icon: a state, a mark or an anchor skill's holding. */
 export type Value = MapState | "rubric" | "none" | Holding;
 
 /**
- * The base of each value's icon, as the author chose them (R10). Each is drawn in outline,
+ * The base of each value's icon, as the author chose them. Each is drawn in outline,
  * `<base>-outline-rounded`: a tile has nothing chosen to fill, and its expansion is aria-expanded.
  * None runs along the line, so none is mirrored right to left. The states and marks stand in
  * spec's table of icons, since app's module card shows them too, so a change of one is a change of
- * spec's table; the holdings are values of skill-map alone (R10; R78 spec).
+ * spec's table (R78 spec); the holdings are values of skill-map alone.
  */
 export const TABLE = {
   review: "update",
@@ -89,7 +89,7 @@ export function module(
     return `${JSON.stringify(value)}: ${JSON.stringify({ name, ...drawn(set, name) })},`;
   });
   return `// Written by scripts/icons.ts — \`just icons\` — from ${SET} ${version}:
-// Material Symbols by Google, under the Apache License 2.0 (R10; R78 spec).
+// Material Symbols by Google, under the Apache License 2.0.
 // ci-lint fails unless it is what the script writes, so it is never edited by hand.
 
 /**

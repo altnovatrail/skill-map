@@ -1,5 +1,5 @@
 // The words of the map: the package's own table, in each language of the interface, English and
-// Russian (R10; R91 spec, R92 spec). The table is data alone. A phrase with
+// Russian. The table is data alone. A phrase with
 // something in it is a template with named places, {tier} or {skills}, which the tree fills with
 // text or with nodes of their own language, so that a language orders it as it needs: no phrase is
 // glued from pieces. A phrase with a number has a form for each category of CLDR the language

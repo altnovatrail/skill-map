@@ -1,9 +1,9 @@
 // The element's styles: one constructed sheet, which the shadow root adopts. No <style> and no
 // attribute style in the tree, so that a consumer's CSP lets them through without 'unsafe-inline'
-// (R09; R36 spec).
+// (R09).
 //
-// The look holds the standard of the packages of the interface, WCAG 2.2 AA with 2.5.5 and 2.3.3
-// (R90 spec; R10). The theme is the consumer's, by three custom properties the shadow tree
+// The look holds the standard of the packages of the interface, WCAG 2.2 AA with 2.5.5 and 2.3.3.
+// The theme is the consumer's, by three custom properties the shadow tree
 // inherits: --novatrail-skill-map-paper, the map's ground, --novatrail-skill-map-ink, its text,
 // frames and icons, and --novatrail-skill-map-accent, the expanded tile, the frames of the tiles
 // linked to it, the details and the ring of the focus. Their defaults stand in each var(), not in
@@ -12,7 +12,7 @@
 // property is then as if unset, and the text takes the host's colour, the ground none. A state has
 // no colour of its own: its word and its icon name it (1.4.1). With forced colours the system's
 // colours stand in for the theme. The expanded skill's lines lie under the bands, in the accent,
-// and their places are attributes of SVG (R11). Nothing moves: no transition and no animation, the
+// and their places are attributes of SVG. Nothing moves: no transition and no animation, the
 // lines' too, so there is nothing for prefers-reduced-motion to stop. The size of text is the
 // consumer's, in em and rem, and a target is 44 by 44 CSS pixels at least.
 
@@ -62,7 +62,7 @@ const CSS = `
   position: relative;
 }
 /* A band's heading covers the lines that pass under it, as a tile does, but no wider than its text:
-   a line across a tier stays in sight beside it (R11). */
+   a line across a tier stays in sight beside it. */
 .band > :is(h2, h3, h4, h5, h6) {
   width: fit-content;
   margin: 1rem 0 0.5rem;
@@ -80,7 +80,7 @@ const CSS = `
   max-width: 100%;
 }
 /* The parts of a tile stay inline: a block or an element out of the flow would put a space into
-   its accessible name, "Quarters , Locked" (R09). */
+   its accessible name: "Quarters , Locked". */
 .tile,
 .practise {
   box-sizing: border-box;

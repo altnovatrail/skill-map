@@ -1,5 +1,5 @@
 // Written by scripts/demo-data.ts from the module index of a release of modules, verified by
-// spec's release-verify and held by its sha256 since: `just demo-pin` writes it anew (R12).
+// spec's release-verify and held by its sha256 since: `just demo-pin` writes it anew.
 // Do not edit it by hand.
 
 /** The module index the demo's graphs come from, and its digest. */

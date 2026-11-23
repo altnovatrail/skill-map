@@ -1,4 +1,4 @@
-// Synthetic answers of GetSkillMap for any graph of the page (R12): as the
+// Synthetic answers of GetSkillMap for any graph of the page: as the
 // contract gives them, made up, of no learner. The map reads them as it reads api's.
 
 import type {

@@ -1,6 +1,6 @@
 // The states on the map: what each skill of a module shows, worked out from the open view of its
 // graph, the answer of GetSkillMap and the time of the device. The map counts no mastery: it
-// matches the marks learner-model has made against the graph (R03).
+// matches the marks learner-model has made against the graph.
 
 import type {
   AnchorSkillHolding,
@@ -42,7 +42,7 @@ export interface SkillOnMap {
    */
   readonly waitsFor: readonly string[];
   /**
-   * The record of the answer the state comes from, the first that names the skill (R03), for the
+   * The record of the answer the state comes from, the first that names the skill, for the
    * adult's details; absent for a skill the answer does not name, and on a map without state.
    */
   readonly record?: SkillState;
@@ -53,7 +53,7 @@ export type Shown = MapState | "rubric" | "none";
 
 /**
  * A skill of the module's state or mark: the mark of one of `rubric` or `none` comes from the
- * graph, and a skill of `verdict` has null on a map without state (R03). The element and ./states
+ * graph, and a skill of `verdict` has null on a map without state. The element and ./states
  * both show a skill by it.
  */
 export function shownOf(skill: Pick<SkillOnMap, "assessability" | "state">): Shown | null {
@@ -82,7 +82,7 @@ export interface AnchorOnMap {
   readonly reason: Reason | null;
   /**
    * Whether a skill of the module has it as a prerequisite, and so it stands before tier 1; one
-   * the graph names only in `teaches` is shown in the details of the skills that teach it (R03).
+   * the graph names only in `teaches` is shown in the details of the skills that teach it.
    */
   readonly prerequisite: boolean;
 }
@@ -100,7 +100,7 @@ type Named<Value extends number, Name> = { readonly [Key in Value]: Name };
 
 /**
  * The values of the contract's enums this build knows. The package takes the contracts' types
- * alone, so the values are its own (R08); `satisfies` holds each to its
+ * alone, so the values are its own; `satisfies` holds each to its
  * member of the contract's: a value renumbered, two swapped, one added or one gone is a type error
  * here.
  */
@@ -131,7 +131,7 @@ const REASONS_OF: Readonly<Record<Holding, readonly Reason[]>> = {
 };
 
 /**
- * The states of a module's map at a time of the device (R03). Without the answer of GetSkillMap,
+ * The states of a module's map at a time of the device. Without the answer of GetSkillMap,
  * a map for site and the authors' tools, no skill has a state or is open, and no anchor skill a
  * holding.
  */
@@ -152,14 +152,14 @@ export function mapStates(
       skills.set(id, { id, assessability, state: null, open: true, waitsFor: [] });
     } else {
       // A prerequisite of rubric or none and an anchor skill do not hold the skill back: the map
-      // cannot see them mastered, and the engine keeps the author's order (R03).
+      // cannot see them mastered, and the engine keeps the author's order.
       const waitsFor = (skill.prerequisites ?? []).filter(
         (prerequisite) =>
           Object.hasOwn(graph.skills, prerequisite) &&
           graph.skills[prerequisite]?.assessability === "verdict" &&
           !mastered(prerequisite),
       );
-      // A skill the answer does not name reads as one without evidence (R03).
+      // A skill the answer does not name reads as one without evidence.
       const record = records.get(id);
       const state = stateOf(record, waitsFor.length === 0, now);
       skills.set(id, {
@@ -197,7 +197,7 @@ export function mapStates(
   return { skills, anchors };
 }
 
-/** The first state that holds, by R03. */
+/** The first state that holds, in the order of MapState. */
 function stateOf(
   record: SkillState | undefined,
   prerequisitesMastered: boolean,
@@ -248,7 +248,7 @@ function known<T extends string>(
   return value === undefined ? undefined : names[value];
 }
 
-/** The records of a list by a key, the first of each key counting (R03). */
+/** The records of a list by a key, the first of each key counting. */
 function firstBy<T>(records: readonly T[], key: (record: T) => string): Map<string, T> {
   const byKey = new Map<string, T>();
   for (const record of records) {

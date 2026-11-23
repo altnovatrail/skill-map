@@ -1,4 +1,4 @@
-# NovaTrail's shared checks (R03 .github), pinned to a release of .github by SHA with its version
+# NovaTrail's shared checks, pinned to a release of .github by SHA with its version
 # beside it; Dependabot moves both. The repository's own jobs go beside them.
 name: CI
 
@@ -31,14 +31,14 @@ jobs:
     uses: altnovatrail/.github/.github/workflows/documents.yml@f1c7e9e6f8245fdbdbc23c4091f3c26350e3a44e # v0.1.33
 
   # The repository's TypeScript code, by its own ci- recipes: the tests in its toolchain stage, with
-  # the browsers, and lint, vuln and licenses in toolchain-core, without them (R08, R23). With
+  # the browsers, and lint, vuln and licenses in toolchain-core, without them. With
   # engines, the tests in WebKit and Firefox are the check
   # "TypeScript / engines", by the recipe ci-engines, beside "TypeScript / test" in Node and
-  # Chromium (R25). Its licenses job checks the spec submodule out, for ci-licenses to run
+  # Chromium. Its licenses job checks the spec submodule out, for ci-licenses to run
   # spec's recipes from it, and there ci-licenses also checks the signature of each package of
-  # @altnovatrail in the lock file, which needs the network the job has (R39 spec, R77 spec). Its
+  # @altnovatrail in the lock file, which needs the network the job has. Its
   # coverage job sends the report of ci-test to Codecov by OIDC, and a nested job has no more than
-  # this one gives it: without id-token: write the run would not start at all (R48 spec).
+  # this one gives it: without id-token: write the run would not start at all.
   typescript:
     name: TypeScript
     permissions:
