@@ -2,7 +2,7 @@
 
 > Why skill-map is built the way it is. Each entry: what was decided, why, what was rejected, and in its tail "— *Consequence:*" the files, by their paths, that a change of it edits.
 >
-> **Rule:** do not re-propose what was rejected without new facts. If a decision has to change, ask the author and rewrite its entry in its place, and every entry the change touches: an entry is its text in force — what was decided, why, what was rejected and what a change of it edits —, git keeps the old text, and the commit says why. An entry's number stands in its heading alone: an entry cites no other entry and no section, says in words what it rests on, and carries no date of who decided it and no amendment; a claim about the outside world cites its one record of [sources.md](sources.md). The dated amendments and citations still standing in some entries wait to be folded into their text in place, and until then they are part of it.
+> **Rule:** do not re-propose what was rejected without new facts. If a decision has to change, ask the author and rewrite its entry in its place, and every entry the change touches: an entry is its text in force — what was decided, why, what was rejected and what a change of it edits —, git keeps the old text, and the commit says why. An entry's number stands in its heading alone: an entry cites no other entry and no section, says in words what it rests on, and carries no date of who decided it and no amendment; a claim about the outside world cites its one record of [sources.md](sources.md).
 >
 > The repository was set up 2026-10-19 from the template of `spec` v0.1.0. How it comes to differ from the template — tools in the devcontainer, rules in RUN.md — is recorded here as a decision. Next number — R27.
 >
@@ -282,17 +282,18 @@
 
 ## Lines
 
-**R11. The lines of the expanded skill are cubic curves in one SVG under the map's bands: from the middle of the bottom edge of a prerequisite's tile to the top edge of the expanded tile, and from the bottom edge of its details to the middle of the top edge of each tile that the skill opens. The ends on the expanded tile and under its details are spread across the tile's width. The element measures the lines' places after each render of the tree and again on `ResizeObserver`. There is no animation.** The author's answers of 2026-11-07 in planning T15 (RUN.md, T15, «Решено автором»): a curve, recomputing on render and by the observer, no animation. The rest are the plan's proposals, which the author approved.
-- **Geometry** — the core's `linesOf`, `src/core/lines.ts`, without DOM: from the rectangles of the tiles and the details in the map's coordinates, by the links of `linksOf` (T12) in the order of the layout. The curve is `M sx sy C sx my, ex my, ex ey`, where `my` is the middle in height: the line leaves the start and enters the end vertically. The ends on the expanded tile are at the fractions `(i + 1) / (n + 1)` of its width, separately for the lines to it and from it, in the order from left to right in which the other ends stand: so the points do not stick together, and the lines do not cross needlessly — both when the bands wrap and on a right-to-left page. The ends and the curve are accurate to 0.1 CSS px, rounded in one place. A tile without a place gives no line.
-- **Drawing** — `src/element/lines.ts`: one `<svg class="lines">`, first in the map's container, `aria-hidden`. Each line has a `<g>` with `data-from` and `data-to`, a `<path>` and two points `<circle r="4">`. The drawing's unit is the map's CSS px: the SVG has no `viewBox`, and the style sets its size. The places are only SVG attributes, `d`, `cx` and `cy`; there is no attribute `style`, and the check under the strict CSP expands a skill and sees two lines without violations (R09). The lines' nodes live by the pair of ends and are moved in place.
+**R11. The lines of the expanded skill are cubic curves in one SVG under the map's bands: from the middle of the bottom edge of a prerequisite's tile to the top edge of the expanded tile, and from the bottom edge of its details to the middle of the top edge of each tile that the skill opens. The ends on the expanded tile and under its details are spread across the tile's width. The tiles, the details and the bands' headings lie over the lines. The element measures the lines' places after each render of the tree and again on `ResizeObserver`. There is no animation.**
+- **Geometry** — the core's `linesOf`, `src/core/lines.ts`, without DOM: from the rectangles of the tiles and the details in the map's coordinates, by the links of `linksOf` in the order of the layout. The curve is `M sx sy C sx my, ex my, ex ey`, where `my` is the middle in height: the line leaves the start and enters the end vertically. The ends on the expanded tile are at the fractions `(i + 1) / (n + 1)` of its width, separately for the lines to it and from it, in the order from left to right in which the other ends stand: so the points do not stick together, and the lines do not cross needlessly — both when the bands wrap and on a right-to-left page. The ends and the curve are accurate to 0.1 CSS px, rounded in one place. A tile without a place gives no line.
+- **Drawing** — `src/element/lines.ts`: one `<svg class="lines">`, first in the map's container, `aria-hidden`. Each line has a `<g>` with `data-from` and `data-to`, a `<path>` and two points `<circle r="4">`. The drawing's unit is the map's CSS px: the SVG has no `viewBox`, and the style sets its size. The places are only SVG attributes, `d`, `cx` and `cy`; there is no attribute `style`, and the check under the strict CSP expands a skill and sees two lines without violations. The lines' nodes live by the pair of ends and are moved in place.
 - **Under the tiles.** The SVG is absolute over the whole container, `.map` is `position: relative`, and the bands are positioned too and come after it in the DOM: the tiles and the details, with the paper background, lie over the lines, and the lines are visible in the gaps between them. `pointer-events: none` — a touch goes through to the tile.
-- **Recomputing.** At its end, `MapTree.render` measures the tiles and the details through `getBoundingClientRect` relative to the map and draws the lines. `ResizeObserver` watches the map, the details and each tile — it takes a tile when the tile is created and lets it go when it is gone — and draws the lines again if a skill is expanded: the page's width, the zoom and a font that finished loading change the tiles' size, and a tile shifted by a neighbour is shifted because the neighbour changed size. The observer does not watch the SVG itself, and drawing the lines does not change the sizes of what is observed — there is no loop. The element got `connectedCallback` and `disconnectedCallback`: removed from the page, it observes nothing, and once back, it observes again, and the observer's first notice draws the lines again.
-- **Color** — the theme's accent, `--novatrail-skill-map-accent` (R10): `color` on the SVG, and the line of 2 px and the points are `currentColor`. So an invalid value of the accent gives the lines the ink's color, as it does the tiles, and not an empty `stroke`. The default has 6.7:1 to the paper, and a test holds no less than 3:1 to the map's background (1.4.11). In the forced colors mode — Highlight, as the borders of the linked tiles.
-- **No animation** — the lines appear at once, and `prefers-reduced-motion` has nothing to turn off (2.3.3). The item of R10 "the motion to come — the lines of T15 — goes only under `(prefers-reduced-motion: no-preference)`" is answered by this: no motion came.
+- **Under the bands' headings.** A band's heading lies over the lines, as a tile does, but no wider than its text: it has the paper background and `width: fit-content`, and with forced colors the background Canvas. A link across a tier goes under the words of the heading of the band in between, and beside them it is visible: without the background, it ran over the letters.
+- **Recomputing.** At its end, `MapTree.render` measures the tiles and the details through `getBoundingClientRect` relative to the map and draws the lines. `ResizeObserver` watches the map, the details and each tile — it takes a tile when the tile is created and lets it go when it is gone — and draws the lines again if a skill is expanded: the page's width, the zoom and a font that finished loading change the tiles' size, and a tile shifted by a neighbour is shifted because the neighbour changed size. The observer does not watch the SVG itself, and drawing the lines does not change the sizes of what is observed — there is no loop. The element got `connectedCallback` and `disconnectedCallback`: removed from the page, it observes nothing, and once back, it observes again, and the observer's first notice draws the lines again (sources 2.4).
+- **Color** — the theme's accent, `--novatrail-skill-map-accent`: `color` on the SVG, and the line of 2 px and the points are `currentColor`. So an invalid value of the accent gives the lines the ink's color, as it does the tiles, and not an empty `stroke`. The default has 6.7:1 to the paper, and a test holds no less than 3:1 to the map's background (1.4.11). In the forced colors mode — Highlight, as the borders of the linked tiles.
+- **No animation** — the lines appear at once, and `prefers-reduced-motion` has nothing to turn off (2.3.3): the look's rule that motion goes only under `(prefers-reduced-motion: no-preference)` has no motion here to hold.
 
 — *Why:*
-- a curve — as on MathTrail's topic map ([architecture.md](architecture.md), section 4): smooth lines merge less often, and one skill's lines are few;
-- the geometry in the core — tests without a browser check it, and the element only measures and draws, as with the layout (R06);
+- a curve — as on MathTrail's topic map (sources 1.3): smooth lines merge less often, and one skill's lines are few;
+- the geometry in the core — tests without a browser check it, and the element only measures and draws, as with the layout;
 - the observer on the tiles, not only on the map — at the same width of the map, a tile changes size with the font and the language;
 - no animation — the link is visible at once, and 2.3.3 asks for neither a test project of its own nor waiting.
 
@@ -303,31 +304,27 @@
 - all the ends at the middle of the edge — the points of several lines would merge into one;
 - the ends in the order of the layout — when the bands wrap, the lines would cross needlessly.
 
-— *Consequence:* T16 tries the lines by hand on a tablet and on a graph with many tiers; Д3 — collapsing distant tiers — stays.
-
-— `src/core/lines.ts`, `src/element/lines.ts`, `src/element/tree.ts`, `src/element/index.ts`, `src/element/styles.ts`; [architecture.md](architecture.md), sections 3.4 and 3.8; R06, R10; RUN.md, T15.
-
-— *Amendment 2026-11-08:* **a band's heading lies over the lines, as a tile does, but no wider than its text: it has the paper background and `width: fit-content`.** A link across a tier ran over the letters of the heading of the band in between — the headings had no background (Д5 in table 4 of RUN.md, a screenshot of the trial of T16). Now the line goes under the words, and beside them it is visible. With forced colors the heading's background is Canvas. — `src/element/styles.ts`; RUN.md, T20.
+— *Consequence:* the lines wait for the trial by hand on a tablet, Д4, and the folding of distant tiers, Д3, stays open, both in [run/DEBT.md](../run/DEBT.md). — `src/core/lines.ts`, `src/element/lines.ts`, `src/element/tree.ts`, `src/element/index.ts`, `src/element/styles.ts`; [architecture.md](architecture.md).
 
 ## The demo
 
-**R12. The map is tried by hand on the page `demo/` — `just demo` on a computer, and its static build `just demo-build` on a tablet. The graphs on it are the example `example/fair-shares`, a graph of its own of eight tiers by the format's rule of tiers, the modules of the first slice from a release of `modules`, and the tier vectors from the format file of a release of `spec`. `release-verify` checks the module index once, and from then on pinned digests hold it, the packages and the format file. The modules' content gets neither onto the disk nor into the repository.** The author's answers of 2026-11-07 in planning T16: the signature once, then sha256; the vectors of `spec` — yes; the tablet — a static build. The rest are the plan's proposals, which the author approved.
-- **The page** — `demo/index.html` and `demo/main.ts` after the model of `canvas`'s demo. The switches are the graph, the view (`learner`, `adult`, without `view`), the language (`en`, `ru`, and `de`, where English is expected), the state, a light or a dark theme through the three variables (R10), `heading-level` and a width of 320 px. The page lists the choices made by "Practise", as `skillchoose` gives them, and stores nothing.
+**R12. The map is tried by hand on the page `demo/` — `just demo` on a computer, and its static build `just demo-build` on a tablet. The graphs on it are the example `example/fair-shares`, a graph of its own of eight tiers by the format's rule of tiers, the modules of the first slice from a release of `modules`, and the tier vectors from the format file of a release of `spec`. `release-verify` checks the module index once, and from then on pinned digests hold it, the packages and the format file. The modules' content gets neither onto the disk nor into the repository.**
+- **The page** — `demo/index.html` and `demo/main.ts` after the model of `canvas`'s demo. The switches are the graph, the view (`learner`, `adult`, without `view`), the language (`en`, `ru`, and `de`, where English is expected), the state, a light or a dark theme through the three variables of the theme, `heading-level` and a width of 320 px. The page lists the choices made by "Practise", as `skillchoose` gives them, and stores nothing.
 - **States** — `demo/states.ts`: synthetic answers of `GetSkillMap` for any graph — "no state", "new learner", "on the way" and "everything mastered". The example's own answer names its skills, and so exists only for `example/fair-shares`. They hold no learner's data.
-- **The graph of eight tiers** — `demo/eight-tiers.ts`: `tiersOf` computes the tiers by the format's rule — the longest chain of the module's prerequisites, and an anchor skill gives no tier (R49 spec). `GetSkillGraph` would not give tiers written in by hand, and a test holds eight tiers.
-- **The modules' graphs** — `scripts/demo-data.ts`, which names the release of `modules`. The recipe `demo-pin` downloads its `module-index.json` and its signature, checks them with `just -f spec/justfile release-verify modules <tag> …` and writes the index's sha256 into `demo/release.ts`. From then on, the page downloads the index and the packages into memory each time and checks the chain of digests ([the format text](../spec/format/README.md), section 25):
+- **The graph of eight tiers** — `demo/eight-tiers.ts`: `tiersOf` computes the tiers by the format's rule — the longest chain of the module's prerequisites, and an anchor skill gives no tier. `GetSkillGraph` would not give tiers written in by hand, and a test holds eight tiers.
+- **The modules' graphs** — `scripts/demo-data.ts`, which names the release of `modules`. The recipe `demo-pin` downloads its `module-index.json` and its signature, checks them with `just -f spec/justfile release-verify modules <tag> …` and writes the index's sha256 into `demo/release.ts`. From then on, the page downloads the index and the packages into memory each time and checks the chain of digests that [the format text](../spec/format/README.md) sets:
   - the index's sha256 — the pinned one;
   - the entry's `package_digest` — the sha256 of the package's `inventory.json`;
   - `server_part.digest` in `inventory.json` — the sha256 of `server.json`.
 
-  From `server.json` the page takes `manifest`, `skill_graph` and `skill_tiers`, and of the graph its open view, without `retired_skills`. From the index it takes the latest version of each module that is not withdrawn, of the format version that `scripts/taxonomy.ts` names, by the tag of `spec/`; the package is downloaded from the release that its entry names: the index also keeps the entries of packages built by earlier releases ([the format text](../spec/format/README.md), section 26).
-- **Tier vectors** — `chain`, `longest-chain`, `olympiad-math`, `two-graphs` and `one-tier` of `format/vectors/tiers/` from the format file that `scripts/taxonomy.ts` names, by the sha256 that `src/element/anchor-titles.ts` pins (R09). `yaml`, ISC, in `devDependencies`, parses the YAML. The vector `olympiad-math` carries the MIT notice about MathTrail's topics: NovaTrail does not distribute the demo — the build stays on the author's device.
+  From `server.json` the page takes `manifest`, `skill_graph` and `skill_tiers`, and of the graph its open view, without `retired_skills`. From the index it takes the latest version of each module that is not withdrawn, of the format version that `scripts/taxonomy.ts` names, by the tag of `spec/`; the package is downloaded from the release that its entry names: the index also keeps the entries of packages built by earlier releases.
+- **Tier vectors** — `chain`, `longest-chain`, `olympiad-math`, `two-graphs` and `one-tier` of `format/vectors/tiers/` from the format file that `scripts/taxonomy.ts` names, by the sha256 that `src/element/anchor-titles.ts` pins. `yaml`, ISC, in `devDependencies`, parses the YAML. The vector `olympiad-math` carries the MIT notice about MathTrail's topics: NovaTrail does not distribute the demo — the build stays on the author's device.
 - **Nothing from the network written to disk.** The archives are read in memory, and `tar` takes them from standard input (CodeQL `js/http-to-file-access`). The paths and the commands take nothing from the command line (SonarCloud S8705 and S8707). In Vite the graphs come in as the virtual module `virtual:demo-graphs`, which the plugin `demo/vite.config.ts` loads once at start. If a digest does not match or there is no network, the server and the build stop and name the cause.
 - **Server and build.** `just demo` is Vite on 127.0.0.1:5173 with VS Code's port forwarding, and `fs.strict` lets in only `demo/`, `src/` and `node_modules`. `just demo-build` writes `demo/dist/` (in `.gitignore`) with relative paths: any file server serves the folder, and it needs no network. Over `file://` the browser does not load modules, so a server is needed. Neither the demo nor the build goes into the package or the release: `files` is `lib` and `NOTICE`.
 - **The element's registration in the build.** `sideEffects` names `./src/element/index.ts` beside the build's entry point, `lib/element/index.js`: otherwise the bundler drops the import of `src/element/index.ts` together with the element's registration. `scripts/package.ts` holds both. For the consumer this changes nothing: `src/` does not go into the npm archive.
 
 — *Why:*
-- the signature once — as with the titles of the anchor skills (R09): RULES.md has a release file pass through `release-verify` once, and from then on be held by its digest;
+- the signature once — as with the titles of the anchor skills: the shared rules have a release file pass through `release-verify` once, and from then on be held by its digest;
 - the modules' content in memory — a copy in the repository would drift from the release, and CI would go for it once more;
 - the vectors of `spec` — pairs of a graph and its tiers that the format itself holds, with a graph of 17 skills;
 - a static build — a tablet on the author's network does not see the container's port, and an external tunnel is a third-party service.
@@ -339,17 +336,17 @@
 - device emulation and `adb reverse` — an iPad cannot be connected that way; the VS Code tunnel is an external service, and the demo is visible from the network;
 - the demo on an older format than the element's types, after a tag of `spec` changed the format version — the demo would draw modules in another format than the element.
 
-— *Consequence:* a move to a new release of `modules` runs `just demo-pin`, and a move to a new tag of `spec` also `just taxonomy`; if the tag changes the format version, the move pins a release of `modules` whose index has modules of that version. — `demo/`, `scripts/demo-data.ts`, `demo/release.ts`, `justfile`, `.gitignore`, `tsconfig.element.json`, `tsconfig.node.json`, `biome.json`; [architecture.md](architecture.md), sections 3.7 and 4; R09, R10.
+— *Consequence:* a move to a new release of `modules` runs `just demo-pin`, and a move to a new tag of `spec` also `just taxonomy`; if the tag changes the format version, the move pins a release of `modules` whose index has modules of that version. — `demo/`, `scripts/demo-data.ts`, `demo/release.ts`, `justfile`, `.gitignore`, `tsconfig.element.json`, `tsconfig.node.json`, `biome.json`; [architecture.md](architecture.md).
 
 ## The release
 
-**R13. The release of `skill-map` is the shared `release.yml` of `.github` (R22), line 0.1, and the recipe `release-files` writes its files: the npm package archive with the release's version, `LICENSE` and `SHA256SUMS`. The recipe itself checks the archive that goes out — its contents, and the trial consumer. After CI of a push to `main`, and by the button, the release goes out and the same archive goes to npm by trusted publishing, without a token; every pull request tries the release and publishes nothing. Releases are immutable, and a ruleset holds the tags `v*`.** The author's answers of 2026-11-08 in planning T17: the paths — as at `canvas`; the trial — on every pull request and on `main`; the consumer — in the recipe; the settings — the executor. The rest are the plan's proposals, which the author approved, after the model of T66, T70 and T71 of `canvas`; publishing is T18.
-- **`release.yml`** — `.github/workflows/release.yml`: on `workflow_run` of CI on `main`, if CI passed and it was a push to the repository itself, on `pull_request`, and by the button. The branch filter of `workflow_run` also lets through the CI of a pull request from a fork's branch named `main`, so the condition asks about the event and the repository. `RELEASE_LINE: "0.1"`, the permissions `contents: write`, `id-token: write` and `actions: read`, `publish: ${{ github.event_name != 'pull_request' }}` and `npm-package: "@altnovatrail/skill-map"` on every event: in a pull request the npm step checks the archive with the code that publishes it and tries its publishing without doing it. The shared workflow builds the stage `toolchain-core` of `.devcontainer/Dockerfile`, all that `release-files` needs (R23).
+**R13. The release of `skill-map` is the shared `release.yml` of `.github`, line 0.1, and the recipe `release-files` writes its files: the npm package archive with the release's version, `LICENSE` and `SHA256SUMS`. The recipe itself checks the archive that goes out — its contents, and the trial consumer. After CI of a push to `main`, and by the button, the release goes out and the same archive goes to npm by trusted publishing, without a token; every pull request tries the release and publishes nothing. Releases are immutable, and a ruleset holds the tags `v*`.** The paths and the release are after the model of `canvas`.
+- **`release.yml`** — `.github/workflows/release.yml`: on `workflow_run` of CI on `main`, if CI passed and it was a push to the repository itself, on `pull_request`, and by the button. The branch filter of `workflow_run` also lets through the CI of a pull request from a fork's branch named `main`, so the condition asks about the event and the repository. `RELEASE_LINE: "0.1"`, the permissions `contents: write`, `id-token: write` and `actions: read`, `publish: ${{ github.event_name != 'pull_request' }}` and `npm-package: "@altnovatrail/skill-map"` on every event: in a pull request the npm step checks the archive with the code that publishes it and tries its publishing without doing it. The shared workflow builds the stage `toolchain-core` of `.devcontainer/Dockerfile`, all that `release-files` needs.
 - **The release paths** — what the consumer receives, and what it is built from:
   - `src/*.ts` without `*.test.ts`, `*.fixture.ts` and `*.check.ts`, the generated icons and titles of the anchor skills too;
   - `package.json`, `tsconfig.base.json` and `tsconfig.build.json`, `justfile`;
   - README, `LICENSE` and `NOTICE` — they lie in the archive;
-  - `.devcontainer/Dockerfile` — the stage `toolchain-core`, in which npm packs the archive (R23);
+  - `.devcontainer/Dockerfile` — the stage `toolchain-core`, in which npm packs the archive;
   - `release.yml` itself, so that a change of the line gives a release.
 
   Only an edit of one of them gives a new version — README and `justfile` too, since README lies in the archive and the recipes build it; and so does the Dockerfile. An edit of `docs/`, RUN.md, the tests, the scripts, the demo and the lock file gives no version.
@@ -358,74 +355,73 @@
   - `scripts/package.ts`;
   - a copy of what `npm pack` takes from the tree, by its own list of `--dry-run`, with the permissions `u=rwX,go=rX` — `npm pack` keeps the files' permissions, and they depend on the mask of whoever built —, with the version without `v`, and `npm pack --json` into `dist/`;
   - `scripts/release.ts` checks what `npm pack` made: one archive, the package's name, the version, the file's name, and only the build with `LICENSE` and `NOTICE` — and gives the archive's name;
-  - the trial consumer `scripts/consumer.ts --release` takes this archive from `dist/` and checks its declarations with `tsc` under `NodeNext` and `Bundler` (R09);
+  - the trial consumer `scripts/consumer.ts --release` takes this archive from `dist/` and checks its declarations with `tsc` under `NodeNext` and `Bundler`;
   - `LICENSE` and `SHA256SUMS` into `dist/`.
 
   `npm pack` fixes the time and the order of the files, so the same commit gives the same sums.
-- **Settings** — the executor's by the author's word of 2026-11-08, a confirmation by rule 4 of RUN.md at no cost: immutable releases are on (`immutable-releases`: `enabled: true`); the ruleset `v-tags`, ID 26779303, is `refs/tags/v*`, with the rules `update`, `deletion` and `non_fast_forward`, without bypass, like `v-tags` at `canvas` (26336827) (Д54 spec). npm's trusted publisher is the author's: `npm trust github @altnovatrail/skill-map --file release.yml --repository altnovatrail/skill-map --allow-publish`, with "Require two-factor authentication and disallow bypass 2fa tokens"; a trusted publisher set without a publication expires, as `canvas` recorded (T71 of `canvas`).
+- **Settings** — of the repository, at no cost: immutable releases are on (`immutable-releases`: `enabled: true`); the ruleset `v-tags`, ID 26779303, is `refs/tags/v*`, with the rules `update`, `deletion` and `non_fast_forward`, without bypass, like `v-tags` at `canvas` (26336827). npm's trusted publisher is the author's: `npm trust github @altnovatrail/skill-map --file release.yml --repository altnovatrail/skill-map --allow-publish`, with "Require two-factor authentication and disallow bypass 2fa tokens"; a trusted publisher set without a publication expires, as `canvas` found.
 
 — *Why:*
 - a release cannot be undone — an immutable release cannot be replaced, and a number that npm has once taken cannot be returned. The trial catches a recipe's error before a release;
-- the paths — by the 2026-10-22 amendment to R31 spec: the list holds what the consumer will receive. Without the lock file, an edit of a development tool gives no version;
+- the paths — the list holds what the consumer will receive, as spec's rule of release paths has it. Without the lock file, an edit of a development tool gives no version;
 - the consumer in the recipe — a release whose declarations a consumer would not accept does not go out, and every release checks this, not one trial project;
 - the npm step in a pull request too — the code that publishes checks the archive before it reaches `main`.
 
 — *Rejected:*
 - `package-lock.json` in the paths — every pull request of Dependabot would give a new version;
 - the trial only by a trial pull request without a merge — an edit that breaks the release would be seen only by the release on `main`;
-- a trial project by hand once, as at `canvas`, — nobody would check the next releases with a consumer any more;
-- the settings by the author's hand after T17 — the first release, T18, waited for them.
+- a trial project by hand once, as at `canvas`, — nobody would check the next releases with a consumer any more.
 
 — *Revisit:*
 - `pull_request` has no path filter: it would repeat the list in another syntax, and the run of an edit outside the list ends as soon as the number is computed; the trial builds everything on every pull request that touches the list (Д6);
 - a pull request from a fork has no write permissions and no OIDC, and the trial does not start there. `skill-map` has no forks yet, and the trial is not in the ruleset of `main` (Д6).
 
-— `.github/workflows/release.yml`, `justfile`, `scripts/release.ts`, `scripts/consumer.ts`; [architecture.md](architecture.md), section 3.7; R08, R09.
+— *Consequence:* `.github/workflows/release.yml`, `justfile`, `scripts/release.ts`, `scripts/consumer.ts`; [architecture.md](architecture.md).
 
 ## Withdrawn
 
-**R14. Withdrawn: it recorded a move to a tag of `spec`, which is a commit and no entry of the log (R26).** What the tag answered — О-13 and the card architecture 3.3 spec with the map's detailing — is in `spec`; its text is in git.
+**R14. Withdrawn: it recorded a move to a tag of `spec`, which is a commit and no entry of the log.** What the tag answered — О-13 and the component's card with the map's detailing — is in `spec`; its text is in git.
 
 ## The network of the checks
 
-**R15. A failure of the network in `ci-lint`, which downloads the format file of `spec` (R09), and in `just demo`, which downloads the index and the packages of `modules` (R12), is softened by retrying the download, `scripts/download.ts`, and nothing more for now: an input of the cache in the shared `typescript.yml` of `.github` comes as a new row «В реестр spec» if the failures recur (Д7).** The author's answer of 2026-11-08 to В7, «оставить», by the row's recommendation, option (c).
+**R15. A failure of the network in `ci-lint`, which downloads the format file of `spec`, and in `just demo`, which downloads the index and the packages of `modules`, is softened by retrying the download, `scripts/download.ts`, and nothing more for now: an input of the cache in the shared `typescript.yml` of `.github` comes as a new row «В реестр spec» if the failures recur (Д7).**
 
 — *Why:* a failure of the network held a required check once, on pull request #24, and the retry covers a short outage; an input of the cache is a change of `.github` for every repository that calls it.
 
-— `scripts/download.ts`; [run/DEBT.md](../run/DEBT.md), Д7.
+— *Consequence:* `scripts/download.ts`; Д7 in [run/DEBT.md](../run/DEBT.md).
 
 ## Withdrawn
 
-**R16. Withdrawn: it recorded a move to a tag of `spec`, which is a commit and no entry of the log (R26).** The format the demo reads, and its release of `modules`, are R12; its text is in git.
+**R16. Withdrawn: it recorded a move to a tag of `spec`, which is a commit and no entry of the log.** The format the demo reads, and its release of `modules`, are in the decision on the demo; its text is in git.
 
 ## The browser of the tests
 
-**R17. `playwright` in `package.json` is the version of the Playwright image from which the stage `toolchain` of `.devcontainer/Dockerfile` takes the browsers, at the revisions of that version, and both come with the template of `spec` (R26). A raise sooner than the template's is R79 spec's route: the pull request that raises the package raises the image, by its digest, and the browsers' revisions in the Dockerfile with it, and writes a row «в реестр spec»; until a tag of `spec` whose template carries that version, the Dockerfile differs from the template's output by those lines.** R79 spec, the item "Who raises the versions": "A repository that needs a new `playwright` sooner raises all three in its Dockerfile — in the pull request that raises the package, … — and writes a row «в реестр spec»".
-- **What a raise checks:** the package's license and date, after the pause of three days (R08); the browsers' revisions from `browsers.json` of `playwright-core`; the digest of the image's index in MCR, with builds for `linux/amd64` and `linux/arm64`; the list of the system libraries of the engines in `nativeDeps` of `playwright-core` against the Dockerfile's, so that the snapshot of the Ubuntu archive is raised only for a new package (R40 spec).
+**R17. `playwright` in `package.json` is the version of the Playwright image from which the stage `toolchain` of `.devcontainer/Dockerfile` takes the browsers, at the revisions of that version, and both come with the template of `spec`. A raise sooner than the template's goes by spec's rule on who raises the versions: the pull request that raises the package raises the image, by its digest, and the browsers' revisions in the Dockerfile with it, and writes a row «в реестр spec»; until a tag of `spec` whose template carries that version, the Dockerfile differs from the template's output by those lines.**
+- **What a raise checks:** the package's license and date, after the pause of three days; the browsers' revisions from `browsers.json` of `playwright-core`; the digest of the image's index in MCR, with builds for `linux/amd64` and `linux/arm64`; the list of the system libraries of the engines in `nativeDeps` of `playwright-core` against the Dockerfile's, so that the snapshot of the Ubuntu archive is raised only for a new package.
 
-— *Why:* without the browser of its version, `playwright` does not find it, and `ci-test` fails, as Dependabot's pull request #34 did on 2026-11-09. Waiting for the template of `spec` means keeping Dependabot red, and `playwright` on the old version, until `spec` gets round to it; R79 spec provides for this.
+— *Why:* without the browser of its version, `playwright` does not find it, and `ci-test` fails, as Dependabot's pull request #34 did. Waiting for the template of `spec` means keeping Dependabot red, and `playwright` on the old version, until `spec` gets round to it; spec's rule provides for a raise sooner.
 
 — *Rejected:*
-- leaving `playwright` behind and closing Dependabot's pull request until a tag of `spec` with the new template: Dependabot opens it again, and raising the image here is just what R79 spec allows;
-- taking the image by tag without a digest: against exact versions (RULES.md, Hard rules), all the more as MCR rebuilds images under the same tag;
+- leaving `playwright` behind and closing Dependabot's pull request until a tag of `spec` with the new template: Dependabot opens it again, and raising the image here is just what spec's rule allows;
+- taking the image by tag without a digest: against the rule of exact versions, all the more as MCR rebuilds images under the same tag;
 - raising the snapshot of the Ubuntu archive along with it when the list of libraries is the same: a new snapshot means new versions of all its packages for no need.
 
-— *Consequence:* the move to a tag of `spec` whose template carries the version removes the difference; if the template raises `playwright` above the version of `package.json`, the move raises the package along with it. — `.devcontainer/Dockerfile`, `package.json`, `.github/dependabot.yml`; [architecture.md](architecture.md), section 3.7; R08.
+— *Consequence:* the move to a tag of `spec` whose template carries the version removes the difference; if the template raises `playwright` above the version of `package.json`, the move raises the package along with it. — `.devcontainer/Dockerfile`, `package.json`, `.github/dependabot.yml`; [architecture.md](architecture.md).
 
 ## The modules that teach an anchor skill
 
-**R18. The element does not show `teaching_modules` of `AnchorSkillState`, the modules of the catalog that teach an anchor skill and are not connected to the profile (R99 spec): it has no titles of these modules, and whether the map shows them is the open question of [architecture.md](architecture.md), section 2.5, row В11 of [run/QUESTIONS.md](../run/QUESTIONS.md).** Д211 spec left it to the map's detailing.
+**R18. The element does not show `teaching_modules` of `AnchorSkillState`, the modules of the catalog that teach an anchor skill and are not connected to the profile: it has no titles of these modules, and whether the map shows them is still to decide, in [architecture.md](architecture.md) and row В11 of [run/QUESTIONS.md](../run/QUESTIONS.md).** `spec` leaves it to the map's own detailing.
 - The field is in the test fixture `src/core/fair-shares.fixture.ts`, which the type requires; no code of the element reads it.
 
-— *Why:* the IDs of the catalog's modules are no text for the learner, and their titles are no data the element takes (R04): showing them would change its agreement.
+— *Why:* the IDs of the catalog's modules are no text for the learner, and their titles are no data the element takes: showing them would change its agreement with `app`.
 
-— `src/core/fair-shares.fixture.ts`; [architecture.md](architecture.md), sections 2.5 and 3.1.
+— *Consequence:* `src/core/fair-shares.fixture.ts`; [architecture.md](architecture.md).
 
 ## The plan
 
-**R19. The rules of RUN.md do not repeat RULES.md and CLAUDE.md, which every session loads: rules 3, 5 and 10 are a line with a pointer, rule 6 does not list what `docs-check-repo` checks, which CLAUDE.md, Environment, says, and the template's block «Citations» is left out, save the search of a task by its heading and the numbers of tasks, in Epics, as R61 sim did. Rule 4 has the exception of R146 spec cut to what `skill-map` has, a browser, and rule 12 names its SonarCloud and CodeQL. The rules keep their numbers. This is the difference of RUN.md from the template's (R21).** The author's instruction of 2026-11-13: «почисти RUN.md от ненужной тебе информации».
+**R19. The rules of RUN.md do not repeat RULES.md and CLAUDE.md, which every session loads: rules 3 and 10 are a line with a pointer, and rule 5 names external facts without listing their kinds. Rule 4 has the template's exception cut to what `skill-map` has, a browser, and rule 12 names its SonarCloud and CodeQL. Rule 6 and the block «Citations» are the template's: rule 6 names besides the key `"citations"` of `docs-budgets.json` and the rules of the parts. The rules keep their numbers. This is the difference of RUN.md from the template's.**
 
-— *Why:* every task reads RUN.md, and a session pays for what it reads (measurements 1.5 spec): what the rules repeated is in every session already, with RULES.md and CLAUDE.md. `skill-map` has no sign-in and no AI of its own (architecture 1), so the rest of the exception of R146 spec does not arise.
+— *Why:* every task reads RUN.md, and a session pays for what it reads (measurements 1.5 spec): what the rules repeated is in every session already, with RULES.md and CLAUDE.md. `skill-map` has no sign-in and no AI of its own, so the rest of the template's exception does not arise.
 
 — *Rejected:* RUN.md as in the template — its repetitions cost each task tokens here; renumbering the rules — AGENTS.md, CLAUDE.md, `run/` and this log cite them by number; dropping the rule on tasks outside an epic — a future one would have no place.
 
@@ -433,65 +429,65 @@
 
 ## Withdrawn
 
-**R20. Withdrawn: it recorded a move to a tag of `spec`, which is a commit and no entry of the log (R26).** What holds of it is elsewhere: the browsers of the stage `toolchain` as exceptions to the rule of licenses — R02; the words and icons of the states and marks in the tables of architecture 6 spec — R10; the entry point `./states` — R08. Its text is in git.
+**R20. Withdrawn: it recorded a move to a tag of `spec`, which is a commit and no entry of the log.** What holds of it is in the decisions on the devcontainer, on words and icons and on the tools of the code: the browsers of the stage `toolchain` as exceptions to the rule of licenses, the words and icons of the states and marks of spec's shared tables, and the entry point `./states`. Its text is in git.
 
 ## The plan in `run/`
 
-**R21. The work plan of `skill-map` is in the layout and the language of the template of `spec`: tables 2, 3 and 4 are `run/EPICS.md`, `run/QUESTIONS.md` and `run/DEBT.md`, and the open tasks outside an epic `run/TASKS.md`, each file opening with its rules; RUN.md keeps its rules and the current epic, in English and terse, for the session; the bodies of tasks and the archives `docs/plan/` stay in Russian. A done task's body and its gist sentence go to its epic's archive at once, and a task outside an epic, with no current epic, to the archive of the last done epic, section «Задачи вне эпика, сделанные после него». RUN.md differs from the template's by R19 alone.** Rows Д250 spec and Д235 spec (R153–R155 spec; the 2026-11-13 amendment to R19 spec), by T24.
+**R21. The work plan of `skill-map` is in the layout and the language of the template of `spec`: tables 2, 3 and 4 are `run/EPICS.md`, `run/QUESTIONS.md` and `run/DEBT.md`, and the open tasks outside an epic `run/TASKS.md`, each file opening with its rules; RUN.md keeps its rules and the current epic, in English and terse, for the session; the bodies of tasks and the archives `docs/plan/` stay in Russian. A done task's body and its gist sentence go to its epic's archive at once, and a task outside an epic, with no current epic, to the archive of the last done epic, section «Задачи вне эпика, сделанные после него». RUN.md differs from the template's only by its shorter rules.**
 - An opening of `run/` names the old place of its table, so "Д3 in DEBT.md" and "В11 of table 3 of RUN.md" in older texts find the row.
 
-— *Why:* every task reads RUN.md whole, and tables 2–4 and the bodies of the tasks outside an epic are read only by a task that cites a row or is that task (R155 spec).
+— *Why:* every task reads RUN.md whole, and tables 2–4 and the bodies of the tasks outside an epic are read only by a task that cites a row or is that task.
 
 — *Rejected:*
-- no `run/TASKS.md`, as R61 sim — `sim` has no task between epics (R47 sim, R50 sim), while here rule 9 keeps tasks outside an epic;
-- deleting a done task outside an epic when there is no current epic, as R19 first had — the 2026-11-13 amendment to R19 spec replaced it: a body deleted escapes the search by heading, and `spec` cites such tasks (Д235 spec);
-- the template's full rules 3, 5, 6 and 10 and its block «Citations» — R19;
-- the paragraphs of the closed rows of table 4 translated into `run/DEBT.md` — an opening holds its rules and its next free number, no history (R154 spec);
-- translating the archives `docs/plan/` — R154 spec rejected it too.
+- no `run/TASKS.md`, as `sim` has it — `sim` has no task between epics, while here rule 9 keeps tasks outside an epic;
+- deleting a done task outside an epic when there is no current epic — a body deleted escapes the search by heading, and `spec` cites such tasks;
+- the template's full rules 3, 5 and 10 — they repeat what every session loads;
+- the paragraphs of the closed rows of table 4 translated into `run/DEBT.md` — an opening holds its rules and its next free number, no history;
+- translating the archives `docs/plan/` — they are written for people and stay in Russian.
 
-— RUN.md; `run/`; CLAUDE.md, Documents; [plan/E3.md](plan/E3.md).
+— *Consequence:* RUN.md; `run/`; [CLAUDE.md](../CLAUDE.md); `docs/plan/`.
 
 ## The CI on the shared workflows of `.github`
 
-**R22. Every reference to a shared workflow of `.github` — four in `ci.yml` and one each in `codeql.yml`, `scorecard.yml` and `release.yml` — is pinned to one release by its SHA, with the version beside it, and `.github/dependabot.yml` raises them as one group, `shared-workflows`, `patterns: ["altnovatrail/.github/*"]`, under `github-actions`. `ci.yml` calls `typescript.yml` with the input `engines: true` (R25), and no input else. The jobs take the images of the stages of `.devcontainer/Dockerfile` from the cache of GitHub Actions by its hash and build them only on a miss (R36 .github, R41–R47 .github).** Rows Д146 spec and Д88 spec, by T25, and row 7.13 of COORDINATION.md spec, by T28 and T29.
-- **What the workflows do here** (sources 3.5–3.7, 3.9): the job "TypeScript / toolchain" first looks up the images of `toolchain` and `toolchain-core` by the hash of the Dockerfile, each a file and an entry of the cache, and on a miss builds them and hands them to the checks by an artifact of the run; only a push to `main` saves an entry. "TypeScript / lint", "vuln" and "licenses" run in `toolchain-core`, "test" and "engines" in `toolchain` (R23); "Documents / docs-check-repo" takes its own image of `toolchain-core`. The shared `release.yml` builds `toolchain-core` from the network, with no cache (sources 3.5), and `codeql.yml` takes no image. Which of the jobs the ruleset of `main` requires is the author's setting (R08).
-- **The release.** `.github/workflows/release.yml` is a path of the release (R13), so a raise of the references gives a release of the package from the same code.
+**R22. Every reference to a shared workflow of `.github` — four in `ci.yml` and one each in `codeql.yml`, `scorecard.yml` and `release.yml` — is pinned to one release by its SHA, with the version beside it, and `.github/dependabot.yml` raises them as one group, `shared-workflows`, `patterns: ["altnovatrail/.github/*"]`, under `github-actions`, a pattern whose `*` matches `/` too (sources 3.5). `ci.yml` calls `typescript.yml` with the input `engines: true`, and no input else. The jobs take the images of the stages of `.devcontainer/Dockerfile` from the cache of GitHub Actions by its hash and build them only on a miss.**
+- **What the workflows do here.** The job "TypeScript / toolchain" first looks up the images of `toolchain` and `toolchain-core` by the hash of the Dockerfile, each a file and an entry of the cache, and on a miss builds them and hands them to the checks by an artifact of the run; only a push to `main` saves an entry (sources 3.6). "TypeScript / lint", "vuln" and "licenses" run in `toolchain-core`, "test" and "engines" in `toolchain`; "Documents / docs-check-repo" takes its own image of `toolchain-core`; and the shared `release.yml` builds `toolchain-core` from the network, with no cache (sources 3.7). `codeql.yml` takes no image (sources 3.6). This holds at the release the references are pinned to, which changes none of the seven workflows this repository calls (sources 3.9). Which of the jobs the ruleset of `main` requires is the author's setting.
+- **The release.** `.github/workflows/release.yml` is a path of the release, so a raise of the references gives a release of the package from the same code.
 
-— *Why:* without the cache, each job built the image from the network, and an outage of nodejs.org, GitHub or the snapshot of Ubuntu's archive failed the checks (Д146 spec). Without the group, Dependabot opens a pull request per reference to `.github`, each a round of rebase and checks (Д88 spec).
+— *Why:* without the cache, each job built the image from the network, and an outage of nodejs.org, GitHub or the snapshot of Ubuntu's archive failed the checks. Without the group, Dependabot opens a pull request per reference to `.github`, each a round of rebase and checks.
 
-— *Rejected:* moving the references with a tag of `spec` — they move by Dependabot's group or by their own row of COORDINATION.md spec (R26).
+— *Rejected:* moving the references with a tag of `spec` — they move by Dependabot's group or by a row of their own in spec's plan across repositories.
 
-— `.github/workflows/`, `.github/dependabot.yml`; [architecture.md](architecture.md), section 3.7; [sources.md](sources.md), records 3.5–3.7 and 3.9; [measurements](measurements.md) 2.2.
+— *Consequence:* `.github/workflows/`, `.github/dependabot.yml`; [architecture.md](architecture.md).
 
 ## The stages of the Dockerfile
 
-**R23. `.devcontainer/Dockerfile`, the template's (R26), has three stages: `toolchain-core` — Node, just, Go and buf —, in which the release and the checks that start no browser run, `release-files`, `ci-lint`, `ci-vuln`, `ci-licenses` and `docs-check-repo`; `toolchain` on it, which adds the browsers and their system packages, apt reading the snapshot of the Ubuntu archive alone, for `ci-test` and `ci-engines`; and `devcontainer`. `skill-map` installs no tool of its own in either, and the Dockerfile stays among the paths of the release.** Row 7.24 of COORDINATION.md spec, with T166 spec and T66 `.github` (R47 .github), by T29; the author agreed to the change of `.devcontainer/` on 2026-11-16 (T171 spec).
-- **What is in which stage** (row В40 `.github`; [sources.md](sources.md), record 3.7): `release-files` runs Node, npm and `tsc`, and `ci-lint`, `ci-vuln`, `ci-licenses` and `docs-check-repo` start no browser; `ci-test` and `ci-engines` alone need the browsers (R02, R25).
-- **apt** takes the system packages from a source of the snapshot alone, by `-o Dir::Etc::SourceList=/dev/null -o Dir::Etc::SourceParts=<folder>`, not by `--snapshot` with the base image's sources (R40 spec).
+**R23. `.devcontainer/Dockerfile`, the template's, has three stages: `toolchain-core` — Node, just, Go and buf —, in which the release and the checks that start no browser run, `release-files`, `ci-lint`, `ci-vuln`, `ci-licenses` and `docs-check-repo`; `toolchain` on it, which adds the browsers and their system packages, apt reading the snapshot of the Ubuntu archive alone, for `ci-test` and `ci-engines`; and `devcontainer`. `skill-map` installs no tool of its own in either, and the Dockerfile stays among the paths of the release.**
+- **What is in which stage** (sources 3.7): `release-files` runs Node, npm and `tsc`, and `ci-lint`, `ci-vuln`, `ci-licenses` and `docs-check-repo` start no browser; `ci-test` and `ci-engines` alone need the browsers.
+- **apt** takes the system packages from a source of the snapshot alone, by `-o Dir::Etc::SourceList=/dev/null -o Dir::Etc::SourceParts=<folder>`, not by `--snapshot` with the base image's sources.
 
-— *Why:* the release built all of `toolchain`, three browsers and the packages of apt, for `release-version` and `release-files`, which need Node alone: its step "Work out the version" took 178 s to 1,557 s on `main`, mostly apt from `snapshot.ubuntu.com` (measurements 2.1, 2.3), and `apt-get update --snapshot` fetched 67.6 MB, the live archive's indexes and the snapshot's, against 33.6 MB from the snapshot alone (measurements 3.1 spec, 3.2 spec).
+— *Why:* the release built all of `toolchain`, three browsers and the packages of apt, for `release-version` and `release-files`, which need Node alone: its step "Work out the version" took 178 s to 1,557 s on `main`, mostly apt from `snapshot.ubuntu.com` (measurements 2.3); `apt-get update --snapshot` fetched 67.6 MB, the live archive's indexes and the snapshot's, against 33.6 MB from the snapshot alone (measurements 3.2 spec).
 
-— *Rejected:* taking `.devcontainer/Dockerfile` out of the paths of the release, now that the release builds the core alone: a pathspec names a file, not its stage, and the core — Node, npm — is what builds the archive (R13).
+— *Rejected:* taking `.devcontainer/Dockerfile` out of the paths of the release, now that the release builds the core alone: a pathspec names a file, not its stage, and the core — Node, npm — is what builds the archive.
 
-— *Consequence:* the comments of `justfile`, `ci.yml` and `release.yml` and `.claude/rules/package.md` name the stages; a container built by an older Dockerfile than the tree's is Д12 of [run/DEBT.md](../run/DEBT.md). — `.devcontainer/Dockerfile`; `.github/workflows/`, `justfile`, `.claude/rules/package.md`; [architecture.md](architecture.md), section 3.7; [sources.md](sources.md), record 3.7; [measurements](measurements.md) 2.3.
+— *Consequence:* the comments of `justfile`, `ci.yml` and `release.yml` and `.claude/rules/package.md` name the stages; a container built by an older Dockerfile than the tree's is Д12 of [run/DEBT.md](../run/DEBT.md). — `.devcontainer/Dockerfile`; `.github/workflows/`, `justfile`, `.claude/rules/package.md`; [architecture.md](architecture.md).
 
 ## The level of the module
 
-**R24. The element reads neither of the fields of `GetSkillMapResponse` on the level of the module, `level_band` and `level_set_at`: `app` shows them — "Easier" and "Harder" to the adult, "the level was set by an adult" with its date to every learner (architecture 3.1 spec) —, and the card architecture 3.3 spec gives the element nothing of it (R157 spec).** T31, by the 2026-11-16 amendment to R99 spec (T178 spec).
+**R24. The element reads neither of the fields of `GetSkillMapResponse` on the level of the module, `level_band` and `level_set_at`: `app` shows them — "Easier" and "Harder" to the adult, "the level was set by an adult" with its date to every learner —, and the component's card in `spec` gives the element nothing of it.**
 - The test fixture `src/core/fair-shares.fixture.ts` names `level_band`, which the type requires, and a test holds that the fields change no state.
 
-— *Rejected:* the level on the map — the card does not give it to the element, and it would change the element's agreement, R04, by a row «В реестр spec».
+— *Rejected:* the level on the map — the card does not give it to the element, and it would change the element's agreement with `app`, which changes only by a row «В реестр spec».
 
-— `src/core/fair-shares.fixture.ts`; [architecture.md](architecture.md), section 3.1.
+— *Consequence:* `src/core/fair-shares.fixture.ts`; [architecture.md](architecture.md).
 
 ## The engines of the tests
 
-**R25. The element's tests run in Chromium, WebKit and Firefox: each project of the element in `vitest.config.ts` has an instance per engine, named "<project> (<engine>)"; `ci-test` runs Node and Chromium with the coverage, and the new recipe `ci-engines` runs WebKit and Firefox without it, as the check "TypeScript / engines" of the shared `typescript.yml`, which `ci.yml` asks for by its input `engines: true`. `just ci` runs all five.** Decided 2026-11-17 in T32, which closes Д11.
+**R25. The element's tests run in Chromium, WebKit and Firefox: each project of the element in `vitest.config.ts` has an instance per engine, named "<project> (<engine>)"; `ci-test` runs Node and Chromium with the coverage, and the new recipe `ci-engines` runs WebKit and Firefox without it, as the check "TypeScript / engines" of the shared `typescript.yml`, which `ci.yml` asks for by its input `engines: true`. `just ci` runs all five.**
 - **Why the coverage stays in Chromium:** v8 counts it through the protocol of Chromium alone, and Vitest fails a run with `--coverage` that keeps an instance of WebKit or Firefox (sources 3.8). The report is the one it was, Node and Chromium, and `codecov/patch` reads it as before.
 - **What the engines found:** WebKit passes every test, forced colours too; Firefox failed three, each by the test and not by the map (measurements 3.1). `lines.test.ts` probed a rounded corner of a tile, which Firefox does not hit, and now probes a line's end under the tile's top edge, with the SVG made to take the pointer for the probe, so that a line over the tile would be hit; `csp.test.ts` wrote `'self'` into the policy of a frame of `srcdoc`, under which Firefox does not run the fixture from the page's origin, and in Firefox alone now writes the origin out, the same policy for a consumer's page served from it; Chromium and WebKit keep `'self'`.
-- **The release.** The `justfile` is a path of the release (R13), so the merge gives a release of the package, its archive built from the same code.
+- **The release.** The `justfile` is a path of the release, so the merge gives a release of the package, its archive built from the same code.
 
-— *Why:* T34 `app` found bugs seen only in WebKit, and a change of look or layout here would break WebKit and Firefox unseen; the browsers are in the stage `toolchain` (R02), and the shared `typescript.yml` has the input (R22; sources 3.6). Two jobs side by side keep the run of the tests about as long as before (measurements 3.1).
+— *Why:* `app` found bugs seen only in WebKit, and a change of look or layout here would break WebKit and Firefox unseen; the browsers are in the stage `toolchain`, and the shared `typescript.yml` has the input (sources 3.6). Two jobs side by side keep the run of the tests about as long as before (measurements 3.1).
 
 — *Rejected:*
 - all three engines in `ci-test`, without the input: the coverage would need `istanbul` in place of v8, a new dependency and another count of lines, and the job would run the engines one after the other;
@@ -500,22 +496,22 @@
 - leaving Firefox out of `csp.test.ts`: the test would check one engine less, for a difference of the frame of the test, not of a consumer's page; and writing the origin out in every engine: none would check `'self'`, the policy a strict consumer most often writes;
 - the selection of `ci-test` by the names it keeps, `node` and `*(chromium)`: a new project of another name would run in neither recipe, so `ci-test` leaves out `*(webkit)` and `*(firefox)` instead.
 
-— *Consequence:* R08, R22 and R23 name the engines and the recipe; Д11 leaves [run/DEBT.md](../run/DEBT.md). — `vitest.config.ts`, `justfile`, `.github/workflows/ci.yml`, `src/element/lines.test.ts`, `src/element/csp.test.ts`; [architecture.md](architecture.md), section 3.7; [sources.md](sources.md), record 3.8; [measurements](measurements.md) 3.1; `.claude/rules/package.md`.
+— *Consequence:* the decisions on the tools of the code, on the CI and on the stages of the Dockerfile name the engines and the recipe. — `vitest.config.ts`, `justfile`, `.github/workflows/ci.yml`, `src/element/lines.test.ts`, `src/element/csp.test.ts`, `.claude/rules/package.md`; [architecture.md](architecture.md).
 
 ## A move to a tag of `spec`
 
-**R26. A move of `skill-map` to a tag of `spec` is one task and its commit, which says why, and it moves together: the submodule `spec/`; `@altnovatrail/spec` and `@altnovatrail/contracts` in `package.json`, at the tag's version; `RELEASE` in `scripts/taxonomy.ts`, after which `just taxonomy` writes `src/element/anchor-titles.ts` anew from the tag's format file; the tests that name the tag; `.devcontainer/`, as `just new-repo-draft skill-map typescript 3.3 <tag>` builds it on a clone of `spec` at the tag; and the lines of CLAUDE.md and RUN.md that name the tag. The move is no entry of this log, and README.md names no tag (R160 spec).** T35 and T36 outside an epic, in the orchestrator's runs of «Порядок» of COORDINATION.md spec (R156 spec).
+**R26. A move of `skill-map` to a tag of `spec` is one task and its commit, which says why, and it moves together: the submodule `spec/`; `@altnovatrail/spec` and `@altnovatrail/contracts` in `package.json`, at the tag's version; `RELEASE` in `scripts/taxonomy.ts`, after which `just taxonomy` writes `src/element/anchor-titles.ts` anew from the tag's format file; the tests that name the tag; `.devcontainer/`, as `just new-repo-draft skill-map typescript 3.3 <tag>` builds it on a clone of `spec` at the tag; and the lines of CLAUDE.md and RUN.md that name the tag. The move is no entry of this log, and README.md names no tag.**
 
 — *Why:*
-- `spec/` is what the documents are checked against (R32 spec), and the packages and the format file are what the code reads — the types of the contracts and the titles of the anchor skills (R09): one tag for all keeps them one `spec`.
-- Each enters through a check of its release: the lock file through `release-verify-npm` in `ci-licenses`, the format file through `release-verify` in `just taxonomy` (R77 spec; RULES.md, Hard rules).
+- `spec/` is what the documents are checked against, and the packages and the format file are what the code reads — the types of the contracts and the titles of the anchor skills: one tag for all keeps them one `spec`.
+- Each enters through a check of its release, as the shared rule on release files asks: the lock file through `release-verify-npm` in `ci-licenses`, the format file through `release-verify` in `just taxonomy`.
 - `.devcontainer/` is the file the template's recipe builds for this repository, not spec's own `.devcontainer/` in `repo-template/files/`, which has the stage `orchestrator`: a copy taken by hand drifts, and the next move cannot tell its own differences from the template's.
-- CLAUDE.md and RUN.md name the tag so that a session knows it without `git -C spec describe --tags` (R160 spec).
+- CLAUDE.md and RUN.md name the tag so that a session knows it without `git -C spec describe --tags`.
 
 — *Rejected:*
-- an entry of the log for each move: the commit and git hold what a move did (R160 spec). The entries of earlier moves are withdrawn, R01, R05, R14, R16 and R20, or hold what of their move still holds, R02, R15, R18, R23 and R24;
-- keeping `.devcontainer/` of an older tag while the recipe's file differs from it by a comment alone, as T35 did: the file drifts from the template, at the cost of one miss of the image's cache in CI when it is taken (R22);
-- moving the references to the shared workflows of `.github` with the tag: they are pinned by SHA by R22 and move by their own row of COORDINATION.md spec.
+- an entry of the log for each move: the commit and git hold what a move did. The entries of earlier moves are withdrawn, or hold only what of their move still holds;
+- keeping `.devcontainer/` of an older tag while the recipe's file differs from it by a comment alone: the file drifts from the template, at the cost of one miss of the image's cache in CI when it is taken;
+- moving the references to the shared workflows of `.github` with the tag: they are pinned by SHA and move by Dependabot's group or by a row of their own in spec's plan across repositories.
 
-— *Consequence:* `spec/`, `package.json`, `package-lock.json`, `scripts/taxonomy.ts`, `src/element/anchor-titles.ts`, the tests `scripts/*.test.ts`, `.devcontainer/`; CLAUDE.md, Documents; RUN.md, the opening; [sources.md](sources.md), record 3.2.
+— *Consequence:* `spec/`, `package.json`, `package-lock.json`, `scripts/taxonomy.ts`, `src/element/anchor-titles.ts`, the tests `scripts/*.test.ts`, `.devcontainer/`; [CLAUDE.md](../CLAUDE.md); RUN.md; [sources.md](sources.md).
 
