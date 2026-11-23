@@ -7,14 +7,4 @@ Open tasks outside the current epic, each as its body, in Russian.
 
 ## Tasks outside an epic
 
-#### T47. Ссылки по правилу R171 spec, часть 6: источники, замеры и ключ проверки
-
-- **Цель:** `docs/sources.md` и `docs/measurements.md` — по правилу ссылок R171 spec; `docs-budgets.json` — `"citations": true`; `just -f spec/justfile docs-check-repo` с ключом — зелёный.
-- **Почему:** последняя часть T42 по её шагу 9 (архив `docs/plan/E3.md`): ключ включает она; R171 spec.
-- **Сделать:**
-  1. Шаги 4 и 7 T42 — в этих файлах: запись хранит свою дату и теряет номер задачи, в заголовке тоже; ссылку на поправку записи — на запись.
-  2. `docs-budgets.json` — ключ `"citations": true`, как в `spec/repo-template/files/docs-budgets.json`, рядом с `entries`, которые остаются; то, что ключ найдёт вне этих файлов, — исправить здесь же.
-  3. Замер «после» — командами `measurements 1.18 spec`, по видам, против «до» T42.
-- **Как проверить:** `docs-check-repo` с ключом — зелёный; `/code-review high`, один круг; в отчёте — ссылок было до T42 и стало, по видам.
-- **Разделы:** R171 spec, R32 spec; тело T42 — архив `docs/plan/E3.md`; `spec/repo-template/files/docs-budgets.json`.
-- **Зависит от:** T43, T44, T45, T46.
+None yet.
