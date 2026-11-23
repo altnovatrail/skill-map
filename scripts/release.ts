@@ -1,6 +1,6 @@
 // After npm pack of a release's copy, in just release-files: the archive that goes out is the
-// package at the release's version, the way a consumer takes it (R13), as
-// canvas's scripts/release.ts checks its own (R08 canvas).
+// package at the release's version, the way a consumer takes it, as
+// canvas's scripts/release.ts checks its own.
 //
 //   npm pack --json … | node scripts/release.ts <version>
 //
@@ -8,7 +8,7 @@
 // It fails with every problem: a name or a version other than the release's, a file name other
 // than the one npm gives the package's archive, which .github's shared release looks for, a file
 // the build does not ship, or one it leaves out — NOTICE among them, which names the icons the
-// package embeds (R10). The version is a string it compares, never a path or a command. Run from
+// package embeds. The version is a string it compares, never a path or a command. Run from
 // the repository's root, whose package.json names the package.
 
 import { readFileSync } from "node:fs";

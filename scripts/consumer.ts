@@ -1,4 +1,4 @@
-// After just build: the package's declarations the way a consumer's TypeScript takes them (R09).
+// After just build: the package's declarations the way a consumer's TypeScript takes them.
 //
 //   node scripts/consumer.ts             the archive npm pack makes of the tree, in ci-test
 //   node scripts/consumer.ts --release   the archive just release-files wrote into dist/
@@ -9,7 +9,7 @@
 // strict and without skipLibCheck: the element's name gives its type, the properties take the
 // types of data, the event's type holds on the element and on the document, ./states takes the
 // same data and gives its seven values, and what is wrong is refused. With --release it takes the
-// archive that goes out, at the release's version, rather than packing one (R13): the one archive
+// archive that goes out, at the release's version, rather than packing one: the one archive
 // of the package in RELEASED, a folder the script names itself, so that nothing of the command
 // line goes into a path. Run from the repository's root, after the build.
 

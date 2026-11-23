@@ -21,10 +21,10 @@ updates:
     cooldown:
       default-days: 3
 
-  # The npm packages the code is built and checked with (R08). The browser the
+  # The npm packages the code is built and checked with. The browser the
   # tests run in is no package: it comes with the toolchain stage of .devcontainer/Dockerfile, from
   # spec's template, and a pull request that raises playwright stays red until the image there is
-  # raised with it, by hand (R79 spec).
+  # raised with it, by hand.
   - package-ecosystem: npm
     directory: /
     schedule:
@@ -42,11 +42,11 @@ updates:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
       # The types of the module format and the contracts are spec's, at the version of the tag the
-      # spec/ submodule stands on: they move with it, in a move to a new tag of spec (R73 spec,
-      # R83 spec), and ci-licenses checks their signatures by spec's release-verify-npm (R77 spec).
+      # spec/ submodule stands on: they move with it, in a move to a new tag of spec, and
+      # ci-licenses checks their signatures by spec's release-verify-npm.
       - dependency-name: "@altnovatrail/spec"
       - dependency-name: "@altnovatrail/contracts"
       # The icon set is raised together with canvas and app, only by a row of spec's COORDINATION.md:
       # canvas and skill-map come out with the new version, then app takes both with its own set at
-      # the same version. A branch of that row raises it here with just icons (R10; R78 spec).
+      # the same version. A branch of that row raises it here with just icons (R10).
       - dependency-name: "@iconify-json/material-symbols"

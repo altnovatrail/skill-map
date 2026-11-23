@@ -1,6 +1,6 @@
 # skill-map — sources
 
-> The external facts the repository's documents under `docs/` rest on: a provider's terms, a price, a law, a standard, a library's documentation. Here are their records — the address, the version or date of the page, the date it was read and a quote in the source's language — and [architecture.md](architecture.md) and the decision log hold the claim and a citation of the record by its number, as a section: `sources 1.1` (RULES.md, The bar; R143 spec).
+> The external facts the repository's documents under `docs/` rest on: a provider's terms, a price, a law, a standard, a library's documentation. Here are their records — the address, the version or date of the page, the date it was read and a quote in the source's language — and [architecture.md](architecture.md) and the decision log hold the claim and a citation of its one record by its number, as a section: `sources 1.1`, not a chain (R171 spec). A record's heading names its topic and date, not a task.
 >
 > A record is a subsection "N.M" of a topic: one source, or one reading of several sources for one decision. A record's number never changes: a new one goes at the end of its topic, a new topic at the end of the file. A source read again is an item with its date in the same record, and the earlier text is not edited. The model is sources spec. The results of measurements are not here but in `docs/measurements.md`, which the first measurement starts.
 >
@@ -77,6 +77,7 @@ Section 3.7 of [architecture.md](architecture.md); R08.
 - The npm registry, `npm view <package>@<version> license dependencies` and `npm view <package> time`, read 2026-11-18 (R26): `@altnovatrail/spec` 0.18.27, published 2026-11-18T01:20:26Z, and `@altnovatrail/contracts` 0.18.27, published 2026-11-18T01:20:21Z — Apache-2.0; `@altnovatrail/contracts` 0.18.27 still depends on `@bufbuild/protobuf` 2.17.0.
 - The npm registry, `npm view <package>@<version> license dependencies` and `npm view <package> time`, read 2026-11-18 (R26): `@altnovatrail/spec` 0.18.34, published 2026-11-18T10:03:05Z, and `@altnovatrail/contracts` 0.18.34, published 2026-11-18T10:02:57Z — Apache-2.0; `@altnovatrail/contracts` 0.18.34 still depends on `@bufbuild/protobuf` 2.17.0.
 - The npm registry, `npm view <package>@<version> license dependencies` and `npm view <package> time`, read 2026-11-20 (R26): `@altnovatrail/spec` 0.19.4, published 2026-11-20T20:58:01Z, and `@altnovatrail/contracts` 0.19.4, published 2026-11-20T20:58:27Z — Apache-2.0; `@altnovatrail/contracts` 0.19.4 still depends on `@bufbuild/protobuf` 2.17.0.
+- The npm registry, `npm view <package>@<version> license dependencies` and `npm view <package> time`, read 2026-11-23 (R26): `@altnovatrail/spec` 0.19.11, published 2026-11-23T05:40:31Z, and `@altnovatrail/contracts` 0.19.11, published 2026-11-23T05:40:26Z — Apache-2.0; `@altnovatrail/contracts` 0.19.11 still depends on `@bufbuild/protobuf` 2.17.0.
 
 ### 3.3. The demo
 

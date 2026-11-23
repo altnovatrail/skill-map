@@ -14,7 +14,7 @@ import {
   useMap,
 } from "./map.fixture.js";
 
-// The expanded skill's lines (R06, R11): from the tiles it builds on into its
+// The expanded skill's lines: from the tiles it builds on into its
 // tile's top edge, and out of its details' bottom edge into the tiles it opens, each a curve with a
 // point at both ends, under the bands; drawn anew when the sizes change.
 

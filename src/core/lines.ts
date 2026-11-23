@@ -1,5 +1,5 @@
 // The lines of the expanded skill: where each starts and ends, and the curve between, from the
-// boxes the element measured (R06, R11). Each line goes down, from the bottom edge of a
+// boxes the element measured. Each line goes down, from the bottom edge of a
 // prerequisite's tile into the top edge of the expanded tile, and from the bottom edge of the
 // details into the top edge of each tile the skill opens. The ends on the expanded tile and on its
 // details are spread across the tile's width in the order of the other ends from left to right, so

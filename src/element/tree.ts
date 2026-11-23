@@ -1,8 +1,8 @@
 // The tree of the map in the element's shadow root: a band is a heading and a list of tiles, a
-// tile is a button that expands the skill, and the details are an item of the list right after it
-// (R06). The tree is the map's text alternative too: the order of the DOM is the order on the
+// tile is a button that expands the skill, and the details are an item of the list right after it.
+// The tree is the map's text alternative too: the order of the DOM is the order on the
 // screen. On new data it is updated in place, by the skill's ID, so that the focus and the
-// expanded skill stay (R04).
+// expanded skill stay.
 
 import type {
   GetSkillMapResponse,
@@ -70,7 +70,7 @@ export class MapTree {
   readonly #lines: Lines;
   /**
    * Draws the lines anew whenever the map, a tile or the details changes its size: the width of the
-   * page, its zoom, a font that came late (R11). It watches only while the element is on a page.
+   * page, its zoom, a font that came late. It watches only while the element is on a page.
    */
   readonly #observer = new ResizeObserver(() => {
     if (this.#expanded !== null) this.#drawLines();
@@ -167,7 +167,7 @@ export class MapTree {
     this.#drawLines();
 
     // A node the focus was on stays focused where it still is, though it was moved; one that is
-    // gone hands the focus to a tile by R06.
+    // gone hands the focus to the tile focusAfter gives.
     if (active instanceof HTMLElement && focused !== undefined) {
       if (active.isConnected && active.getRootNode() === this.#root) {
         if (this.#root.activeElement !== active) active.focus({ preventScroll: true });
@@ -178,7 +178,7 @@ export class MapTree {
     }
   }
 
-  /** The expanded skill's lines, by the places of the tiles as they are measured now (R11). */
+  /** The expanded skill's lines, by the places of the tiles as they are measured now. */
   #drawLines(): void {
     const expanded = this.#expanded;
     const links = this.#links;
@@ -377,7 +377,7 @@ export class MapTree {
     return [this.#paragraph([data.words.teaches]), list];
   }
 
-  /** The adult's details of a skill of verdict (R03): no estimate, uncertainty or retention. */
+  /** The adult's details of a skill of verdict: no estimate, uncertainty or retention. */
   #numbers(state: SkillState | undefined, data: MapData): Node[] {
     const { words, manifest } = data;
     const formats = formatsOf(words);
@@ -404,7 +404,7 @@ export class MapTree {
     return lines.map((line) => this.#paragraph(line));
   }
 
-  /** The title of a skill of the module in its language, or an anchor skill's in English (R04). */
+  /** The title of a skill of the module in its language, or an anchor skill's in English. */
   #title(id: string, anchor: boolean, data: MapData): HTMLElement {
     return anchor
       ? this.#text("span", ANCHOR_TITLES[id] ?? id, "en", "title")
@@ -428,9 +428,9 @@ export class MapTree {
   }
 
   /**
-   * A state, a mark or a holding: its icon, then its word, which names it (R90 spec). The icon is
+   * A state, a mark or a holding: its icon, then its word, which names it. The icon is
    * hidden from the tree of accessibility and has no title, and it is drawn in the text's colour,
-   * by attributes of SVG alone: no attribute style (R78 spec; R09).
+   * by attributes of SVG alone: no attribute style.
    */
   #status(value: IconValue, words: Words): HTMLElement {
     let icon = this.#icons.get(value);

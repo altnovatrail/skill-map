@@ -1,6 +1,6 @@
-// The English titles of the anchor skills, embedded at build time (R04, R09): from
+// The English titles of the anchor skills, embedded at build time: from
 // shared-taxonomy.schema.json in the format file of a release of spec, which enters the package
-// only through spec's release-verify (R77 spec).
+// only through spec's release-verify.
 //
 //   just taxonomy                      verify the file, pin its digest and write the titles
 //   node scripts/taxonomy.ts --check   fail unless the pinned file gives the titles as written
@@ -23,7 +23,7 @@ import { download } from "./download.ts";
 import { TAR } from "./tar.ts";
 
 /** The release of spec whose format file the titles come from: the tag spec/ stands on. */
-export const RELEASE = { repository: "spec", tag: "v0.19.4", format: "0.4" } as const;
+export const RELEASE = { repository: "spec", tag: "v0.19.11", format: "0.4" } as const;
 /** Where the titles are written. */
 export const TARGET = "src/element/anchor-titles.ts";
 
@@ -58,7 +58,7 @@ export function render(sha256: string, titles: readonly [string, string][]): str
   const rows = titles.map(([id, title]) => `  ${JSON.stringify(id)}: ${JSON.stringify(title)},`);
   return [
     "// Written by scripts/taxonomy.ts from the format file of a release of spec, verified by spec's",
-    "// release-verify and held by its sha256 since: `just taxonomy` writes it anew (R09). Do not",
+    "// release-verify and held by its sha256 since: `just taxonomy` writes it anew. Do not",
     "// edit it by hand: ci-lint checks it against the file.",
     "",
     "/** The format file the titles come from, and its digest. */",
@@ -68,7 +68,7 @@ export function render(sha256: string, titles: readonly [string, string][]): str
     `  sha256: ${JSON.stringify(sha256)},`,
     "} as const;",
     "",
-    "/** The English title of each anchor skill of the shared taxonomy, by ID (R50 spec). */",
+    "/** The English title of each anchor skill of the shared taxonomy, by ID. */",
     "export const ANCHOR_TITLES: Readonly<Record<string, string>> = {",
     ...rows,
     "};",

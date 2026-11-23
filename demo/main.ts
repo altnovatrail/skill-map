@@ -1,4 +1,4 @@
-// The page to try the map on by hand (R12). It gives the element
+// The page to try the map on by hand. It gives the element
 // the graph, the tiers, the manifest and the state the controls choose, and its view, language and
 // level of headings by attributes, as app is to; the theme by the element's custom properties, and
 // the width by its frame. The skills chosen by Practise are listed as skillchoose tells them, with

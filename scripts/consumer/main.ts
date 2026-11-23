@@ -1,5 +1,5 @@
 // What a consumer writes, type-checked by scripts/consumer.ts against the package as npm pack makes
-// it (R09): never built, and never checked by the repository's own programs.
+// it: never built, and never checked by the repository's own programs.
 import "@altnovatrail/skill-map";
 import type { GetSkillMapResponse } from "@altnovatrail/contracts/novatrail/api/v1/progress_pb.js";
 import type {

@@ -1,8 +1,8 @@
 # skill-map decision log
 
-> Why skill-map is built the way it is. Each entry says what was decided, why, what was rejected and where it is described.
+> Why skill-map is built the way it is. Each entry: what was decided, why, what was rejected, and in its tail "— *Consequence:*" the files and sections that a change of it edits (R171 spec).
 >
-> **Rule:** do not re-propose what was rejected without new facts. If a decision has to change, ask the author and rewrite its entry in its place, and every entry the change touches: an entry is its text in force — what was decided, why, what was rejected and where it is described —, git keeps the old text, and the commit says why. An entry that still has dated amendments is rewritten whole, its amendments folded in, when a task touches it (R160 spec).
+> **Rule:** do not re-propose what was rejected without new facts. If a decision has to change, ask the author and rewrite its entry in its place, and every entry the change touches: an entry is its text in force — what was decided, why, what was rejected and what a change of it edits —, git keeps the old text, and the commit says why (R160 spec). No dated amendment is written; those still here wait to be folded into their entries in place (R171 spec), and until then an entry's amendments are part of its text in force.
 >
 > The repository was set up 2026-10-19 from the template of `spec` v0.1.0 (R21 spec); a move to a tag of `spec` is R26. How it comes to differ from the template — tools in the devcontainer, rules in RUN.md — is recorded here as a decision, as R46 canvas-api recorded how it differed from its model. Next number — R27.
 >

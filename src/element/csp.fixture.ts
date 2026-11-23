@@ -1,7 +1,6 @@
 // Runs inside a frame whose Content-Security-Policy allows styles and scripts from its own origin
-// alone, as a strict consumer's would (R36 spec): it draws the
-// map of example/fair-shares, expands a skill so that its lines are drawn (R11), and tells the
-// test what the policy refused, on window.cspResult.
+// alone, as a strict consumer's would: it draws the map of example/fair-shares, expands a skill
+// so that its lines are drawn, and tells the test what the policy refused, on window.cspResult.
 
 // The imports are static: Vitest rewrites a dynamic import() into a call of its runner, which this
 // frame does not have. The element draws nothing until the map is assigned below, after the

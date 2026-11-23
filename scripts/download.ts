@@ -1,6 +1,6 @@
-// A file of a release, downloaded into memory, for the scripts that hold it to a pinned digest
-// (R09, R12). A run of CI meets a failure of the network now and then — a
-// connection refused, a reset, a server's error — and a check main requires should not fail for one:
+// A file of a release, downloaded into memory, for the scripts that hold it to a pinned digest.
+// A run of CI meets a failure of the network now and then — a connection refused, a reset, a
+// server's error — and a check main requires should not fail for one:
 // such a failure is tried again, a few times, after a pause that grows. An answer that will not
 // change, such as 404, is not. The error names what failed, the cause of a failed fetch too, which
 // fetch itself hides behind "fetch failed".

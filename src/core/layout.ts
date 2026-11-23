@@ -1,7 +1,6 @@
 // The layout of the map: which band each skill stands in, its place in the band, the links of an
-// expanded skill, and where the focus goes when its node is gone (R06). The tiers come ready from
-// module-kit through api: the map orders the skills within them and never works a tier out (R49
-// spec, R62 spec).
+// expanded skill, and where the focus goes when its node is gone. The tiers come ready from
+// module-kit through api: the map orders the skills within them and never works one out (R49 spec).
 
 import type { SkillGraph } from "@altnovatrail/spec/formatv0/open";
 
@@ -40,7 +39,7 @@ export interface Place {
 }
 
 /**
- * The bands of a map (R06). The anchor skills come first, only those that skills of the module on
+ * The bands of a map. The anchor skills come first, only those that skills of the module on
  * the map have as prerequisites, each by its ID; without any there is no such band. Then each tier with
  * skills, in order. Tier 1 is ordered by ID; each band after it by the mean of the places of the
  * skill's prerequisites among the module's skills, and by ID where those tie. Anchor skills give
@@ -49,9 +48,9 @@ export interface Place {
  * the expansion moves a tile.
  *
  * A skill of the graph without a tier, as `tiers` gives it, a whole number from 1, stands in no
- * band: the tiers come from the same package as the graph (R99 spec), and the map does not work
+ * band: the tiers come from the same package as the graph, and the map does not work
  * one out. One of a tier past 1 with no prerequisite among the module's skills, which the rule of
- * tiers rules out (R49 spec), goes after those that have, by ID.
+ * tiers rules out, goes after those that have, by ID.
  */
 export function layout(graph: SkillGraph, tiers: Readonly<Record<string, number>>): Layout {
   const prerequisitesOf = (id: string) => graph.skills[id]?.prerequisites ?? [];
@@ -114,7 +113,7 @@ export interface Links {
 }
 
 /**
- * The links of a skill of the module, or of an anchor skill, that is expanded (R06). Its tiles
+ * The links of a skill of the module, or of an anchor skill, that is expanded. Its tiles
  * get the labels: «нужен раньше» on each it builds on, «откроется после» on each it opens. A link
  * goes only to a tile of the map: a skill that stands in no band has none.
  */
@@ -140,7 +139,7 @@ export function linksOf(graph: SkillGraph, map: Layout, id: string): Links {
 
 /**
  * The tile the focus goes to when the node it was on is gone with new data — the tile, or the
- * button «Заниматься» that «ждёт» replaced (R04): the tile of the same skill; without it, the
+ * button «Заниматься» that «ждёт» replaced: the tile of the same skill; without it, the
  * first tile of the band the skill stood in; without that, the first tile of the map. Null when
  * the map has no tile. A band is the same when it is the band of the anchor skills, or the band of
  * the same tier.
