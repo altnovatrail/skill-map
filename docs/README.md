@@ -1,8 +1,8 @@
 # The documents of skill-map
 
-What the [README](../README.md) of the repository leaves out, which says only what the component is and where it stands in NovaTrail (R21 spec). How to build and run the component, and anything else of the kind, is added here as it comes, or in a document of its own that this list names.
+What the [README](../README.md) of the repository leaves out, which says only what the component is and where it stands in NovaTrail. How to build and run the component, and anything else of the kind, is added here as it comes, or in a document of its own that this list names.
 
-- [architecture.md](architecture.md) — the component: what it does and does not do, its data and links, what is still to decide, and how it is built — section 3.7 names how it is checked, released and installed.
+- [architecture.md](architecture.md) — the component: what it does and does not do, its data and links, what is still to decide, and how it is built, checked, released and installed.
 - [decisions.md](decisions.md) — the decision log: what was decided, why, and what was rejected.
 - [sources.md](sources.md) — the records of external facts the documents rest on, each with its source, its date and its quote.
 - [measurements.md](measurements.md) — the measurements: what was measured, how, on what, and the numbers.

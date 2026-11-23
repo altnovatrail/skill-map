@@ -33,7 +33,7 @@ export type Value = MapState | "rubric" | "none" | Holding;
  * `<base>-outline-rounded`: a tile has nothing chosen to fill, and its expansion is aria-expanded.
  * None runs along the line, so none is mirrored right to left. The states and marks stand in
  * spec's table of icons, since app's module card shows them too, so a change of one is a change of
- * spec's table (R78 spec); the holdings are values of skill-map alone.
+ * spec's table; the holdings are values of skill-map alone.
  */
 export const TABLE = {
   review: "update",

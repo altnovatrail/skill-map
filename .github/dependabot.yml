@@ -48,5 +48,5 @@ updates:
       - dependency-name: "@altnovatrail/contracts"
       # The icon set is raised together with canvas and app, only by a row of spec's COORDINATION.md:
       # canvas and skill-map come out with the new version, then app takes both with its own set at
-      # the same version. A branch of that row raises it here with just icons (R10).
+      # the same version. A branch of that row raises it here with just icons.
       - dependency-name: "@iconify-json/material-symbols"

@@ -12,7 +12,7 @@ function rows(bands: readonly Band[]) {
   );
 }
 
-describe("example/fair-shares, as in the table of section 3.4 of docs/architecture.md", () => {
+describe("example/fair-shares, as in the table of the layout in docs/architecture.md", () => {
   const map = layout(GRAPH, TIERS);
 
   test("the bands and the order of their tiles are the table's", () => {

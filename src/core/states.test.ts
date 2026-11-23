@@ -25,7 +25,7 @@ function table(states: ReturnType<typeof mapStates>) {
   }));
 }
 
-describe("example/fair-shares, as in section 3.2 of docs/architecture.md", () => {
+describe("example/fair-shares, as in docs/architecture.md", () => {
   const states = mapStates(GRAPH, SKILL_MAP, NOW);
 
   test("each skill of verdict has its state, and every skill but quarters is open", () => {

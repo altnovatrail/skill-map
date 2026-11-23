@@ -31,10 +31,10 @@ export function headingLevel(attribute: string | null): 2 | 3 | 4 | 5 | 6 {
 /**
  * The language of the map's own words an attribute `lang` names, of the languages the package
  * has: the tag is cut from its end, a subtag at a time, until a language matches, as the lookup of
- * RFC 4647, section 3.4, does; a single letter, `x` or an extension's, goes with what follows it.
+ * RFC 4647 does; a single letter, `x` or an extension's, goes with what follows it.
  * Case does not count. Without the attribute, or with no language of the package in it, null: the
  * map then speaks English. The element reads no ancestor's
- * language (R36 spec).
+ * language, as no package of the interface does.
  */
 export function languageOf(attribute: string | null, known: ReadonlySet<string>): string | null {
   let range = (attribute ?? "").trim().toLowerCase();
