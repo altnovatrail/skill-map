@@ -19,7 +19,7 @@ What spec's restructuring of the documents and the plan changed in the sessions 
 
 - The context of a main call fell from 329.5 to 177.0 thousand, −46%; that of a subagent's call rose from 81.4 to 88.1.
 - The windows differ in work: "before" holds the detailing, the first code and the moves to tags of epics E1–E3, to v0.9.9 and v0.15.0, and the raise of `playwright`; "after" holds the move to v0.16.3 with the restructuring, pull request #37, and the translation of 265 KB of Russian text by seven subagents — five translators and two blind readers —, which make most of its calls of subagents.
-- With 198 main calls the row is below the 300 main calls from which spec's threshold takes a row as a reference, so it is not one: the reference of `skill-map` is its row after in measurements 1.9 spec.
+- With 198 main calls the row is below the 300 main calls from which spec's threshold takes a row as a reference, so it is not one: the reference of `skill-map` is its first later row with at least 300 main calls (measurements 1.9 spec).
 
 ## 2. The speed of CI
 
