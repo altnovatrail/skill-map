@@ -77,6 +77,7 @@ Section 3.7 of [architecture.md](architecture.md); R08.
 - The npm registry, `npm view <package>@<version> license dependencies` and `npm view <package> time`, read 2026-11-18 (R26): `@altnovatrail/spec` 0.18.27, published 2026-11-18T01:20:26Z, and `@altnovatrail/contracts` 0.18.27, published 2026-11-18T01:20:21Z — Apache-2.0; `@altnovatrail/contracts` 0.18.27 still depends on `@bufbuild/protobuf` 2.17.0.
 - The npm registry, `npm view <package>@<version> license dependencies` and `npm view <package> time`, read 2026-11-18 (R26): `@altnovatrail/spec` 0.18.34, published 2026-11-18T10:03:05Z, and `@altnovatrail/contracts` 0.18.34, published 2026-11-18T10:02:57Z — Apache-2.0; `@altnovatrail/contracts` 0.18.34 still depends on `@bufbuild/protobuf` 2.17.0.
 - The npm registry, `npm view <package>@<version> license dependencies` and `npm view <package> time`, read 2026-11-20 (R26): `@altnovatrail/spec` 0.19.4, published 2026-11-20T20:58:01Z, and `@altnovatrail/contracts` 0.19.4, published 2026-11-20T20:58:27Z — Apache-2.0; `@altnovatrail/contracts` 0.19.4 still depends on `@bufbuild/protobuf` 2.17.0.
+- The npm registry, `npm view <package>@<version> license dependencies` and `npm view <package> time`, read 2026-11-23 (R26): `@altnovatrail/spec` 0.19.11, published 2026-11-23T05:40:31Z, and `@altnovatrail/contracts` 0.19.11, published 2026-11-23T05:40:26Z — Apache-2.0; `@altnovatrail/contracts` 0.19.11 still depends on `@bufbuild/protobuf` 2.17.0.
 
 ### 3.3. The demo
 
