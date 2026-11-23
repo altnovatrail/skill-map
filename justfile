@@ -54,10 +54,10 @@ ci-vuln:
 
 # The checks of package-lock.json. First, fail if a package of it, the tools of development too,
 # carries a license that spec's list does not allow and is no exception that licenses.json names.
-# The list, the reading of SPDX expressions and the rule of an exception are
-# spec's, at the tag spec/ is on: an exception off the list holds only for a package the lock file
-# marks dev, and covers the builds for each platform it names in optionalDependencies while they
-# are dev too and under the same license. That reads the lock file, licenses.json and spec/ at its
+# The list, the reading of SPDX expressions and the rule of an exception are spec's, at the tag
+# spec/ is on: an exception off the list holds only for a package the lock file marks dev, and
+# covers the builds for each platform it names in optionalDependencies while they are dev too and
+# under the same license. That reads the lock file, licenses.json and spec/ at its
 # tag, and installs nothing. Then, fail unless each package of @altnovatrail in the lock file is the
 # signed file of its release: spec's release-verify-npm checks the archive at the lock file's
 # resolved address against the release's bundle, by Sigstore's trust root, and the lock file's
@@ -85,7 +85,7 @@ build: _install
 # the archive itself and names it, and the trial consumer takes it as a consumer's TypeScript does,
 # under NodeNext and Bundler: a release a consumer could not build with is no release. npm pack
 # fixes every file's time and order, so a build of the same commit gives the same sums, and the
-# sums are printed for whoever builds it again to compare.
+# sums are printed for whoever builds it again to compare. As canvas's release-files does.
 release-files version: build
     #!/usr/bin/env bash
     set -euo pipefail

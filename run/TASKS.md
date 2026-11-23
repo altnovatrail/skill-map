@@ -49,7 +49,7 @@ Open tasks outside the current epic, each as its body, in Russian (R154 spec, R1
 - **Почему:** последняя часть T42 по её шагу 9 (архив `docs/plan/E3.md`): ключ включает она; R171 spec.
 - **Сделать:**
   1. Шаги 4 и 7 T42 — в этих файлах: запись хранит свою дату и теряет номер задачи, в заголовке тоже; ссылку на поправку записи — на запись.
-  2. `docs-budgets.json` — `"citations": true`, как в `spec/repo-template/files/docs-budgets.json`; то, что ключ найдёт вне этих файлов, — исправить здесь же.
+  2. `docs-budgets.json` — ключ `"citations": true`, как в `spec/repo-template/files/docs-budgets.json`, рядом с `entries`, которые остаются; то, что ключ найдёт вне этих файлов, — исправить здесь же.
   3. Замер «после» — командами `measurements 1.18 spec`, по видам, против «до» T42.
 - **Как проверить:** `docs-check-repo` с ключом — зелёный; `/code-review high`, один круг; в отчёте — ссылок было до T42 и стало, по видам.
 - **Разделы:** R171 spec, R32 spec; тело T42 — архив `docs/plan/E3.md`; `spec/repo-template/files/docs-budgets.json`.

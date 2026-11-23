@@ -1,5 +1,6 @@
 // After npm pack of a release's copy, in just release-files: the archive that goes out is the
-// package at the release's version, the way a consumer takes it.
+// package at the release's version, the way a consumer takes it, as
+// canvas's scripts/release.ts checks its own.
 //
 //   npm pack --json … | node scripts/release.ts <version>
 //

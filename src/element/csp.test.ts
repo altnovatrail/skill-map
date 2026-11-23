@@ -11,7 +11,7 @@ interface Result {
 /**
  * A frame under a strict consumer's policy: styles and scripts from its own origin alone, by
  * 'self'. In Firefox the policy names the origin instead: it takes 'self' of a frame of srcdoc for
- * no origin of the page, and refuses the fixture.
+ * no origin of the page, and refuses the fixture (R25).
  */
 async function strictFrame(): Promise<{ frame: HTMLIFrameElement; result: Result }> {
   const fixture = new URL("./csp.fixture.ts", import.meta.url).href;

@@ -1,7 +1,7 @@
 // The package's second entry point, ./states: the state or mark of each skill of a module, by the
-// rule the map draws by, for app's module card, so that the card and the map never part.
-// It is one function, not the core: it sees neither the DOM nor the element, and
-// importing it registers nothing.
+// rule the map draws by, for app's module card, so that the card and the map never part. It
+// is one function, not the core: it sees neither the DOM nor the element, and importing it
+// registers nothing.
 
 import type { GetSkillMapResponse } from "@altnovatrail/contracts/novatrail/api/v1/progress_pb.js";
 import type { SkillGraph } from "@altnovatrail/spec/formatv0/open";

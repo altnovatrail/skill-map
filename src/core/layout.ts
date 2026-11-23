@@ -1,7 +1,6 @@
 // The layout of the map: which band each skill stands in, its place in the band, the links of an
 // expanded skill, and where the focus goes when its node is gone. The tiers come ready from
-// module-kit through api: the map orders the skills within them and never works a tier out
-// (R49 spec).
+// module-kit through api: the map orders the skills within them and never works one out (R49 spec).
 
 import type { SkillGraph } from "@altnovatrail/spec/formatv0/open";
 

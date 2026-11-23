@@ -1,10 +1,10 @@
 // The element's styles: one constructed sheet, which the shadow root adopts. No <style> and no
-// attribute style in the tree, so that a consumer's CSP lets them through without 'unsafe-inline'
-// (R09).
+// attribute style in the tree, so that a consumer's CSP lets them through without
+// 'unsafe-inline' (R09).
 //
 // The look holds the standard of the packages of the interface, WCAG 2.2 AA with 2.5.5 and 2.3.3.
-// The theme is the consumer's, by three custom properties the shadow tree
-// inherits: --novatrail-skill-map-paper, the map's ground, --novatrail-skill-map-ink, its text,
+// The theme is the consumer's, by three custom properties the shadow tree inherits:
+// --novatrail-skill-map-paper, the map's ground, --novatrail-skill-map-ink, its text,
 // frames and icons, and --novatrail-skill-map-accent, the expanded tile, the frames of the tiles
 // linked to it, the details and the ring of the focus. Their defaults stand in each var(), not in
 // :host: a declaration there would set the property on the host, and a value the page gives the

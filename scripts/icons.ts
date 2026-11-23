@@ -10,7 +10,7 @@
 // written again, fails it. Nothing goes to the network, now or when the element runs: the paths are
 // in the build. The module comes out as Biome formats it, by the Biome package-lock.json pins, so
 // ci-lint's format check passes it as it is. Run from the repository's root, as the recipes run it:
-// the paths it writes are the root's.
+// the paths it writes are the root's. As canvas's scripts/icons.ts does it.
 
 import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
