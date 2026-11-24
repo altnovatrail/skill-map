@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "vitest";
-import { pinned, render, TARGET, titlesOf } from "./taxonomy.ts";
+import { pinned, RELEASE, render, TARGET, titlesOf } from "./taxonomy.ts";
 
 const SHA = "0".repeat(64);
 
@@ -29,7 +29,7 @@ test("a schema without branches, or a branch without a const and a title of stri
 
 test("the source names the release, the file and its digest, and quotes each title", () => {
   const source = render(SHA, [["core.a", 'Say "hi"']]);
-  expect(source).toContain('release: "spec v0.19.12",');
+  expect(source).toContain(`release: "spec ${RELEASE.tag}",`);
   expect(source).toContain('file: "format-0.4.tar.gz",');
   expect(source).toContain(`sha256: "${SHA}",`);
   expect(source).toContain('  "core.a": "Say \\"hi\\"",');
@@ -48,4 +48,9 @@ test("the titles in the package are what render writes for their own digest", ()
     ([, id, title]) => [JSON.parse(id ?? ""), JSON.parse(title ?? "")] as [string, string],
   );
   expect(render(sha ?? "", titles)).toBe(source);
+});
+
+test("the release is the tag of the spec package that package.json names", () => {
+  const manifest = JSON.parse(readFileSync("package.json", "utf8"));
+  expect(RELEASE.tag).toBe(`v${manifest.dependencies["@altnovatrail/spec"]}`);
 });
