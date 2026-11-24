@@ -11,6 +11,7 @@ import {
   URLS,
   vectorOf,
 } from "./demo-data.ts";
+import { RELEASE as FORMAT_RELEASE } from "./taxonomy.ts";
 
 const bytes = (text: string) => new TextEncoder().encode(text);
 
@@ -89,7 +90,7 @@ test("a vector of tiers gives its graph and its tiers, and one without them is r
   );
   expect(vector).toEqual({
     name: "chain",
-    source: "spec v0.19.12, format/vectors/tiers/chain.yaml",
+    source: `spec ${FORMAT_RELEASE.tag}, format/vectors/tiers/chain.yaml`,
     graph: { skills: { a: { title: "A", assessability: "verdict" } } },
     tiers: { a: 1 },
     manifest: null,
