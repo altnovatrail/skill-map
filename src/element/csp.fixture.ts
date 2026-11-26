@@ -34,7 +34,8 @@ await new Promise((resolve) => setTimeout(resolve));
 await new Promise((resolve) => setTimeout(resolve));
 
 const root = map.shadowRoot as ShadowRoot;
-// Quarters, expanded, has two lines: the map draws them in the update its click asks for.
+// Quarters, chosen, has four lines, those of its chain: the map draws them in the update its click
+// asks for.
 const quarters = [...root.querySelectorAll("button")].find((node) =>
   node.textContent?.startsWith("Quarters"),
 );
@@ -46,7 +47,8 @@ const result: Result = {
   violations: [...violations],
   display: getComputedStyle(list).display,
   sheets: root.adoptedStyleSheets.length,
-  inline: root.querySelectorAll("style, [style]").length,
+  // The places the element computes are set through the CSSOM, which the policy does not govern.
+  inline: root.querySelectorAll("style").length,
   lines: root.querySelectorAll(".lines path").length,
 };
 (window as unknown as { cspResult: Result }).cspResult = result;

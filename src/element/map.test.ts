@@ -12,6 +12,8 @@ import { NovatrailSkillMap, type SkillChooseEvent, TAG } from "./index.js";
 import {
   adopt,
   button,
+  chip,
+  chips,
   MANIFEST,
   mount,
   mounted,
@@ -70,7 +72,7 @@ describe("the tree of example/fair-shares on the learner's view", () => {
     expect(shadow().querySelectorAll("h5")).toHaveLength(0);
   });
 
-  test("quarters, expanded, waits for halves, and its prerequisites are marked needed before", async () => {
+  test("quarters, chosen, waits for halves, and its card names what it builds on, each with its state", async () => {
     await mount();
     await userEvent.click(tile("Quarters, Locked"));
     const quarters = button("Quarters, Locked");
@@ -78,12 +80,12 @@ describe("the tree of example/fair-shares on the learner's view", () => {
     const details = shadow().getElementById(quarters.getAttribute("aria-controls") ?? "");
     expect(details?.previousElementSibling).toBe(quarters.parentElement);
     expect(details?.textContent).toContain("Builds on");
-    expect(details?.textContent).toContain("Halves — not mastered yet");
     expect(details?.textContent).toContain("Waits for: Halves");
-    await expect.element(tile("Halves, In progress, needed before")).toBeVisible();
-    await expect
-      .element(tile("Explain how you shared, Feedback by criteria, needed before"))
-      .toBeVisible();
+    expect(chips()).toEqual([
+      "Explain how you shared, Feedback by criteria",
+      "Halves, In progress",
+    ]);
+    await expect.element(chip("Halves, In progress")).toBeVisible();
     expect(page.getByRole("button", { name: "Practise" }).query()).toBeNull();
   });
 
@@ -92,8 +94,7 @@ describe("the tree of example/fair-shares on the learner's view", () => {
     const chosen: SkillChooseEvent[] = [];
     document.addEventListener("skillchoose", (event) => chosen.push(event), { once: true });
     await userEvent.click(tile("Share with a remainder, Ready to start"));
-    await expect.element(tile("Multiplication table, Held, needed before")).toBeVisible();
-    await expect.element(tile("Equal groups, Time to review, needed before")).toBeVisible();
+    expect(chips()).toEqual(["Multiplication table, Held", "Equal groups, Time to review"]);
     await userEvent.click(page.getByRole("button", { name: "Practise" }));
     expect(chosen).toHaveLength(1);
     const [event] = chosen;
@@ -104,23 +105,52 @@ describe("the tree of example/fair-shares on the learner's view", () => {
     expect(event?.target).toBe(mounted());
   });
 
-  test("Enter expands, the focus stays on the tile, and Tab goes to Practise, then to the next tile", async () => {
+  test("Enter chooses, the focus stays on the tile, and Tab goes to Practise, the chips, Close, then the next tile", async () => {
     await mount();
     button("Count objects, Mastered").focus();
     await userEvent.keyboard("{Enter}");
     expect(shadow().activeElement?.textContent).toBe("Count objects, Mastered");
     expect(button("Count objects, Mastered").getAttribute("aria-expanded")).toBe("true");
-    for (const name of [
-      "Equal groups, Time to review, opens after",
-      "Explain how you shared, Feedback by criteria, opens after",
-      "Halves, In progress, opens after",
-    ]) {
-      await expect.element(tile(name)).toBeVisible();
+    const opens = [
+      "Equal groups, Time to review",
+      "Explain how you shared, Feedback by criteria",
+      "Halves, In progress",
+    ];
+    expect(chips()).toEqual(opens);
+    for (const name of ["Practise", ...opens]) {
+      await userEvent.keyboard("{Tab}");
+      expect(shadow().activeElement?.textContent).toBe(name);
     }
     await userEvent.keyboard("{Tab}");
-    expect(shadow().activeElement?.textContent).toBe("Practise");
+    expect(shadow().activeElement?.getAttribute("aria-label")).toBe("Close");
     await userEvent.keyboard("{Tab}");
     expect(shadow().activeElement?.textContent).toBe("Draw shares, Not assessed");
+  });
+
+  test("the card at the bottom of the window hides neither the chosen tile nor a tile the focus goes to", async () => {
+    // A short window, so that the card covers the last tiles.
+    await page.viewport(414, 600);
+    try {
+      await mount();
+      await userEvent.click(tile("Count objects, Mastered"));
+      const card = () =>
+        (shadow().getElementById("details") as HTMLElement).getBoundingClientRect();
+      expect(button("Count objects, Mastered").getBoundingClientRect().bottom).toBeLessThanOrEqual(
+        card().top,
+      );
+      expect(button("Quarters, Locked").getBoundingClientRect().top).toBeGreaterThan(card().top);
+      for (
+        let tab = 0;
+        tab < 20 && shadow().activeElement?.textContent !== "Quarters, Locked";
+        tab++
+      )
+        await userEvent.keyboard("{Tab}");
+      const quarters = button("Quarters, Locked");
+      expect(shadow().activeElement).toBe(quarters);
+      expect(quarters.getBoundingClientRect().bottom).toBeLessThanOrEqual(card().top);
+    } finally {
+      await page.viewport(414, 896);
+    }
   });
 
   test("Space expands too, and pressing again closes", async () => {
@@ -139,7 +169,7 @@ describe("the tree of example/fair-shares on the learner's view", () => {
     await userEvent.click(tile("Halves, In progress"));
     await userEvent.click(tile("Draw shares, Not assessed"));
     expect(button("Halves, In progress").getAttribute("aria-expanded")).toBe("false");
-    expect(shadow().querySelectorAll(".details")).toHaveLength(1);
+    expect(shadow().querySelectorAll(".card")).toHaveLength(1);
   });
 
   test("an anchor skill expands to its holding and the skills that need it, with no Practise", async () => {
@@ -149,7 +179,7 @@ describe("the tree of example/fair-shares on the learner's view", () => {
     expect(details?.textContent).toContain("Needed by");
     expect(details?.textContent).toContain("Share with a remainder");
     expect(page.getByRole("button", { name: "Practise" }).query()).toBeNull();
-    await expect.element(tile("Share with a remainder, Ready to start, opens after")).toBeVisible();
+    expect(chips()).toEqual(["Share with a remainder, Ready to start"]);
   });
 
   test("a skill's details have its description, in the explanation language", async () => {
@@ -290,8 +320,8 @@ describe("the views", () => {
     expect(text).toContain("Mastery band: Starter");
     expect(text).toContain("Review on Nov 20, 2026");
     expect(page.getByRole("button", { name: "Practise" }).query()).toBeNull();
-    // Count objects is expanded: Equal groups, which it opens, says so.
-    await userEvent.click(tile("Equal groups, Time to review, opens after"));
+    // Count objects is chosen: a chip of its card chooses Equal groups, which it opens.
+    await userEvent.click(chip("Equal groups, Time to review"));
     expect(shadow().getElementById("details")?.textContent).toContain("Time to review");
     await userEvent.click(tile("Quarters, Locked"));
     expect(shadow().getElementById("details")?.textContent).toContain("0 answers");
@@ -326,7 +356,7 @@ describe("the views", () => {
     expect(text).toContain("Mastery band: b9");
     await userEvent.click(tile("Multiplication table, Unknown"));
     expect(shadow().getElementById("details")?.textContent).toContain(
-      "Unknown — no module teaches it",
+      "UnknownNo module teaches it",
     );
   });
 

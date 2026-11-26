@@ -1,6 +1,6 @@
 // What the element's tests share: the manifest of example/fair-shares, a map mounted on the page
-// with its data, the tiles found by their role and name, and the device's time held at the
-// fixture's NOW. useMap registers the hooks that hold the time and take the map off after a test.
+// with its data, the tiles and the card's chips found by their role and name, and the device's time
+// held at the fixture's NOW. useMap registers the hooks that hold the time and take the map off after a test.
 
 import { afterEach, beforeEach, vi } from "vitest";
 import { page } from "vitest/browser";
@@ -55,8 +55,22 @@ export function mounted(): NovatrailSkillMap {
   return map;
 }
 
-export const tile = (name: string) => page.getByRole("button", { name, exact: true });
+/** The button of the class given with the accessible name given: a tile and a chip may share it. */
+function named(kind: "tile" | "chip", name: string) {
+  const found = page
+    .getByRole("button", { name, exact: true })
+    .elements()
+    .find((node) => node.classList.contains(kind));
+  if (found === undefined) throw new Error(`no ${kind} is named «${name}»`);
+  return page.elementLocator(found);
+}
+
+export const tile = (name: string) => named("tile", name);
+export const chip = (name: string) => named("chip", name);
 export const button = (name: string) => tile(name).element() as HTMLButtonElement;
+/** The names of the chips of the card, in its order. */
+export const chips = () =>
+  [...(mounted().shadowRoot?.querySelectorAll(".chip") ?? [])].map((node) => node.textContent);
 export const shadow = () => mounted().shadowRoot as ShadowRoot;
 
 /** The hooks of a file of the element's tests: the time held at NOW, and the map taken off. */

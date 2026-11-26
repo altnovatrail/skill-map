@@ -27,13 +27,14 @@ test("each phrase of every language has the places English has, and a form other
   for (const words of WORDS.values()) {
     for (const [key, text] of phrases(words)) {
       // A form of a phrase with a number has the places of English's other.
-      const base = key.replace(/^(\.evidence)\.[a-z]+$/, "$1.other");
+      const base = key.replace(/^(\.evidence|\.tierCount)\.[a-z]+$/, "$1.other");
       expect(places(text), `${words.lang}${key}`).toEqual(places(english.get(base) ?? ""));
     }
     for (const key of english.keys()) {
-      if (!key.startsWith(".evidence.")) expect(phrases(words).has(key), key).toBe(true);
+      if (!/^\.(evidence|tierCount)\./.test(key)) expect(phrases(words).has(key), key).toBe(true);
     }
     expect(words.evidence.other).toBeDefined();
+    expect(words.tierCount.other).toBeDefined();
   }
 });
 
