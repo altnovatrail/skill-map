@@ -1,7 +1,7 @@
 import type { SkillGraph } from "@altnovatrail/spec/formatv0/open";
 import { describe, expect, test } from "vitest";
 import { GRAPH, TIERS } from "./fair-shares.fixture.js";
-import { type Band, focusAfter, layout, linksOf } from "./layout.js";
+import { allLinks, type Band, chainOf, focusAfter, layout, linksOf } from "./layout.js";
 
 /** Each band's heading, as the core gives it, and its tiles in order. */
 function rows(bands: readonly Band[]) {
@@ -67,6 +67,35 @@ describe("example/fair-shares, as in the table of the layout in docs/architectur
       opens: ["share-with-remainder"],
       teaches: [],
     });
+  });
+
+  test("every link of the map runs from a prerequisite on it into a skill of a tier, in the order of the tiles", () => {
+    expect(allLinks(GRAPH, map).map(({ from, to }) => `${from} → ${to}`)).toEqual([
+      "count-objects → equal-groups",
+      "count-objects → explain-sharing",
+      "count-objects → halves",
+      // The anchor skill's band comes first.
+      "core.multiplication-table → share-with-remainder",
+      "equal-groups → share-with-remainder",
+      "explain-sharing → quarters",
+      "halves → quarters",
+    ]);
+  });
+
+  test("a skill's chain is the skill, all it builds on and all that builds on it, not its neighbours'", () => {
+    expect([...chainOf(GRAPH, map, "halves")].sort()).toEqual([
+      "count-objects",
+      "halves",
+      "quarters",
+    ]);
+    expect([...chainOf(GRAPH, map, "share-with-remainder")].sort()).toEqual([
+      "core.multiplication-table",
+      "count-objects",
+      "equal-groups",
+      "share-with-remainder",
+    ]);
+    expect([...chainOf(GRAPH, map, "draw-shares")]).toEqual(["draw-shares"]);
+    expect(chainOf(GRAPH, map, "core.fractions-of-a-whole").size).toBe(0);
   });
 
   test("neither the order of the skills in the graph nor anything but the graph and tiers moves a tile", () => {

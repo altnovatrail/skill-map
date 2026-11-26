@@ -137,6 +137,56 @@ export function linksOf(graph: SkillGraph, map: Layout, id: string): Links {
   };
 }
 
+/** A link of the map: a prerequisite on the map, a skill or an anchor skill, and the skill that needs it. */
+export interface Link {
+  readonly from: string;
+  readonly to: string;
+}
+
+/**
+ * Every link of the map, each between two tiles: from each prerequisite of a skill of the module
+ * on the map to that skill. In the order of the layout, by the skill, then by its prerequisite.
+ */
+export function allLinks(graph: SkillGraph, map: Layout): Link[] {
+  const order = (a: string, b: string) => {
+    const [p, q] = [map.places.get(a) as Place, map.places.get(b) as Place];
+    return p.band - q.band || p.index - q.index;
+  };
+  return map.bands
+    .filter((band) => band.kind === "tier")
+    .flatMap((band) => band.skills)
+    .flatMap((to) =>
+      [...new Set(graph.skills[to]?.prerequisites ?? [])]
+        .filter((from) => map.places.has(from))
+        .sort(order)
+        .map((from) => ({ from, to })),
+    );
+}
+
+/**
+ * The chain of a skill on the map: the skill, every skill it builds on, however far down, and
+ * every skill that builds on it, however far up. A skill or an anchor skill that is not on the
+ * map has an empty chain.
+ */
+export function chainOf(graph: SkillGraph, map: Layout, id: string): ReadonlySet<string> {
+  if (!map.places.has(id)) return new Set();
+  const links = allLinks(graph, map);
+  /** Every skill reached from the start by links, each step from one end of a link to its other. */
+  const reach = (start: string, near: keyof Link, far: keyof Link) => {
+    const seen = new Set<string>();
+    const queue = [start];
+    for (let at = queue.shift(); at !== undefined; at = queue.shift()) {
+      for (const link of links) {
+        if (link[near] !== at || seen.has(link[far])) continue;
+        seen.add(link[far]);
+        queue.push(link[far]);
+      }
+    }
+    return seen;
+  };
+  return new Set([id, ...reach(id, "to", "from"), ...reach(id, "from", "to")]);
+}
+
 /**
  * The tile the focus goes to when the node it was on is gone with new data — the tile, or the
  * button «Заниматься» that «ждёт» replaced: the tile of the same skill; without it, the

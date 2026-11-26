@@ -31,16 +31,19 @@ export interface Words {
   readonly marks: Readonly<Record<"rubric" | "none", string>>;
   readonly holdings: Readonly<Record<Holding, string>>;
   readonly reasons: Readonly<Record<Reason, string>>;
-  /** The labels of the tiles linked to the expanded one. */
-  readonly neededBefore: string;
-  readonly opensAfter: string;
-  /** The parts of the details. */
+  /** The name of the legend: each value a tile shows, with how many show it. */
+  readonly legend: string;
+  /** How many of a tier's skills are mastered, with {mastered} and {count}. */
+  readonly tierProgress: string;
+  /** How many skills a tier has, in {count}, when none of them has a state. */
+  readonly tierCount: Plural;
+  /** The button that closes the chosen skill's card. */
+  readonly close: string;
+  /** The parts of the card. */
   readonly buildsOn: string;
   readonly opens: string;
   readonly teaches: string;
   readonly neededBy: string;
-  /** A prerequisite of a locked skill, with {skill}. */
-  readonly notMastered: string;
   /** An anchor skill's holding with its reason, with {holding} and {reason}. */
   readonly holdingReason: string;
   /** An anchor skill a skill teaches, with {skill} and {holding}. */
@@ -82,13 +85,14 @@ const EN: Words = {
     "nobody-teaches": "no module teaches it",
     "only-unassessable": "only skills without a verdict teach it",
   },
-  neededBefore: "needed before",
-  opensAfter: "opens after",
+  legend: "What the marks mean",
+  tierProgress: "{mastered} of {count} mastered",
+  tierCount: { one: "{count} skill", other: "{count} skills" },
+  close: "Close",
   buildsOn: "Builds on",
   opens: "Opens",
   teaches: "Teaches",
   neededBy: "Needed by",
-  notMastered: "{skill} — not mastered yet",
   holdingReason: "{holding} — {reason}",
   taught: "{skill} — {holding}",
   practise: "Practise",
@@ -121,13 +125,19 @@ const RU: Words = {
     "nobody-teaches": "ему не учит ни один модуль",
     "only-unassessable": "ему учат только навыки без вердикта",
   },
-  neededBefore: "нужен раньше",
-  opensAfter: "откроется после",
+  legend: "Что значат отметки",
+  tierProgress: "Освоено {mastered} из {count}",
+  tierCount: {
+    one: "{count} навык",
+    few: "{count} навыка",
+    many: "{count} навыков",
+    other: "{count} навыка",
+  },
+  close: "Закрыть",
   buildsOn: "Опирается на",
   opens: "Открывает",
   teaches: "Учит",
   neededBy: "Нужен для",
-  notMastered: "{skill} — ещё не освоен",
   holdingReason: "{holding} — {reason}",
   taught: "{skill} — {holding}",
   practise: "Заниматься",

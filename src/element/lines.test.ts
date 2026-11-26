@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { userEvent } from "vitest/browser";
+import { page, userEvent } from "vitest/browser";
 import { GRAPH, SKILL_MAP, TIERS } from "../core/fair-shares.fixture.js";
 import { TAG } from "./index.js";
 import {
@@ -14,9 +14,11 @@ import {
   useMap,
 } from "./map.fixture.js";
 
-// The expanded skill's lines: from the tiles it builds on into its
-// tile's top edge, and out of its details' bottom edge into the tiles it opens, each a curve with a
-// point at both ends, under the bands; drawn anew when the sizes change.
+// The map's lines. With the tiers as columns, every link has its line, under the tiles, from a
+// prerequisite's right side into the skill's left side; an anchor skill's runs down the gap before
+// the skill's column. With the tiers as bands only the chosen skill's chain has lines, down from a
+// tile's bottom into the next one's top. A chosen skill's chain is drawn again over the dimmed
+// tiles, in the accent. Drawn anew when the sizes change.
 
 useMap();
 
@@ -27,25 +29,28 @@ const frames = () =>
 interface Drawn {
   readonly from: string;
   readonly to: string;
+  readonly kind: string;
   readonly start: { x: number; y: number };
   readonly end: { x: number; y: number };
 }
 
-/** The lines the map draws, by the ends' points. */
-function lines(): Drawn[] {
-  return [...shadow().querySelectorAll(".lines g")].map((group) => {
-    const [start, end] = [...group.querySelectorAll("circle")].map((point) => ({
-      x: Number(point.getAttribute("cx")),
-      y: Number(point.getAttribute("cy")),
-    }));
+/** The lines of one layer, by the ends of their paths: the first point and the last. */
+function lines(layer: "under" | "over"): Drawn[] {
+  return [...shadow().querySelectorAll(`.lines.${layer} path`)].map((path) => {
+    const numbers = (path.getAttribute("d")?.match(/-?[\d.]+/g) ?? []).map(Number);
+    const [sx = Number.NaN, sy = Number.NaN] = numbers;
+    const [ex = Number.NaN, ey = Number.NaN] = numbers.slice(-2);
     return {
-      from: group.getAttribute("data-from") ?? "",
-      to: group.getAttribute("data-to") ?? "",
-      start: start as Drawn["start"],
-      end: end as Drawn["end"],
+      from: path.getAttribute("data-from") ?? "",
+      to: path.getAttribute("data-to") ?? "",
+      kind: path.getAttribute("class") ?? "",
+      start: { x: sx, y: sy },
+      end: { x: ex, y: ey },
     };
   });
 }
+
+const links = (drawn: readonly Drawn[]) => drawn.map(({ from, to }) => `${from} → ${to}`);
 
 /** A node's box in the map's own coordinates. */
 function boxOf(node: Element) {
@@ -59,131 +64,196 @@ function boxOf(node: Element) {
   };
 }
 
-const details = () => shadow().getElementById("details") as HTMLElement;
-
-/** The tile of a skill, by its ID, found by its button in the tree. */
-const tileOf = (name: string) => button(name);
-
-/** A line comes from the middle of a box's bottom edge. */
-function fromBottom(line: Drawn | undefined, node: Element): void {
+/** A line comes from the middle of a box's bottom edge, or of its right side. */
+function from(line: Drawn | undefined, node: Element, side: "bottom" | "right"): void {
   const box = boxOf(node);
-  expect(line?.start.x).toBeCloseTo((box.left + box.right) / 2, 0);
-  expect(line?.start.y).toBeCloseTo(box.bottom, 0);
-}
-
-/** A line comes into a box's top edge, within its width. */
-function intoTop(line: Drawn | undefined, node: Element): void {
-  const box = boxOf(node);
-  expect(line?.end.y).toBeCloseTo(box.top, 0);
-  expect(line?.end.x).toBeGreaterThan(box.left);
-  expect(line?.end.x).toBeLessThan(box.right);
-}
-
-test("quarters, expanded, has a line from halves and one from explain-sharing into its top edge", async () => {
-  await mount();
-  await userEvent.click(tile("Quarters, Locked"));
-  const drawn = lines();
-  expect(drawn.map(({ from, to }) => `${from} → ${to}`)).toEqual([
-    "explain-sharing → quarters",
-    "halves → quarters",
-  ]);
-  const quarters = tileOf("Quarters, Locked");
-  fromBottom(drawn[0], tileOf("Explain how you shared, Feedback by criteria, needed before"));
-  fromBottom(drawn[1], tileOf("Halves, In progress, needed before"));
-  for (const line of drawn) intoTop(line, quarters);
-  // Two ends on one edge are spread across it, left to right as the lines' other ends are.
-  const [one, two] = drawn as [Drawn, Drawn];
-  expect(one.end.x).not.toBe(two.end.x);
-  expect(one.start.x < two.start.x).toBe(one.end.x < two.end.x);
-});
-
-test("share-with-remainder has a line from equal-groups and one from the anchor skill's band", async () => {
-  await mount();
-  await userEvent.click(tile("Share with a remainder, Ready to start"));
-  const drawn = lines();
-  expect(drawn.map(({ from }) => from)).toEqual(["core.multiplication-table", "equal-groups"]);
-  fromBottom(drawn[0], tileOf("Multiplication table, Held, needed before"));
-  fromBottom(drawn[1], tileOf("Equal groups, Time to review, needed before"));
-});
-
-test("count-objects has lines out of its details' bottom edge into the three tiles it opens", async () => {
-  await mount();
-  await userEvent.click(tile("Count objects, Mastered"));
-  const drawn = lines();
-  expect(drawn.map(({ to }) => to)).toEqual(["equal-groups", "explain-sharing", "halves"]);
-  const below = boxOf(details());
-  const own = boxOf(tileOf("Count objects, Mastered"));
-  for (const line of drawn) {
-    expect(line.start.y).toBeCloseTo(below.bottom, 0);
-    expect(line.start.x).toBeGreaterThan(own.left);
-    expect(line.start.x).toBeLessThan(own.right);
+  if (side === "bottom") {
+    expect(line?.start.x).toBeCloseTo((box.left + box.right) / 2, 0);
+    expect(line?.start.y).toBeCloseTo(box.bottom, 0);
+  } else {
+    expect(line?.start.x).toBeCloseTo(box.right, 0);
+    expect(line?.start.y).toBeCloseTo((box.top + box.bottom) / 2, 0);
   }
-  intoTop(drawn[0], tileOf("Equal groups, Time to review, opens after"));
-  intoTop(drawn[2], tileOf("Halves, In progress, opens after"));
-});
+}
 
-test("an expanded anchor skill has a line to the skill that needs it; closing takes the lines off", async () => {
-  await mount();
-  await userEvent.click(tile("Multiplication table, Held"));
-  expect(lines().map(({ from, to }) => `${from} → ${to}`)).toEqual([
-    "core.multiplication-table → share-with-remainder",
-  ]);
-  await userEvent.click(tile("Multiplication table, Held"));
-  expect(lines()).toEqual([]);
-});
+/** A line comes into the middle of a box's top edge, or of its left side. */
+function into(line: Drawn | undefined, node: Element, side: "top" | "left"): void {
+  const box = boxOf(node);
+  if (side === "top") {
+    expect(line?.end.x).toBeCloseTo((box.left + box.right) / 2, 0);
+    expect(line?.end.y).toBeCloseTo(box.top, 0);
+  } else {
+    expect(line?.end.x).toBeCloseTo(box.left, 0);
+    expect(line?.end.y).toBeCloseTo((box.top + box.bottom) / 2, 0);
+  }
+}
 
-test("each line is a path with a point at both ends, by SVG's attributes alone, hidden from the tree of accessibility", async () => {
-  await mount();
-  await userEvent.click(tile("Quarters, Locked"));
-  const svg = shadow().querySelector("svg.lines") as SVGSVGElement;
-  expect(svg.getAttribute("aria-hidden")).toBe("true");
-  expect(svg.querySelectorAll("path")).toHaveLength(2);
-  expect(svg.querySelectorAll("circle")).toHaveLength(4);
-  for (const node of [svg, ...svg.querySelectorAll("*")])
-    expect(node.hasAttribute("style")).toBe(false);
-  expect(svg.querySelector("path")?.getAttribute("d")).toMatch(/^M[\d.]+ [\d.]+C/);
-  // The lines lie under the bands: a tile is drawn over them. The probe is a line's end, 2 px under
-  // the tile's top edge, where its point and the tile overlap, clear of the tile's rounded corner,
-  // which Firefox does not hit. The SVG takes no pointer, so for the probe alone it is made to: were
-  // it over the tile, the point would be hit.
-  const quarters = tileOf("Quarters, Locked");
-  const origin = (shadow().querySelector(".map") as Element).getBoundingClientRect();
-  const { end } = lines()[0] as Drawn;
-  svg.style.pointerEvents = "auto";
-  const hit = shadow().elementFromPoint(origin.left + end.x, origin.top + end.y + 2);
-  svg.removeAttribute("style");
-  expect(hit?.closest("button")).toBe(quarters);
-});
-
-test("a narrower map draws the lines anew to where the tiles now stand", async () => {
+/** A map in a frame wide enough for its three tiers to stand as columns, the test given it. */
+async function inColumns(test: (frame: HTMLElement) => Promise<void>): Promise<void> {
   const frame = document.createElement("div");
   frame.style.width = "900px";
   document.body.append(frame);
   try {
     await mount({ view: "learner" }, undefined, frame);
-    await userEvent.click(tile("Count objects, Mastered"));
     await frames();
-    const wide = lines();
-    frame.style.width = "320px";
-    await frames();
-    const narrow = lines();
-    expect(narrow.map(({ to }) => to)).toEqual(wide.map(({ to }) => to));
-    expect(narrow).not.toEqual(wide);
-    intoTop(narrow[2], tileOf("Halves, In progress, opens after"));
-    expect(narrow[0]?.start.y).toBeCloseTo(boxOf(details()).bottom, 0);
+    await test(frame);
   } finally {
     mounted().remove();
     frame.remove();
   }
+}
+
+const CHAIN = [
+  "count-objects → explain-sharing",
+  "count-objects → halves",
+  "explain-sharing → quarters",
+  "halves → quarters",
+];
+
+test("with the tiers as bands, only the chosen skill's chain has lines, each down from one tile into the next", async () => {
+  await mount();
+  expect(shadow().querySelector(".map")?.classList.contains("columns")).toBe(false);
+  expect(lines("under")).toEqual([]);
+  expect(lines("over")).toEqual([]);
+  await userEvent.click(tile("Quarters, Locked"));
+  const drawn = lines("over");
+  expect(links(drawn)).toEqual(CHAIN);
+  expect(lines("under")).toEqual([]);
+  from(drawn[2], button("Explain how you shared, Feedback by criteria"), "bottom");
+  into(drawn[3], button("Quarters, Locked"), "top");
+  await userEvent.click(page.getByRole("button", { name: "Close" }));
+  expect(lines("over")).toEqual([]);
 });
 
-test("a new language draws the lines to the tiles' new widths", async () => {
+test("with the tiers as columns, every link has its line, green from a prerequisite mastered or held", async () => {
+  await inColumns(async () => {
+    expect(shadow().querySelector(".map")?.classList.contains("columns")).toBe(true);
+    const drawn = lines("under");
+    expect(drawn.map(({ from, to, kind }) => `${from} → ${to} ${kind}`.trim())).toEqual([
+      "count-objects → equal-groups walked",
+      "count-objects → explain-sharing walked",
+      "count-objects → halves walked",
+      "core.multiplication-table → share-with-remainder walked",
+      "equal-groups → share-with-remainder walked",
+      "explain-sharing → quarters",
+      "halves → quarters",
+    ]);
+    expect(lines("over")).toEqual([]);
+    from(drawn[0], button("Count objects, Mastered"), "right");
+    into(drawn[0], button("Equal groups, Time to review"), "left");
+    // The anchor skill's line: down from its tile, and into the side of the skill's.
+    from(drawn[3], button("Multiplication table, Held"), "bottom");
+    into(drawn[3], button("Share with a remainder, Ready to start"), "left");
+  });
+});
+
+test("with the tiers as columns, a tile stands level with the skills it builds on, where its column lets it", async () => {
+  await inColumns(async () => {
+    const middle = (name: string) => {
+      const { top, bottom } = boxOf(button(name));
+      return (top + bottom) / 2;
+    };
+    const tops = ["Count objects, Mastered", "Equal groups, Time to review"].map(
+      (name) => boxOf(button(name)).top,
+    );
+    expect(tops[1]).toBeCloseTo(tops[0] ?? 0, 0);
+    expect(middle("Quarters, Locked")).toBeCloseTo(
+      (middle("Halves, In progress") + middle("Explain how you shared, Feedback by criteria")) / 2,
+      0,
+    );
+  });
+});
+
+test("a chosen skill's chain is drawn again over the dimmed tiles, and the rest stays under", async () => {
+  await inColumns(async () => {
+    await userEvent.click(tile("Quarters, Locked"));
+    expect(links(lines("over"))).toEqual(CHAIN);
+    expect(links(lines("under"))).toEqual([
+      "count-objects → equal-groups",
+      "core.multiplication-table → share-with-remainder",
+      "equal-groups → share-with-remainder",
+    ]);
+    const over = shadow().querySelector(".lines.over") as Element;
+    expect(getComputedStyle(over).zIndex).toBe("1");
+    expect(getComputedStyle(button("Draw shares, Not assessed")).zIndex).toBe("auto");
+    expect(getComputedStyle(button("Halves, In progress")).zIndex).toBe("2");
+  });
+});
+
+test("the lines are paths, by SVG's attributes alone, hidden from the tree of accessibility", async () => {
+  await inColumns(async () => {
+    await userEvent.click(tile("Quarters, Locked"));
+    const svgs = [...shadow().querySelectorAll("svg.lines")];
+    expect(svgs).toHaveLength(2);
+    for (const svg of svgs) {
+      expect(svg.getAttribute("aria-hidden")).toBe("true");
+      for (const node of [svg, ...svg.querySelectorAll("*")]) {
+        expect(node.hasAttribute("style")).toBe(false);
+        expect(node.tagName.toLowerCase()).toMatch(/^(svg|path)$/);
+      }
+      expect(svg.querySelector("path")?.getAttribute("d")).toMatch(/^M[\d.]+ [\d.]+C/);
+    }
+    // The lines lie under the tiles: the probe is a line's end, 2 px inside the tile's side. The
+    // SVG takes no pointer, so for the probe alone it is made to: were it over the tile, it would
+    // be hit.
+    const quarters = button("Quarters, Locked");
+    const origin = (shadow().querySelector(".map") as Element).getBoundingClientRect();
+    const svg = shadow().querySelector("svg.lines.over") as SVGSVGElement;
+    const { end } = lines("over")[3] as Drawn;
+    svg.style.pointerEvents = "auto";
+    const hit = shadow().elementFromPoint(origin.left + end.x + 2, origin.top + end.y);
+    svg.removeAttribute("style");
+    expect(hit?.closest("button")).toBe(quarters);
+  });
+});
+
+test("one tier stands as a column where two would fit, no wider than 30 rem, and as a band narrower", async () => {
+  await inColumns(async (frame) => {
+    mounted().tiers = Object.fromEntries(Object.keys(TIERS).map((id) => [id, 1]));
+    await frames();
+    const map = shadow().querySelector(".map");
+    expect(map?.classList.contains("columns")).toBe(true);
+    const list = shadow().querySelector(".tiers.single .band > ul");
+    expect(list?.getBoundingClientRect().width).toBeLessThanOrEqual(30 * 16);
+    const widths = [...shadow().querySelectorAll(".tiers .tile")].map(
+      (t) => t.getBoundingClientRect().width,
+    );
+    expect(new Set(widths).size).toBe(1);
+    // Its card is as wide as the map, not the window.
+    await userEvent.click(tile("Halves, In progress"));
+    await frames();
+    const card = shadow().querySelector(".card")?.getBoundingClientRect();
+    const box = frame.getBoundingClientRect();
+    expect(card?.left).toBeGreaterThanOrEqual(box.left);
+    expect(card?.right).toBeLessThanOrEqual(box.right + 1);
+    frame.style.width = "380px";
+    await frames();
+    expect(map?.classList.contains("columns")).toBe(false);
+  });
+});
+
+test("a narrower map stands its tiers as bands and draws the lines anew", async () => {
+  await inColumns(async (frame) => {
+    await userEvent.click(tile("Quarters, Locked"));
+    const wide = lines("over");
+    frame.style.width = "320px";
+    await frames();
+    expect(shadow().querySelector(".map")?.classList.contains("columns")).toBe(false);
+    const narrow = lines("over");
+    expect(links(narrow)).toEqual(links(wide));
+    expect(narrow).not.toEqual(wide);
+    into(narrow[3], button("Quarters, Locked"), "top");
+    expect(lines("under")).toEqual([]);
+  });
+});
+
+test("a new language draws the lines to the tiles' new places", async () => {
   await mount();
   await userEvent.click(tile("Quarters, Locked"));
   mounted().setAttribute("lang", "ru");
   await settled();
-  intoTop(lines()[1], button("Quarters, Ещё закрыт"));
-  fromBottom(lines()[1], button("Halves, В работе, нужен раньше"));
+  into(lines("over")[3], button("Quarters, Ещё закрыт"), "top");
+  from(lines("over")[3], button("Halves, В работе"), "bottom");
 });
 
 test("a map taken off the page and put back draws its lines where the tiles are", async () => {
@@ -192,8 +262,8 @@ test("a map taken off the page and put back draws its lines where the tiles are"
   map.remove();
   document.body.prepend(map);
   await frames();
-  intoTop(lines()[0], tileOf("Quarters, Locked"));
-  fromBottom(lines()[1], tileOf("Halves, In progress, needed before"));
+  into(lines("over")[2], button("Quarters, Locked"), "top");
+  from(lines("over")[3], button("Halves, In progress"), "bottom");
 });
 
 /** The relative luminance of a computed colour, as WCAG 2.2 defines it. */
@@ -205,20 +275,18 @@ function luminance(colour: string): number {
   return 0.2126 * (r ?? 0) + 0.7152 * (g ?? 0) + 0.0722 * (b ?? 0);
 }
 
-test("a line and its points are 3:1 at least against the map's ground, and nothing moves", async () => {
+test("a line of the chain is 3:1 at least against the map's ground, and nothing moves", async () => {
   await mount();
   await userEvent.click(tile("Quarters, Locked"));
   const ground = luminance(
     getComputedStyle(shadow().querySelector(".map") as Element).backgroundColor,
   );
-  const path = shadow().querySelector(".lines path") as Element;
-  const point = shadow().querySelector(".lines circle") as Element;
-  for (const colour of [getComputedStyle(path).stroke, getComputedStyle(point).fill]) {
-    const line = luminance(colour);
-    const ratio = (Math.max(line, ground) + 0.05) / (Math.min(line, ground) + 0.05);
-    expect(ratio).toBeGreaterThanOrEqual(3);
-  }
-  expect(getComputedStyle(path).strokeWidth).toBe("2px");
+  const path = shadow().querySelector(".lines.over path") as Element;
+  const line = luminance(getComputedStyle(path).stroke);
+  expect((Math.max(line, ground) + 0.05) / (Math.min(line, ground) + 0.05)).toBeGreaterThanOrEqual(
+    3,
+  );
+  expect(getComputedStyle(path).strokeWidth).toBe("2.4px");
   expect(shadow().getAnimations()).toEqual([]);
 });
 
@@ -232,11 +300,11 @@ test("a map drawn before it is on a page draws its lines once it is", async () =
   await settled();
   document.body.append(map);
   await userEvent.click(tile("Quarters, Locked"));
-  expect(lines().map(({ from }) => from)).toEqual(["explain-sharing", "halves"]);
-  intoTop(lines()[0], tileOf("Quarters, Locked"));
+  expect(links(lines("over"))).toEqual(CHAIN);
+  into(lines("over")[3], button("Quarters, Locked"), "top");
 });
 
-test("an accent that is no colour gives the lines the ink's colour, as it gives the tiles", async () => {
+test("an accent that is no colour gives the chain's lines the ink's colour", async () => {
   const theme = document.createElement("div");
   theme.style.setProperty("--novatrail-skill-map-accent", "not a colour");
   theme.style.setProperty("--novatrail-skill-map-ink", "rgb(0, 100, 0)");
@@ -244,37 +312,25 @@ test("an accent that is no colour gives the lines the ink's colour, as it gives 
   try {
     await mount({ view: "learner" }, undefined, theme);
     await userEvent.click(tile("Quarters, Locked"));
-    const path = shadow().querySelector(".lines path") as Element;
+    const path = shadow().querySelector(".lines.over path") as Element;
     expect(getComputedStyle(path).stroke).toBe("rgb(0, 100, 0)");
-    expect(getComputedStyle(shadow().querySelector(".lines circle") as Element).fill).toBe(
-      "rgb(0, 100, 0)",
-    );
   } finally {
     mounted().remove();
     theme.remove();
   }
 });
 
-test("a band's heading lies over the lines, as wide as its text: a line across a tier passes under its words", async () => {
-  await mount();
-  await userEvent.click(tile("Share with a remainder, Ready to start"));
-  const heading = [...shadow().querySelectorAll("h3")].find(
-    (node) => node.textContent === "Tier 2 · Sharing",
-  ) as HTMLElement;
-  expect(getComputedStyle(heading).backgroundColor).toBe("rgb(255, 255, 255)");
-  const band = (heading.parentElement as HTMLElement).getBoundingClientRect();
-  expect(heading.getBoundingClientRect().width).toBeLessThan(band.width);
-  // The line from the anchor skill's band to tier 3 crosses tier 2's heading row, within the
-  // heading's width, and under it: the SVG comes first in the map, unlayered, and the bands after it
-  // are positioned, so they paint over it.
-  const line = lines().find(({ from }) => from === "core.multiplication-table");
-  const box = boxOf(heading);
-  expect(line?.start.y).toBeLessThan(box.top);
-  expect(line?.end.y).toBeGreaterThan(box.bottom);
-  expect(Math.min(line?.start.x ?? 0, line?.end.x ?? 0)).toBeLessThan(box.right);
-  const map = shadow().querySelector(".map") as HTMLElement;
-  const svg = shadow().querySelector("svg.lines") as SVGSVGElement;
-  expect(map.firstElementChild).toBe(svg);
-  expect(getComputedStyle(svg).zIndex).toBe("auto");
-  expect(getComputedStyle(heading.parentElement as HTMLElement).position).toBe("relative");
+test("a band's heading lies over the lines, on the paper and as wide as its text", async () => {
+  await inColumns(async () => {
+    const heading = [...shadow().querySelectorAll("h3")].find(
+      (node) => node.textContent === "Tier 2 · Sharing",
+    ) as HTMLElement;
+    expect(getComputedStyle(heading).backgroundColor).toBe("rgb(255, 255, 255)");
+    expect(getComputedStyle(heading).zIndex).toBe("2");
+    const band = (heading.parentElement as HTMLElement).getBoundingClientRect();
+    expect(heading.getBoundingClientRect().width).toBeLessThan(band.width);
+    const map = shadow().querySelector(".map") as HTMLElement;
+    expect(map.firstElementChild?.matches("svg.lines.under")).toBe(true);
+    expect(getComputedStyle(map.firstElementChild as Element).zIndex).toBe("auto");
+  });
 });

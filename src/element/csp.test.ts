@@ -29,7 +29,7 @@ async function strictFrame(): Promise<{ frame: HTMLIFrameElement; result: Result
 test("under a policy without 'unsafe-inline' the map is styled, its lines drawn, and nothing is refused", async () => {
   const { frame, result } = await strictFrame();
   try {
-    expect(result).toEqual({ violations: [], display: "flex", sheets: 1, inline: 0, lines: 2 });
+    expect(result).toEqual({ violations: [], display: "flex", sheets: 1, inline: 0, lines: 4 });
   } finally {
     frame.remove();
   }

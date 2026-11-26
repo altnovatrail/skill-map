@@ -12,6 +12,7 @@ export function fullSkillId(moduleId: string, skillId: string): string {
 }
 
 export * from "./attributes.js";
+export * from "./columns.js";
 export * from "./layout.js";
 export * from "./lines.js";
 export * from "./states.js";

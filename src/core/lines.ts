@@ -1,11 +1,11 @@
-// The lines of the expanded skill: where each starts and ends, and the curve between, from the
-// boxes the element measured. Each line goes down, from the bottom edge of a
-// prerequisite's tile into the top edge of the expanded tile, and from the bottom edge of the
-// details into the top edge of each tile the skill opens. The ends on the expanded tile and on its
-// details are spread across the tile's width in the order of the other ends from left to right, so
-// that their points do not fall on one another and the lines do not cross for nothing.
+// The lines of the map: where each starts and ends, and the curve between, from the boxes the
+// element measured. When the tiers are columns every link has its line, from the right edge of a
+// prerequisite's tile into the left edge of the skill's, and an anchor skill's, from the row above
+// the columns, runs down the gap before the skill's column and into its side. When the tiers are
+// bands only the chosen skill's chain has lines, each down from the bottom edge of one tile into
+// the top edge of the next.
 
-import type { Links } from "./layout.js";
+import type { Link } from "./layout.js";
 
 /** A box of the map, in CSS pixels from the map's top left corner. */
 export interface Box {
@@ -30,6 +30,9 @@ export interface Line {
   readonly d: string;
 }
 
+/** How the map stands: its tiers as columns left to right, or as bands top to bottom. */
+export type Arrangement = "columns" | "bands";
+
 /** A number of the drawing, to a tenth of a CSS pixel. */
 const tenth = (value: number) => Math.round(value * 10) / 10;
 
@@ -43,52 +46,70 @@ export function curve(start: Point, end: Point): string {
   return `M${sx} ${sy}C${sx} ${middle} ${ex} ${middle} ${ex} ${ey}`;
 }
 
-/** The middle of a box's bottom edge, and of its top edge. */
+/** How far a line runs level out of a tile and into the next, at most, in CSS pixels. */
+const REACH = 48;
+
+/** The cubic curve from one point across to another: both ends leave and come in level. */
+export function across(start: Point, end: Point): string {
+  const reach = Math.min(REACH, Math.abs(end.x - start.x) / 2);
+  const [sx, sy, ex, ey] = [tenth(start.x), tenth(start.y), tenth(end.x), tenth(end.y)];
+  return `M${sx} ${sy}C${tenth(sx + reach)} ${sy} ${tenth(ex - reach)} ${ey} ${ex} ${ey}`;
+}
+
+/** The radius of the turns of an anchor skill's line, in CSS pixels. */
+const TURN = 12;
+
+/**
+ * An anchor skill's line when the tiers are columns: down from the tile in the row above them,
+ * over to the gap before the skill's column at x, down that gap, and with a turn into the side of
+ * the skill's tile.
+ */
+export function down(start: Point, end: Point, x: number): string {
+  const [sx, sy, ex, ey, gx] = [
+    tenth(start.x),
+    tenth(start.y),
+    tenth(end.x),
+    tenth(end.y),
+    tenth(x),
+  ];
+  const level = tenth(Math.min(sy + 2 * TURN, ey - TURN));
+  const bend = tenth(Math.min(sy + 4 * TURN, ey - TURN));
+  return `M${sx} ${sy}C${sx} ${level} ${gx} ${level} ${gx} ${bend}L${gx} ${tenth(ey - TURN)}Q${gx} ${ey} ${tenth(gx + TURN)} ${ey}L${ex} ${ey}`;
+}
+
+const rightOf = (box: Box): Point => ({ x: box.right, y: (box.top + box.bottom) / 2 });
+const leftOf = (box: Box): Point => ({ x: box.left, y: (box.top + box.bottom) / 2 });
 const bottomOf = (box: Box): Point => ({ x: (box.left + box.right) / 2, y: box.bottom });
 const topOf = (box: Box): Point => ({ x: (box.left + box.right) / 2, y: box.top });
 
-/** The i-th of n points spread across a box's width, at the height given. */
-const spread = (box: Box, i: number, n: number, y: number): Point => ({
-  x: box.left + ((box.right - box.left) * (i + 1)) / (n + 1),
-  y,
-});
-
 /**
- * The lines of the expanded skill: one from each tile it builds on, into its tile's top edge, and
- * one to each tile it opens, out of its details' bottom edge, in the order of the links. A skill
- * whose tile has no box has no line, and without the expanded tile's box there is none.
+ * The lines of the links given, one for each whose two tiles have boxes. With the tiers as
+ * columns, a line of an anchor skill — one of those named — runs down the gap before the skill's
+ * column, `gap` wide; every other goes across. With the tiers as bands each goes down.
  */
 export function linesOf(
-  expanded: string,
-  links: Links,
+  links: readonly Link[],
   boxes: ReadonlyMap<string, Box>,
-  details: Box,
+  arrangement: Arrangement,
+  anchors: ReadonlySet<string>,
+  gap: number,
 ): Line[] {
-  const tile = boxes.get(expanded);
-  if (tile === undefined) return [];
-  const line = (from: string, to: string, start: Point, end: Point): Line => ({
-    from,
-    to,
-    start: rounded(start),
-    end: rounded(end),
-    d: curve(start, end),
+  return links.flatMap(({ from, to }) => {
+    const [a, b] = [boxes.get(from), boxes.get(to)];
+    if (a === undefined || b === undefined) return [];
+    let start: Point;
+    let end: Point;
+    let d: string;
+    if (arrangement === "bands") {
+      [start, end] = [bottomOf(a), topOf(b)];
+      d = curve(start, end);
+    } else if (anchors.has(from)) {
+      [start, end] = [bottomOf(a), leftOf(b)];
+      d = down(start, end, b.left - gap / 2);
+    } else {
+      [start, end] = [rightOf(a), leftOf(b)];
+      d = across(start, end);
+    }
+    return [{ from, to, start: rounded(start), end: rounded(end), d }];
   });
-  /** The skills with a box, and the place of each among them from left to right. */
-  const ranked = (ids: readonly string[], end: (box: Box) => Point) => {
-    const placed = ids.filter((id) => boxes.has(id));
-    const order = [...placed].sort(
-      (a, b) => end(boxes.get(a) as Box).x - end(boxes.get(b) as Box).x,
-    );
-    return placed.map((id) => ({ id, box: boxes.get(id) as Box, rank: order.indexOf(id) }));
-  };
-  const into = ranked(links.buildsOn, bottomOf);
-  const out = ranked(links.opens, topOf);
-  return [
-    ...into.map(({ id, box, rank }) =>
-      line(id, expanded, bottomOf(box), spread(tile, rank, into.length, tile.top)),
-    ),
-    ...out.map(({ id, box, rank }) =>
-      line(expanded, id, spread(tile, rank, out.length, details.bottom), topOf(box)),
-    ),
-  ];
 }

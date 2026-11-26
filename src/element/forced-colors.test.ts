@@ -3,8 +3,8 @@ import { userEvent } from "vitest/browser";
 import { button, mount, mounted, tile, useMap } from "./map.fixture.js";
 
 // The map with forced colours, in a browser context that is in the mode from the start: the
-// system's colours stand in for the consumer's theme, and the expanded tile stays apart from the
-// others by the system's highlight. vitest.config.ts runs this file alone, in a project of its
+// system's colours stand in for the consumer's theme, and the chosen tile and its chain stay apart
+// from the others by the system's highlight. vitest.config.ts runs this file alone, in a project of its
 // own, as canvas does.
 
 useMap();
@@ -45,17 +45,13 @@ test("with forced colours the tiles are the system's buttons, whatever the consu
     expect(expanded.color).toBe(system("HighlightText"));
     expect(expanded.backgroundColor).not.toBe(backgroundColor);
     expect(expanded.color).not.toBe(color);
-    expect(getComputedStyle(button("Halves, In progress, needed before")).borderTopColor).toBe(
+    expect(getComputedStyle(button("Halves, In progress")).borderTopColor).toBe(
       system("Highlight"),
     );
-    // The lines and their points take the system's highlight, as the tiles linked by them do.
-    const lines = mounted().shadowRoot?.querySelector(".lines") as Element;
-    expect(getComputedStyle(lines.querySelector("path") as Element).stroke).toBe(
-      system("Highlight"),
-    );
-    expect(getComputedStyle(lines.querySelector("circle") as Element).fill).toBe(
-      system("Highlight"),
-    );
+    expect(getComputedStyle(button("Draw shares, Not assessed")).color).toBe(system("GrayText"));
+    // The chain's lines take the system's highlight, as its tiles do.
+    const chain = mounted().shadowRoot?.querySelector(".lines.over path") as Element;
+    expect(getComputedStyle(chain).stroke).toBe(system("Highlight"));
     const heading = mounted().shadowRoot?.querySelector("h3") as HTMLElement;
     expect(getComputedStyle(heading).backgroundColor).toBe(system("Canvas"));
     const details = mounted().shadowRoot?.getElementById("details") as HTMLElement;

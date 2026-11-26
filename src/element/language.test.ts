@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import type { SkillChooseEvent } from "./index.js";
-import { button, mount, mounted, settled, shadow, tile, useMap } from "./map.fixture.js";
+import { button, chip, mount, mounted, settled, shadow, tile, useMap } from "./map.fixture.js";
 
 // The map in Russian, by its own attribute lang:
 // the package's words are Russian, the titles stay in the explanation language, and an anchor
@@ -32,7 +32,7 @@ describe("lang=ru", () => {
     await userEvent.click(tile("Quarters, Ещё закрыт"));
     expect(details()).toContain("Ждёт: Halves");
     expect(details()).toContain("Опирается на");
-    await expect.element(tile("Halves, В работе, нужен раньше")).toBeVisible();
+    await expect.element(chip("Halves, В работе")).toBeVisible();
     await userEvent.click(tile("Share with a remainder, Можно начинать"));
     let chosen: string | undefined;
     mounted().addEventListener("skillchoose", (event: SkillChooseEvent) => {
