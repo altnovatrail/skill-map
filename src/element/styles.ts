@@ -223,6 +223,10 @@ ${dots}
   column-gap: 3.5rem;
   align-items: start;
 }
+/* One tier, one column: no wider than a column of a map of a few. */
+.map.columns .tiers.single {
+  grid-template-columns: minmax(0, 30rem);
+}
 .map.columns .band:not(.anchors) > ul {
   display: flex;
   flex-direction: column;

@@ -229,6 +229,7 @@ export class MapTree {
     }
     place(this.#tiersBox, tiers);
     this.#tiersBox.style.setProperty("--tiers", String(tiers.length));
+    this.#tiersBox.classList.toggle("single", tiers.length === 1);
     // The lines lie first in the map, under the legend and the bands, and are drawn once the tiles
     // have their places.
     place(this.#container, [
@@ -294,8 +295,10 @@ export class MapTree {
     const rem = Number.parseFloat(getComputedStyle(this.#container).fontSize) || 16;
     const count = map.bands.filter((band) => band.kind === "tier").length;
     const width = this.#container.clientWidth;
+    // One tier stands as a column where two would fit: narrower, its tiles wrap as a band.
+    const fit = Math.max(count, 2);
     const arrangement: Arrangement =
-      count > 1 && width >= (count * COLUMN + (count - 1) * GAP) * rem ? "columns" : "bands";
+      count > 0 && width >= (fit * COLUMN + (fit - 1) * GAP) * rem ? "columns" : "bands";
     this.#container.classList.toggle("columns", arrangement === "columns");
 
     const origin = this.#container.getBoundingClientRect();

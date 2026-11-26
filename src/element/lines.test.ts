@@ -207,6 +207,31 @@ test("the lines are paths, by SVG's attributes alone, hidden from the tree of ac
   });
 });
 
+test("one tier stands as a column where two would fit, no wider than 30 rem, and as a band narrower", async () => {
+  await inColumns(async (frame) => {
+    mounted().tiers = Object.fromEntries(Object.keys(TIERS).map((id) => [id, 1]));
+    await frames();
+    const map = shadow().querySelector(".map");
+    expect(map?.classList.contains("columns")).toBe(true);
+    const list = shadow().querySelector(".tiers.single .band > ul");
+    expect(list?.getBoundingClientRect().width).toBeLessThanOrEqual(30 * 16);
+    const widths = [...shadow().querySelectorAll(".tiers .tile")].map(
+      (t) => t.getBoundingClientRect().width,
+    );
+    expect(new Set(widths).size).toBe(1);
+    // Its card is as wide as the map, not the window.
+    await userEvent.click(tile("Halves, In progress"));
+    await frames();
+    const card = shadow().querySelector(".card")?.getBoundingClientRect();
+    const box = frame.getBoundingClientRect();
+    expect(card?.left).toBeGreaterThanOrEqual(box.left);
+    expect(card?.right).toBeLessThanOrEqual(box.right + 1);
+    frame.style.width = "380px";
+    await frames();
+    expect(map?.classList.contains("columns")).toBe(false);
+  });
+});
+
 test("a narrower map stands its tiers as bands and draws the lines anew", async () => {
   await inColumns(async (frame) => {
     await userEvent.click(tile("Quarters, Locked"));
